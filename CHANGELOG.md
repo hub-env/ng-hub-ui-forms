@@ -5,6 +5,20 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.36.0] - 2026-09-23
+
+### Changed
+
+- **BREAKING — the Angular floor rises from `19.0.0` to `21.0.0`.** The old range was
+  measured from the source alone, and `AbstractControl` grew a third type parameter in Angular 21, and the published `.d.ts` carries the shape the compiler emitted, so the types cannot compile on an older one. An application below the new floor could install this
+  package and then fail to build, with an error that pointed at Angular rather than here; it now
+  gets the peer warning it should always have had. Nothing that worked stops working. See
+  `BREAKING_CHANGES.md`.
+- **The floor is proved by running it now, not only derived.** `npm run floors:matrix` builds a real
+  project pinned to the oldest Angular this package claims, installs it there, typechecks the
+  published types against that version's `@angular/*` and runs that version's linker over the
+  compiled output. It is what found this.
+
 ## [22.35.2] - 2026-09-23
 
 ### Changed
@@ -40,28 +54,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   With `multiple` the tiles form a grid inside the field, ending in a tile that adds more files;
   empty, the field is the usual dropzone.
 
-  Clicking a tile opens its file: a picked image enlarges in a native modal `<dialog>`, a stored
-  file opens its URL in a new tab (`rel="noopener noreferrer"`), and a picked file that is not an
-  image opens in a new tab through an object URL created at that moment. Delete or Backspace on a
-  focused tile removes it. With `maxFiles`, a counter reads "3 of 5 files", stored files in view
-  included; at the limit the add tile goes away and drops and pastes are refused, while replacing a
-  file is still allowed. In this mode the native `<input type="file">` sits after the tiles, outside
-  the `<label>`.
+    Clicking a tile opens its file: a picked image enlarges in a native modal `<dialog>`, a stored
+    file opens its URL in a new tab (`rel="noopener noreferrer"`), and a picked file that is not an
+    image opens in a new tab through an object URL created at that moment. Delete or Backspace on a
+    focused tile removes it. With `maxFiles`, a counter reads "3 of 5 files", stored files in view
+    included; at the limit the add tile goes away and drops and pastes are refused, while replacing a
+    file is still allowed. In this mode the native `<input type="file">` sits after the tiles, outside
+    the `<label>`.
 
 - **`currentFile`, the file the record already has.** A URL, a `HubCurrentFile` (`{ url, name?,
-  type? }`) for a URL that does not reveal its name or type, or with `multiple` a list of either; a
+type? }`) for a URL that does not reveal its name or type, or with `multiple` a list of either; a
   single field shows the first. Without a name, the name is the URL's last segment when it carries
   an extension, and the type is read from a `data:` URL. A stored file with no name at all is
   called after the field's label ("Remove Logo"), and "Current file" only when there is no label.
   In a field whose `accept` admits only images, a stored file of unknown type is treated as an
   image. Only `preview="inline"` shows stored files.
 
-  **A stored file never enters the form value**, which stays a `File`, a `File[]` or `null`. When
-  one leaves the field, removed or replaced by a picked file, **`currentFileRemoved`** emits it: it
-  is the application's cue to delete it on the server. It stays hidden until `currentFile` changes.
-  In a single inline field a new file, however it arrives, replaces the stored one; removing the
-  new file afterwards does not bring the stored one back. `fileRemoved` now also emits a picked file
-  that was replaced through its tile.
+    **A stored file never enters the form value**, which stays a `File`, a `File[]` or `null`. When
+    one leaves the field, removed or replaced by a picked file, **`currentFileRemoved`** emits it: it
+    is the application's cue to delete it on the server. It stays hidden until `currentFile` changes.
+    In a single inline field a new file, however it arrives, replaces the stored one; removing the
+    new file afterwards does not bring the stored one back. `fileRemoved` now also emits a picked file
+    that was replaced through its tile.
 
 - **`imagePreview`** (default `true`). Off, every file is drawn as its family icon and no object
   URL is created for a thumbnail, in `list` as well. The lighter choice for long lists of photos.
@@ -103,9 +117,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   written. The group is labelled by the field label through `aria-labelledby`, has one Tab stop and
   moves with the arrows, Home and End.
 
-  Which field is drawn: `swatches` left at `null` takes the application palette, and with none the
-  classic field; `[swatches]="[]"` asks for the classic field even under an application palette; a
-  list draws the grid. A list in which no entry is a colour also falls back to the classic field.
+    Which field is drawn: `swatches` left at `null` takes the application palette, and with none the
+    classic field; `[swatches]="[]"` asks for the classic field even under an application palette; a
+    list draws the grid. A list in which no entry is a colour also falls back to the classic field.
 
 - **`color` in `provideHubForms`** (`HubColorConfig`): `swatches`, the application palette, empty by
   default so colour fields keep the classic field; `customColorLabel` (`'Custom color'`); and
@@ -138,10 +152,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   are two Tab stops, in that order. Read-only, the square does not open the picker; disabled, the
   square, the text and the picker are all disabled.
 
-  `.hub-input__control--color` is kept, but it is on the text `<input>` now, not on an
-  `<input type="color">`: a stylesheet that sized the native button through that class now styles
-  the text field. New classes: `.hub-input__color` (the wrapper), `.hub-input__color-swatch` (the
-  square) and `.hub-input__color-native` (the hidden picker).
+    `.hub-input__control--color` is kept, but it is on the text `<input>` now, not on an
+    `<input type="color">`: a stylesheet that sized the native button through that class now styles
+    the text field. New classes: `.hub-input__color` (the wrapper), `.hub-input__color-swatch` (the
+    square) and `.hub-input__color-native` (the hidden picker).
 
 - **`--hub-input-color-size` is the width of that square**, and its default is the field's inner
   height, `calc(var(--hub-input-line-height) * var(--hub-input-font-size) + 2 * var(--hub-input-padding-y))`,
@@ -204,12 +218,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the rest. Those selectors are the engine's, not this library's: nothing here promises they will
   keep their names, and a consumer who wrote them was pinned to an internal detail.
 
-  Twelve directives replace them, one for one, with the same template contexts:
-  `hubSelectOption`, `hubSelectOptgroup`, `hubSelectLabel`, `hubSelectMultiLabel`,
-  `hubSelectHeader`, `hubSelectFooter`, `hubSelectNotFound`, `hubSelectTypeToSearch`,
-  `hubSelectLoadingText`, `hubSelectLoadingSpinner`, `hubSelectTag` and `hubSelectClearButton`.
-  Nothing under `vendor/` was touched, so the automated upstream sync stays as low-conflict as it
-  was.
+    Twelve directives replace them, one for one, with the same template contexts:
+    `hubSelectOption`, `hubSelectOptgroup`, `hubSelectLabel`, `hubSelectMultiLabel`,
+    `hubSelectHeader`, `hubSelectFooter`, `hubSelectNotFound`, `hubSelectTypeToSearch`,
+    `hubSelectLoadingText`, `hubSelectLoadingSpinner`, `hubSelectTag` and `hubSelectClearButton`.
+    Nothing under `vendor/` was touched, so the automated upstream sync stays as low-conflict as it
+    was.
 
 - **Five of those slots now do something at all.** `ng-typetosearch-tmp`, `ng-loadingtext-tmp`,
   `ng-loadingspinner-tmp`, `ng-tag-tmp` and `ng-clearbutton-tmp` were exported from the entry
@@ -300,11 +314,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   never had; on the dropzone `floating` and `horizontal` keep rendering the stacked label they
   always did, because it has neither arrangement to offer.
 
-  **Two fields name themselves instead.** `hub-otp-input` and `hub-segmented` render a group of
-  controls rather than one control, so there is nothing for `for` to point at: a `<label for>`
-  aimed at a `<div>` is inert and names nothing. Both put the label text on the group through
-  `aria-label`, which is what leaves them with an accessible name once the visible label is
-  clipped away.
+    **Two fields name themselves instead.** `hub-otp-input` and `hub-segmented` render a group of
+    controls rather than one control, so there is nothing for `for` to point at: a `<label for>`
+    aimed at a `<div>` is inert and names nothing. Both put the label text on the group through
+    `aria-label`, which is what leaves them with an accessible name once the visible label is
+    clipped away.
 
 - **`FUNCTIONALITIES.md`**, the coverage table the rest of the family ships. The only feature
   matrix forms had lived in the documentation site, so nobody reading the package could tell
@@ -397,47 +411,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   field was for. The rule the product settles on is **one sentence, below; more than one,
   tooltip** — and the second half of it had no implementation.
 
-  Set `formTextType="tooltip"` and the label row becomes `label + (*) … ?`: the mark is
-  pushed to the end of the row with an auto margin, so a column of fields lines its
-  question marks up instead of scattering them wherever each label happens to stop. The
-  block below stands down. Available on all nine fields that carry helper text —
-  `hub-input`, `hub-textarea`, `hub-select`, `hub-datepicker`, `hub-timepicker`,
-  `hub-otp-input`, `hub-segmented`, `hub-slider` and `hub-file-input`. `hub-segmented`
-  gains `formTextType` in the process; it was the one field that declared `formText`
-  without it.
+    Set `formTextType="tooltip"` and the label row becomes `label + (*) … ?`: the mark is
+    pushed to the end of the row with an auto margin, so a column of fields lines its
+    question marks up instead of scattering them wherever each label happens to stop. The
+    block below stands down. Available on all nine fields that carry helper text —
+    `hub-input`, `hub-textarea`, `hub-select`, `hub-datepicker`, `hub-timepicker`,
+    `hub-otp-input`, `hub-segmented`, `hub-slider` and `hub-file-input`. `hub-segmented`
+    gains `formTextType` in the process; it was the one field that declared `formText`
+    without it.
 
-  **The trigger is a `<button>` outside the `<label>`, deliberately.** Activating a label
-  focuses the control it names, so a button nested in one would open the tooltip *and*
-  jump the caret into the field — a shortcut nobody asked for, and one that reads as
-  correct in a review. It sits beside the label in a `.hub-field__label-row` instead,
-  which keeps it reachable by keyboard on its own. Its accessible name is the helper text
-  itself, so a screen reader is told what a pointer learns by hovering, without waiting
-  for a tooltip it cannot see.
+    **The trigger is a `<button>` outside the `<label>`, deliberately.** Activating a label
+    focuses the control it names, so a button nested in one would open the tooltip _and_
+    jump the caret into the field — a shortcut nobody asked for, and one that reads as
+    correct in a review. It sits beside the label in a `.hub-field__label-row` instead,
+    which keeps it reachable by keyboard on its own. Its accessible name is the helper text
+    itself, so a screen reader is told what a pointer learns by hovering, without waiting
+    for a tooltip it cannot see.
 
-  **The mark is drawn from CSS, not from an icon.** `ng-hub-ui-icons` is not a dependency
-  of this package, and taking one on for a single glyph would make everyone who wants a
-  text input install an icon set. It is a circle and a `?` built from
-  `--hub-form-hint-size`, `-font-size`, `-font-weight`, `-color`, `-bg`, `-border-width`,
-  `-border-color` and the three `-hover-` variants. The size is in `em` of the label, not
-  in `rem`: the mark belongs to the label beside it, so a form that scales its labels down
-  takes the mark with them.
+    **The mark is drawn from CSS, not from an icon.** `ng-hub-ui-icons` is not a dependency
+    of this package, and taking one on for a single glyph would make everyone who wants a
+    text input install an icon set. It is a circle and a `?` built from
+    `--hub-form-hint-size`, `-font-size`, `-font-weight`, `-color`, `-bg`, `-border-width`,
+    `-border-color` and the three `-hover-` variants. The size is in `em` of the label, not
+    in `rem`: the mark belongs to the label beside it, so a form that scales its labels down
+    takes the mark with them.
 
-  The tooltip itself is `[hubTooltip]` from `ng-hub-ui-utils`, already a peer dependency.
-  Its element is appended to `<body>`, out of reach of this package's styles, so an
-  application that wants it dressed needs the tooltip's own sheet:
-  `@use 'ng-hub-ui-utils/styles/tooltip';`. Without it the mark still works and still
-  speaks; only the label it opens comes out unstyled.
+    The tooltip itself is `[hubTooltip]` from `ng-hub-ui-utils`, already a peer dependency.
+    Its element is appended to `<body>`, out of reach of this package's styles, so an
+    application that wants it dressed needs the tooltip's own sheet:
+    `@use 'ng-hub-ui-utils/styles/tooltip';`. Without it the mark still works and still
+    speaks; only the label it opens comes out unstyled.
 
-  Three behaviours worth knowing before reaching for it. A field with a **floating label,
-  or no label at all**, still renders the row — the mark alone, at the end — because the
-  helper text has nowhere else to go once the block below stands down, and dropping it
-  silently is worse than a lone question mark. A **projected `hubFormText` template** keeps
-  its place under the control even in tooltip mode: the tooltip carries a string, so
-  handing it markup would throw the markup away without a word. And on a **checkbox or
-  switch**, where the `<label>` wraps the control itself rather than pointing at it, the
-  mark is lifted out into a row beside that label: nested inside it, activating the mark
-  would toggle the control — and a switch carrying a two-sentence warning is precisely the
-  one that must not flip because somebody asked what it does.
+    Three behaviours worth knowing before reaching for it. A field with a **floating label,
+    or no label at all**, still renders the row — the mark alone, at the end — because the
+    helper text has nowhere else to go once the block below stands down, and dropping it
+    silently is worse than a lone question mark. A **projected `hubFormText` template** keeps
+    its place under the control even in tooltip mode: the tooltip carries a string, so
+    handing it markup would throw the markup away without a word. And on a **checkbox or
+    switch**, where the `<label>` wraps the control itself rather than pointing at it, the
+    mark is lifted out into a row beside that label: nested inside it, activating the mark
+    would toggle the control — and a switch carrying a two-sentence warning is precisely the
+    one that must not flip because somebody asked what it does.
 
 ### Changed
 
@@ -459,59 +473,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`plaintext` on `hub-input` and `hub-textarea`: the value with no field around it.**
   The other half of `readonly`, and the difference is who the field is for. `readonly`
-  still belongs to somebody filling a form in — it is a *state* of an editable field, and
+  still belongs to somebody filling a form in — it is a _state_ of an editable field, and
   a design system can give it a box: `--hub-input-readonly-bg`,
   `--hub-input-readonly-border-color`, `-color` and `-cursor` are there to be set.
-  `plaintext` is for the value that is simply being *shown*: a record open for
+  `plaintext` is for the value that is simply being _shown_: a record open for
   consultation, a figure the server settled, a field a plan has locked. It is not a state
   a theme can put a box back on — having none is what it is.
 
-  Worth knowing before you reach for it: **at the shipped defaults `readonly` already
-  draws no box** — both those token defaults are `transparent`, deliberately, since a
-  read-only value is there to be read and loses only the chrome that promises you can type
-  in it. Untouched, the two differ in the horizontal padding (12px against 0), the inline
-  border width, the cursor, and the affordances below; set
-  `--hub-input-readonly-bg` and `--hub-input-readonly-border-color` and read-only takes the
-  boxed look Bootstrap's own `readonly` ships with, while `plaintext` stays flat. Verified
-  end to end in a browser rather than assumed.
+    Worth knowing before you reach for it: **at the shipped defaults `readonly` already
+    draws no box** — both those token defaults are `transparent`, deliberately, since a
+    read-only value is there to be read and loses only the chrome that promises you can type
+    in it. Untouched, the two differ in the horizontal padding (12px against 0), the inline
+    border width, the cursor, and the affordances below; set
+    `--hub-input-readonly-bg` and `--hub-input-readonly-border-color` and read-only takes the
+    boxed look Bootstrap's own `readonly` ships with, while `plaintext` stays flat. Verified
+    end to end in a browser rather than assumed.
 
-  Modelled on Bootstrap's `.form-control-plaintext`, deliberately — it is the shape
-  every reader already knows, and it solves the hard part: the control stays a real
-  `<input>`/`<textarea>`, so the `<label for>` still points at something labelable and
-  the text stays selectable. A `<span>` would have broken both, silently: the field goes
-  on looking right while the screen reader stops announcing what it is reading.
+    Modelled on Bootstrap's `.form-control-plaintext`, deliberately — it is the shape
+    every reader already knows, and it solves the hard part: the control stays a real
+    `<input>`/`<textarea>`, so the `<label for>` still points at something labelable and
+    the text stays selectable. A `<span>` would have broken both, silently: the field goes
+    on looking right while the screen reader stops announcing what it is reading.
 
-  The horizontal padding goes and the border turns transparent **without losing its
-  width**, and the vertical padding moves rather than shrinks: none above, the field's
-  whole vertical padding below. That buys both things at once. Nothing above puts the value
-  directly under its label — the gap closes from 10px to 4px, because a label and its value
-  are one thing and should read as a pair. Twice the padding below holds the total at
-  exactly an editable field's height, measured at 38px against 38px, so a grid mixing the
-  two still lines up. It is written as `calc(var(--hub-input-padding-y) * 2)` rather than a
-  literal, so it cannot drift if that padding ever moves. `plaintext` implies `readonly`, so
-  the two cannot be passed in disagreement, and the two presentations are exclusive —
-  `hub-field--plaintext` never carries `hub-field--readonly`, which would put the box
-  back.
+    The horizontal padding goes and the border turns transparent **without losing its
+    width**, and the vertical padding moves rather than shrinks: none above, the field's
+    whole vertical padding below. That buys both things at once. Nothing above puts the value
+    directly under its label — the gap closes from 10px to 4px, because a label and its value
+    are one thing and should read as a pair. Twice the padding below holds the total at
+    exactly an editable field's height, measured at 38px against 38px, so a grid mixing the
+    two still lines up. It is written as `calc(var(--hub-input-padding-y) * 2)` rather than a
+    literal, so it cannot drift if that padding ever moves. `plaintext` implies `readonly`, so
+    the two cannot be passed in disagreement, and the two presentations are exclusive —
+    `hub-field--plaintext` never carries `hub-field--readonly`, which would put the box
+    back.
 
-  Every affordance goes with the box, because each one offers a choice the field is no
-  longer making: the input's clear button, a projected select's caret and clear, a
-  datepicker's icon, a textarea's drag handle — and its character counter, which tells
-  you how much room is left to type and so promises typing. A `hub-textarea` with
-  `[counter]` shown as plain text was still printing `12 / 200` under a field with no
-  box; it no longer renders it.
+    Every affordance goes with the box, because each one offers a choice the field is no
+    longer making: the input's clear button, a projected select's caret and clear, a
+    datepicker's icon, a textarea's drag handle — and its character counter, which tells
+    you how much room is left to type and so promises typing. A `hub-textarea` with
+    `[counter]` shown as plain text was still printing `12 / 200` under a field with no
+    box; it no longer renders it.
 
-  The value steps back a shade, through `--hub-input-plaintext-color`. Measured on the
-  documentation site, label and value came out at exactly the same colour, separated by 2px
-  of size and one weight step: enough inside a box, which does the separating, and not
-  enough once the box is gone — a column of them read as undifferentiated lines. **The
-  label is left exactly as it is on every other field**, on the same tokens and the same
-  weight, because a form's labels have to keep one rhythm whatever state each field is in.
-  It is the value that moves: `gray-700` against the editable `gray-900`, and one weight
-  step lighter through `--hub-input-plaintext-font-weight`, so it stops competing with its
-  own label. Enough to say it is not being edited, not enough to read as disabled — 8.18:1
-  against the page, so it clears AAA. Verify the weight against your own font: `system-ui`
-  has a light face and renders it 2.5px narrower over a 29-character string, but a family
-  without one will synthesise or ignore it.
+    The value steps back a shade, through `--hub-input-plaintext-color`. Measured on the
+    documentation site, label and value came out at exactly the same colour, separated by 2px
+    of size and one weight step: enough inside a box, which does the separating, and not
+    enough once the box is gone — a column of them read as undifferentiated lines. **The
+    label is left exactly as it is on every other field**, on the same tokens and the same
+    weight, because a form's labels have to keep one rhythm whatever state each field is in.
+    It is the value that moves: `gray-700` against the editable `gray-900`, and one weight
+    step lighter through `--hub-input-plaintext-font-weight`, so it stops competing with its
+    own label. Enough to say it is not being edited, not enough to read as disabled — 8.18:1
+    against the page, so it clears AAA. Verify the weight against your own font: `system-ui`
+    has a light face and renders it 2.5px narrower over a 29-character string, but a family
+    without one will synthesise or ignore it.
 
 ## [22.29.0] - 2026-09-01
 

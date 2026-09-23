@@ -31,17 +31,17 @@ This document tracks all breaking changes in the `ng-hub-ui-forms` library.
   matters more than the compiler error.
 - **Migration**: drop the `ng-template` and project the content directly.
 
-  ```html
-  <!-- Before -->
-  <hub-fieldset formGroupName="address">
-  	<ng-template hubLegend>Shipping address <span class="badge">required</span></ng-template>
-  </hub-fieldset>
+    ```html
+    <!-- Before -->
+    <hub-fieldset formGroupName="address">
+    	<ng-template hubLegend>Shipping address <span class="badge">required</span></ng-template>
+    </hub-fieldset>
 
-  <!-- After -->
-  <hub-fieldset formGroupName="address">
-  	<hub-legend>Shipping address <span class="badge">required</span></hub-legend>
-  </hub-fieldset>
-  ```
+    <!-- After -->
+    <hub-fieldset formGroupName="address">
+    	<hub-legend>Shipping address <span class="badge">required</span></hub-legend>
+    </hub-fieldset>
+    ```
 
 ### Announced: the vendored `ng-*-tmp` slots and `NgOptionComponent` are removed in 23.0.0
 
@@ -57,27 +57,27 @@ This document tracks all breaking changes in the `ng-hub-ui-forms` library.
 - **Migration**: rename the class and the attribute, one for one. The template context is
   identical, so the body of each template is unchanged.
 
-  | Before | After |
-  | --- | --- |
-  | `NgOptionTemplateDirective` / `ng-option-tmp` | `HubSelectOptionDirective` / `hubSelectOption` |
-  | `NgOptgroupTemplateDirective` / `ng-optgroup-tmp` | `HubSelectOptgroupDirective` / `hubSelectOptgroup` |
-  | `NgLabelTemplateDirective` / `ng-label-tmp` | `HubSelectLabelDirective` / `hubSelectLabel` |
-  | `NgMultiLabelTemplateDirective` / `ng-multi-label-tmp` | `HubSelectMultiLabelDirective` / `hubSelectMultiLabel` |
-  | `NgHeaderTemplateDirective` / `ng-header-tmp` | `HubSelectHeaderDirective` / `hubSelectHeader` |
-  | `NgFooterTemplateDirective` / `ng-footer-tmp` | `HubSelectFooterDirective` / `hubSelectFooter` |
-  | `NgNotFoundTemplateDirective` / `ng-notfound-tmp` | `HubSelectNotFoundDirective` / `hubSelectNotFound` |
-  | `NgTypeToSearchTemplateDirective` / `ng-typetosearch-tmp` | `HubSelectTypeToSearchDirective` / `hubSelectTypeToSearch` |
-  | `NgLoadingTextTemplateDirective` / `ng-loadingtext-tmp` | `HubSelectLoadingTextDirective` / `hubSelectLoadingText` |
-  | `NgLoadingSpinnerTemplateDirective` / `ng-loadingspinner-tmp` | `HubSelectLoadingSpinnerDirective` / `hubSelectLoadingSpinner` |
-  | `NgTagTemplateDirective` / `ng-tag-tmp` | `HubSelectTagDirective` / `hubSelectTag` |
-  | `NgClearButtonTemplateDirective` / `ng-clearbutton-tmp` | `HubSelectClearButtonDirective` / `hubSelectClearButton` |
+    | Before                                                        | After                                                          |
+    | ------------------------------------------------------------- | -------------------------------------------------------------- |
+    | `NgOptionTemplateDirective` / `ng-option-tmp`                 | `HubSelectOptionDirective` / `hubSelectOption`                 |
+    | `NgOptgroupTemplateDirective` / `ng-optgroup-tmp`             | `HubSelectOptgroupDirective` / `hubSelectOptgroup`             |
+    | `NgLabelTemplateDirective` / `ng-label-tmp`                   | `HubSelectLabelDirective` / `hubSelectLabel`                   |
+    | `NgMultiLabelTemplateDirective` / `ng-multi-label-tmp`        | `HubSelectMultiLabelDirective` / `hubSelectMultiLabel`         |
+    | `NgHeaderTemplateDirective` / `ng-header-tmp`                 | `HubSelectHeaderDirective` / `hubSelectHeader`                 |
+    | `NgFooterTemplateDirective` / `ng-footer-tmp`                 | `HubSelectFooterDirective` / `hubSelectFooter`                 |
+    | `NgNotFoundTemplateDirective` / `ng-notfound-tmp`             | `HubSelectNotFoundDirective` / `hubSelectNotFound`             |
+    | `NgTypeToSearchTemplateDirective` / `ng-typetosearch-tmp`     | `HubSelectTypeToSearchDirective` / `hubSelectTypeToSearch`     |
+    | `NgLoadingTextTemplateDirective` / `ng-loadingtext-tmp`       | `HubSelectLoadingTextDirective` / `hubSelectLoadingText`       |
+    | `NgLoadingSpinnerTemplateDirective` / `ng-loadingspinner-tmp` | `HubSelectLoadingSpinnerDirective` / `hubSelectLoadingSpinner` |
+    | `NgTagTemplateDirective` / `ng-tag-tmp`                       | `HubSelectTagDirective` / `hubSelectTag`                       |
+    | `NgClearButtonTemplateDirective` / `ng-clearbutton-tmp`       | `HubSelectClearButtonDirective` / `hubSelectClearButton`       |
 
-  `NgOptionComponent` has no slot equivalent: use `[items]`. `<ng-option>` never reached the engine
-  through `<hub-select>` — the engine's `contentChildren` cannot see through the wrapper's
-  `<ng-content>` — so a select declared that way was always empty.
+    `NgOptionComponent` has no slot equivalent: use `[items]`. `<ng-option>` never reached the engine
+    through `<hub-select>` — the engine's `contentChildren` cannot see through the wrapper's
+    `<ng-content>` — so a select declared that way was always empty.
 
-  The last five of those attributes did nothing at all before this release, for the same reason.
-  Their `hubSelect*` replacements are forwarded, so migrating them is not a rename but a fix.
+    The last five of those attributes did nothing at all before this release, for the same reason.
+    Their `hubSelect*` replacements are forwarded, so migrating them is not a rename but a fix.
 
 ## v22.32.0
 
@@ -101,7 +101,7 @@ This document tracks all breaking changes in the `ng-hub-ui-forms` library.
 ### `HubInvertColorPipe` no longer throws on invalid input
 
 - **Change**: `Error('Invalid HEX color.')` is gone; unresolvable input returns `#000000`.
-- **Impact**: only code that *relied* on the throw — a `try`/`catch` around a manual
+- **Impact**: only code that _relied_ on the throw — a `try`/`catch` around a manual
   `transform()` call, or a test asserting `toThrowError`. In a template the exception was
   unrecoverable anyway, which is why it went.
 - **Migration**: check the input yourself with `isValidColor()` from `ng-hub-ui-utils` if you need
@@ -116,7 +116,7 @@ This document tracks all breaking changes in the `ng-hub-ui-forms` library.
   repeating it. The nine fields in this package were updated with it.
 - **Impact**: a class of your own that extends `HubFieldControl` and declares its own `formText`
   or `formTextType` **stops compiling**: `TS4114: This member must have an 'override' modifier
-  because it overrides a member in the base class 'HubFieldControl'`. This is not hypothetical —
+because it overrides a member in the base class 'HubFieldControl'`. This is not hypothetical —
   `ng-hub-ui-signature` is exactly such a subclass and broke on it, which is how it was found.
 - **Migration**: delete your declaration and inherit the base one, which is `input<string>('')`
   and `input<FormTextType>(FormTextTypes.Bottom)`. Only add `override` if you genuinely need a
@@ -254,3 +254,15 @@ hub-datepicker {
 	--hub-daterangepicker-padding-y: 1rem;
 }
 ```
+
+## [22.36.0] - 2026-09-23
+
+### Angular below 21.0.0 is no longer supported
+
+- **Change**: the `@angular/*` peer ranges move from `>=19.0.0` to `>=21.0.0`.
+
+- **Why**: `AbstractControl` grew a third type parameter in Angular 21, and the published `.d.ts` carries the shape the compiler emitted, so the types cannot compile on an older one.
+
+- **Impact — an application below 21.0.0 gets a peer warning where it used to get a build error.**
+  Nothing that worked stops working: those versions never compiled against this package. Upgrade
+  Angular to 21.0.0 or stay on the previous release.

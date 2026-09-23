@@ -200,13 +200,20 @@
 							<span class="hub-file-input__thumb" aria-hidden="true">
 								@if (item.previewUrl) {
 									<img class="hub-file-input__image" [src]="item.previewUrl" alt="" />
-								} @else if (iconTpt(); as icon) {
-									<ng-container
-										[ngTemplateOutlet]="icon.template"
-										[ngTemplateOutletContext]="{ $implicit: item }"
-									></ng-container>
 								} @else {
-									<span class="hub-file-input__file-icon"></span>
+									<!--
+										A nested @if rather than `@else if (iconTpt(); as icon)`: an `as` on an
+										@else if is only accepted from Angular 20.2, and this package supports
+										older ones.
+									-->
+									@if (iconTpt(); as icon) {
+										<ng-container
+											[ngTemplateOutlet]="icon.template"
+											[ngTemplateOutletContext]="{ $implicit: item }"
+										></ng-container>
+									} @else {
+										<span class="hub-file-input__file-icon"></span>
+									}
 								}
 							</span>
 
