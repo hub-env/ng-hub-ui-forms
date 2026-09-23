@@ -281,6 +281,14 @@ hub-select.hidden-control {
 		&.ng-option-disabled {
 			opacity: var(--hub-form-disabled-opacity);
 		}
+
+		// The create-a-value row prints its invitation and the typed term as two adjacent
+		// elements with nothing between them, so it read `Create type"color"`. The gap belongs
+		// to the label rather than to the text: an `addTagText` is a caption a consumer writes
+		// and nobody writes one ending in a space.
+		.ng-tag-label {
+			margin-inline-end: 0.25em;
+		}
 	}
 
 	.ng-dropdown-panel-items .ng-optgroup {

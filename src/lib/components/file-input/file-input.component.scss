@@ -38,6 +38,27 @@
 			outline: none;
 		}
 
+		// One row: the browse control and the constraints side by side, at the height of any other
+		// control in the form. The panel's own minimum has to be overridden rather than tuned down
+		// — 7rem is what makes the tall one tall, and it is the taller of the two minimums that
+		// would win.
+		&--compact {
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: flex-start;
+			gap: var(--hub-file-input-compact-gap);
+			min-height: var(--hub-file-input-compact-min-height);
+			padding: var(--hub-file-input-compact-padding-y) var(--hub-file-input-compact-padding-x);
+			text-align: start;
+
+			.hub-file-input__prompt {
+				flex-direction: row;
+				align-items: center;
+				justify-content: flex-start;
+			}
+		}
+
 		&--dragover,
 		&--dragover:hover {
 			background-color: var(--hub-file-input-dragover-bg);

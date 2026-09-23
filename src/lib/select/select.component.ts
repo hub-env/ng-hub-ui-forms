@@ -289,6 +289,13 @@ export class HubSelectComponent extends HubFieldControl {
 	readonly closeOnSelect = input(true, { transform: booleanAttribute });
 
 	/**
+	 * Whether the search box empties after each selection. Left undefined so the engine keeps its
+	 * own rule — it falls back to `closeOnSelect`, which is right until the two are wanted apart:
+	 * a tag field that stays open to take the next value still has to clear the term it just used.
+	 */
+	readonly clearSearchOnAdd = input<boolean | undefined>(undefined);
+
+	/**
 	 * Keep the placeholder visible even when a value is selected. Defaults to `false` (the
 	 * placeholder hides on selection) — ng-select v23 defaults this to `true`, which is not the
 	 * conventional behavior.
@@ -360,8 +367,18 @@ export class HubSelectComponent extends HubFieldControl {
 		return attrs;
 	});
 
-	/** Emits whenever the value changes. */
+	/** Emits whenever the value changes. Carries the bound value, the one the form holds. */
 	readonly valueChange = output<any>();
+
+	/**
+	 * Emits the selected ITEM — the whole object, not the bound value — whenever the selection
+	 * changes, which is what `ng-select` has always emitted under this name.
+	 *
+	 * It exists as a real output because otherwise `(change)` on `<hub-select>` is a DOM listener:
+	 * it caught whatever the inner search input happened to bubble, never fired for a value added
+	 * by an asynchronous `addTag`, and compiled without a word of warning either way.
+	 */
+	readonly change = output<any>();
 
 	/** Emits when the control gains focus (dropdown format). */
 	readonly onFocus = output<any>();
@@ -545,6 +562,7 @@ export class HubSelectComponent extends HubFieldControl {
 			}
 
 			this.setValue(current);
+			this.change.emit(this.#selectedItems());
 			return;
 		}
 
@@ -554,6 +572,22 @@ export class HubSelectComponent extends HubFieldControl {
 		} else {
 			this.setValue(value);
 		}
+
+		this.change.emit(this.#selectedItems()[0]);
+	}
+
+	/**
+	 * The items the current value stands for, for the formats that have no engine to ask.
+	 *
+	 * The dropdown forwards the engine's own `change`, which already carries the items; the
+	 * button / checkbox / radio formats hold nothing but the value, so the items are found again
+	 * here. Keeping the payload the same across formats is the point: a consumer should not have
+	 * to know which one it is bound to.
+	 *
+	 * @returns The selected items, in the order the options were declared.
+	 */
+	#selectedItems(): any[] {
+		return this.items().filter((item) => this.isSelected(item));
 	}
 
 	/**

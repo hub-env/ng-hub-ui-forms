@@ -5,6 +5,82 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.37.0] - 2026-09-23
+
+Eleven open rows of the debt backlog, closed together because they are all the same package and
+most of them are one line of surprise each.
+
+### Added
+
+- **`appearance="compact"` on `<hub-file-input>`.** The same field on one row — the browse control
+  and the constraints — for the logo, the signature, the one small file that is not what the screen
+  is about. The tall panel took half a dialog to ask for it, and turning the drag off did not help:
+  the box, the glyph, the browse link and the constraints all stayed, and only the "drag here" line
+  went. The row still takes a drop, so what goes is the copy that described one and not the
+  behaviour. Tokens: `--hub-file-input-compact-min-height` (the shared control height),
+  `-compact-padding-x`, `-compact-padding-y`, `-compact-gap`. A field that has to SHOW what it holds
+  is `preview="inline"` instead — it needs room for the picture, and is sized through its own tokens.
+- **`hubFileDrop` — a container, or a whole page, that takes dropped files.** A file field only
+  accepts a drop inside its own box, which is right for a field and wrong for a screen: on a list of
+  expenses the gesture is to drop the receipt anywhere on it. So every application that wanted that
+  wrote the same component again, and the detail they all got wrong is the silent one — a file
+  dropped where nothing is listening makes the browser open it and lose the page, half-filled form
+  included. The directive watches the host and its subtree, or the whole document with
+  `hubFileDrop="window"`; raises its own card while the drag is over the target; applies `accept`,
+  `maxSize`, `minSize` and `maxFiles` and reports refusals in the same `HubFileRejection` shape a
+  file field uses; and hands back what passed through `filesDropped`. `[overlay]="false"` keeps the
+  behaviour and leaves the drawing to you, with `hub-file-drop--active` on the host to key on.
+  Twenty-two `--hub-file-drop-*` tokens dress the card, which stacks above the modal layer because a
+  screen can be a modal. Dragging is a pointer gesture, so the card is `aria-hidden` and the keyboard
+  route stays the field's.
+- **`(change)` on `<hub-select>`.** It emits the selected item — the whole object, not the bound
+  value — which is what `ng-select` has always emitted under this name. Before, `(change)` on the
+  element was an ordinary DOM listener: it caught whatever the inner search input happened to bubble,
+  never fired for a value an asynchronous `addTag` created, and compiled without a word either way.
+  The formats without an engine emit the same shape, so nothing has to know which one it is bound to.
+- **`clearSearchOnAdd` reaches `<hub-select>`.** The engine has always taken it and falls back to
+  `closeOnSelect` when it is not given — right until the two are wanted apart, which is exactly a tag
+  field: it stays open to take the next value and still has to forget the term it just used. Binding
+  it was an `NG8002`, so the only way to empty the box was to close the list you were about to type
+  into.
+
+### Changed
+
+- **BREAKING (visual) — `<hub-segmented>` now stands at the height of a field.** It measured 43px
+  beside a select's 38, and 33px at `size="sm"`, so a row of the two was out by five pixels whichever
+  size was chosen. The only way to line it up was to deduce the track's internal padding and hard-code
+  it, which stopped being right the moment the library touched its own spacing. There is one control
+  height now — `--hub-field-control-min-height`, the arithmetic an `<input>` reaches by construction —
+  and `--hub-select-min-height` and the new `--hub-segmented-min-height` both read it. `sm` and `lg`
+  step one gutter either side of it (`--hub-segmented-size-step`). See `BREAKING_CHANGES.md`.
+- **`--hub-select-option-marked-bg` is derived from the panel it sits in.** It read the elevated
+  surface, which is a surface and not a relation: in a theme with a grey page and a white elevated
+  surface the marked row came out the only white one in the panel, so it read as the background and
+  everything else as highlighted. It is now an 8% mix of the option's own text colour over the
+  dropdown background.
+
+### Fixed
+
+- **A `visually-hidden` label no longer escapes the field it names.** The clipped label is
+  `position: absolute`, which only says where it is NOT laid out; where it ends up is the nearest
+  positioned ancestor's business, and `.hub-field` declared no position, so with none anywhere up the
+  tree it measured from the page. Inside a scroll container that put it at the bottom of everything
+  and stretched the container's scroll height to reach it — a form that scrolled two thousand pixels
+  past its own last field. The field is its own containing block now.
+- **The create-a-value row no longer glues its caption to the term.** It printed the invitation and
+  the typed term as two adjacent elements with nothing between them, so it read `Create tag"colour"`.
+- **Choosing an asynchronous `addTag` closes the list at once**, rather than when the promise
+  resolves. The panel is appended to `<body>` and drawn above the modal layer, so an `addTag` that
+  opens a dialog left the list hanging over the very form the user had just been sent to fill in —
+  and if the dialog was dismissed, the promise resolved with nothing and the list never closed at all.
+- **No more `NG01354` per control inside a reactive form.** The fields drive their native control
+  with an inner `[ngModel]`; the value the form holds travels through the ControlValueAccessor on the
+  host, not through that binding. Angular cannot tell the two apart on its own — `NgModel` injects its
+  parent with `@Host()`, which stops at the component boundary — so it warned once per control that an
+  `ngModel` under a `formGroup` would not register. Eight controls in a dialog, eight lines of console,
+  in an application whose author wrote none of them and could not silence them. The bindings are now
+  declared standalone, which is what they already were and what the diagnostic reads.
+
 ## [22.36.0] - 2026-09-23
 
 ### Changed

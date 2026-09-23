@@ -50,6 +50,44 @@ class RefusedTagHostComponent {
 	readonly addTag = () => Promise.resolve(null);
 }
 
+@Component({
+	standalone: true,
+	imports: [HubSelectComponent, ReactiveFormsModule],
+	template: `<hub-select [formControl]="ctrl" [items]="items()" [addTag]="addTag" label="Customer" />`
+})
+class DialogTagHostComponent {
+	readonly ctrl = new FormControl<unknown>(null);
+	readonly items = signal<unknown[]>([]);
+
+	/** Resolved by hand, standing in for the modal the consumer opens to fill the new record in. */
+	resolve!: (value: unknown) => void;
+
+	readonly addTag = (term: string) =>
+		new Promise<unknown>((resolve) => {
+			this.resolve = () => resolve({ name: term });
+		});
+}
+
+@Component({
+	standalone: true,
+	imports: [HubSelectComponent, ReactiveFormsModule],
+	template: `
+		<hub-select
+			[formControl]="ctrl"
+			[items]="items()"
+			[multiple]="true"
+			[addTag]="true"
+			[closeOnSelect]="false"
+			[clearSearchOnAdd]="true"
+			label="Tags"
+		/>
+	`
+})
+class ClearSearchHostComponent {
+	readonly ctrl = new FormControl<unknown>([]);
+	readonly items = signal<unknown[]>([]);
+}
+
 describe('hub-select — searching and tagging', () => {
 	/**
 	 * The wrapper used to swallow this one.
@@ -86,5 +124,62 @@ describe('hub-select — searching and tagging', () => {
 
 		expect(host.ctrl.value).toBeNull();
 		expect(engine.selectedItems.length).toBe(0);
+	});
+
+	/**
+	 * An `addTag` that opens a dialog has to get the list out of the way first.
+	 *
+	 * The panel is appended to `<body>` and sits above the modal layer, so while the promise was
+	 * pending it covered the form the user had just been sent to fill in — and if the dialog was
+	 * dismissed, the promise resolved with nothing and the list never closed at all. Measured in
+	 * a real page: `.ng-dropdown-panel` at z-index 1060 over a modal at 1055.
+	 */
+	it('closes the list as soon as an async addTag is chosen, not when it resolves', async () => {
+		const { fixture, engine } = await render(DialogTagHostComponent);
+		const host = fixture.componentInstance as DialogTagHostComponent;
+
+		engine.open();
+		await fixture.whenStable();
+		engine.filter('Ada Lovelace');
+		engine.selectTag();
+		await fixture.whenStable();
+		fixture.detectChanges();
+
+		// The dialog is still open — nothing has resolved — and the list is already gone.
+		expect(engine.isOpen()).toBe(false);
+		expect(document.querySelector('ng-dropdown-panel')).toBeNull();
+
+		host.resolve(null);
+		await fixture.whenStable();
+		fixture.detectChanges();
+
+		// And the value the dialog produced still lands.
+		expect(host.ctrl.value).toEqual({ name: 'Ada Lovelace' });
+	});
+
+	/**
+	 * `clearSearchOnAdd` used to stop at the wrapper.
+	 *
+	 * The engine has always taken it, and falls back to `closeOnSelect` when it is not given —
+	 * right until the two are wanted apart, which is exactly a tag field: it stays open to take
+	 * the next value and still has to forget the term it just used. Binding it on `<hub-select>`
+	 * was an NG8002, so the only way to empty the box was to close the list after every value.
+	 */
+	it('hands clearSearchOnAdd down to the engine, apart from closeOnSelect', async () => {
+		const { engine } = await render(ClearSearchHostComponent);
+
+		expect(engine.clearSearchOnAddValue()).toBe(true);
+		expect(engine.closeOnSelect()).toBe(false);
+	});
+
+	/**
+	 * Left unbound it stays the engine's business, which means `closeOnSelect` decides — the
+	 * behaviour every existing field already has.
+	 */
+	it('leaves clearSearchOnAdd to the engine when the consumer says nothing', async () => {
+		const { engine } = await render(RefusedTagHostComponent);
+
+		expect(engine.clearSearchOnAdd()).toBeUndefined();
+		expect(engine.clearSearchOnAddValue()).toBe(engine.closeOnSelect());
 	});
 });

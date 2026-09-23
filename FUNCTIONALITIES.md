@@ -2,7 +2,7 @@
 
 This table details the functionalities of the `ng-hub-ui-forms` library and indicates which ones are covered by interactive examples.
 
-The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, `hub-slider`, `hub-segmented`, `hub-select`, `hub-datepicker`, `hub-timepicker` and `hub-file-input` — plus the `fieldset[hubFieldset]` / `form[hubForm]` / `hub-legend` containers, the projection directives, the validators and the cross-library adapter.
+The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, `hub-slider`, `hub-segmented`, `hub-select`, `hub-datepicker`, `hub-timepicker` and `hub-file-input` — plus the `fieldset[hubFieldset]` / `form[hubForm]` / `hub-legend` containers, the `hubFileDrop` zone, the projection directives, the validators and the cross-library adapter.
 
 ## Shared field contract (every field)
 
@@ -29,31 +29,31 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 
 ## Input (`hub-input`)
 
-| Category       | Functionality                                                             | Example Covered |
-| :------------- | :------------------------------------------------------------------------ | :-------------: |
-| **Formats**    | `text` / `number` / `email` / `password` / `tel` / `url` / `color`        |       ✅        |
-|                | `checkbox` and `switch`                                                   |       ✅        |
-|                | `counter`, with its own steppers                                          |       ✅        |
-|                | `file` — **deprecated**, use `hub-file-input`                             |       ❌        |
-| **Colour**     | `color` as a hex text field with a square that opens the native picker (`forms-input-color-swatches`) |       ✅        |
-|                | Swatch grid through `swatches`: one row the height of a field, wrapping onto more (`forms-input-color-swatches`) |       ✅        |
-|                | `allowCustomColor`: the last cell opens the native picker, or is left out for a closed palette (`forms-input-color-swatches`) |       ✅        |
-|                | `HUB_COLOR_PALETTES`: `tailwind`, `material`, `pastel`, `neutral`, `status` (`forms-input-color-swatches`) |       ✅        |
+| Category       | Functionality                                                                                                                         | Example Covered |
+| :------------- | :------------------------------------------------------------------------------------------------------------------------------------ | :-------------: |
+| **Formats**    | `text` / `number` / `email` / `password` / `tel` / `url` / `color`                                                                    |       ✅        |
+|                | `checkbox` and `switch`                                                                                                               |       ✅        |
+|                | `counter`, with its own steppers                                                                                                      |       ✅        |
+|                | `file` — **deprecated**, use `hub-file-input`                                                                                         |       ❌        |
+| **Colour**     | `color` as a hex text field with a square that opens the native picker (`forms-input-color-swatches`)                                 |       ✅        |
+|                | Swatch grid through `swatches`: one row the height of a field, wrapping onto more (`forms-input-color-swatches`)                      |       ✅        |
+|                | `allowCustomColor`: the last cell opens the native picker, or is left out for a closed palette (`forms-input-color-swatches`)         |       ✅        |
+|                | `HUB_COLOR_PALETTES`: `tailwind`, `material`, `pastel`, `neutral`, `status` (`forms-input-color-swatches`)                            |       ✅        |
 |                | Application palette through `provideHubForms({ color })`, `[swatches]="[]"` forcing the hex field, `customColorLabel` / `pickerLabel` |       ❌        |
-| **Numbers**    | `min` / `max` (two-way `model`) and `step`                                |       ❌        |
-| **Checkbox**   | Mixed state through `[(indeterminate)]`, reflected on the native property |       ❌        |
-| **Password**   | Reveal toggle (`passwordToggle`, `[(passwordRevealed)]`, `hideOnBlur`)    |       ✅        |
-|                | Caps-lock warning (`capsLockWarning`)                                     |       ✅        |
-|                | Strength meter (`passwordStrength`)                                       |       ✅        |
-| **Masking**    | `mask` pattern, with `unmaskValue` deciding what the control holds        |       ✅        |
-| **Search**     | Debounced `search` output (`debounceTime`)                                |       ✅        |
-|                | Built-in `clearable` button                                               |       ✅        |
-| **Affixes**    | `hubInputPrefix` / `hubInputSuffix` projected inside the field            |       ✅        |
-|                | `prepend` / `append` string addons                                        |       ✅        |
-|                | `hubPrepend` / `hubAppend` attached content, including another field      |       ✅        |
-| **Events**     | `enter` output                                                            |       ❌        |
-| **Deprecated** | `accept` / `multiple` / `buttonLabel`, left from the `file` format        |       ❌        |
-| **Plain text** | `plaintext` renders the value as text while keeping the control bound     |       ✅        |
+| **Numbers**    | `min` / `max` (two-way `model`) and `step`                                                                                            |       ❌        |
+| **Checkbox**   | Mixed state through `[(indeterminate)]`, reflected on the native property                                                             |       ❌        |
+| **Password**   | Reveal toggle (`passwordToggle`, `[(passwordRevealed)]`, `hideOnBlur`)                                                                |       ✅        |
+|                | Caps-lock warning (`capsLockWarning`)                                                                                                 |       ✅        |
+|                | Strength meter (`passwordStrength`)                                                                                                   |       ✅        |
+| **Masking**    | `mask` pattern, with `unmaskValue` deciding what the control holds                                                                    |       ✅        |
+| **Search**     | Debounced `search` output (`debounceTime`)                                                                                            |       ✅        |
+|                | Built-in `clearable` button                                                                                                           |       ✅        |
+| **Affixes**    | `hubInputPrefix` / `hubInputSuffix` projected inside the field                                                                        |       ✅        |
+|                | `prepend` / `append` string addons                                                                                                    |       ✅        |
+|                | `hubPrepend` / `hubAppend` attached content, including another field                                                                  |       ✅        |
+| **Events**     | `enter` output                                                                                                                        |       ❌        |
+| **Deprecated** | `accept` / `multiple` / `buttonLabel`, left from the `file` format                                                                    |       ❌        |
+| **Plain text** | `plaintext` renders the value as text while keeping the control bound                                                                 |       ✅        |
 
 ## OTP input (`hub-otp-input`)
 
@@ -87,34 +87,38 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 
 ## Segmented (`hub-segmented`)
 
-| Category      | Functionality                                                                         | Example Covered |
-| :------------ | :------------------------------------------------------------------------------------ | :-------------: |
-| **Options**   | `options` as `HubSegmentedOption[]`, `[(value)]` two-way                              |       ✅        |
-| **Selection** | Single, and `multiple`                                                                |       ✅        |
-| **Layout**    | Horizontal and `vertical`, `size="sm" \| "md" \| "lg"`                                |       ✅        |
-| **Accent**    | `color` from the semantic families, or any CSS colour                                 |       ✅        |
-| **Template**  | `hubSegmentedOption` for custom option content                                        |       ✅        |
-| **Motion**    | The indicator slides between options, and stands still under `prefers-reduced-motion` |       ❌        |
+| Category      | Functionality                                                                                                   | Example Covered |
+| :------------ | :-------------------------------------------------------------------------------------------------------------- | :-------------: |
+| **Options**   | `options` as `HubSegmentedOption[]`, `[(value)]` two-way                                                        |       ✅        |
+| **Selection** | Single, and `multiple`                                                                                          |       ✅        |
+| **Layout**    | Horizontal and `vertical`, `size="sm" \| "md" \| "lg"`                                                          |       ✅        |
+|               | Stands at the shared control height, so it lines up with a `hub-select` beside it (`forms-field-row-alignment`) |       ✅        |
+| **Accent**    | `color` from the semantic families, or any CSS colour                                                           |       ✅        |
+| **Template**  | `hubSegmentedOption` for custom option content                                                                  |       ✅        |
+| **Motion**    | The indicator slides between options, and stands still under `prefers-reduced-motion`                           |       ❌        |
 
 ## Select (`hub-select`)
 
-| Category       | Functionality                                                                                                          | Example Covered |
-| :------------- | :--------------------------------------------------------------------------------------------------------------------- | :-------------: |
-| **Data**       | `items` with `bindLabel` / `bindValue`, `multiple`                                                                     |       ✅        |
-|                | `groupBy`                                                                                                              |       ✅        |
-|                | `compareWith`                                                                                                          |       ❌        |
-| **Search**     | Client-side `searchable`, with `searchFn`                                                                              |       ✅        |
-|                | Server-side `typeahead` Subject, `minTermLength`, `loading`, `notFoundText`                                            |       ✅        |
-| **Tags**       | `addTag` (boolean or factory) and `addTagText`                                                                         |       ✅        |
-| **Panel**      | `appendTo`, `closeOnSelect`, `fixedPlaceholder`                                                                        |       ❌        |
-|                | Renders above a `HubModal` through `--hub-select-dropdown-zindex`                                                      |       ✅        |
+| Category       | Functionality                                                                                                                                    | Example Covered |
+| :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- | :-------------: |
+| **Data**       | `items` with `bindLabel` / `bindValue`, `multiple`                                                                                               |       ✅        |
+|                | `groupBy`                                                                                                                                        |       ✅        |
+|                | `compareWith`                                                                                                                                    |       ❌        |
+| **Search**     | Client-side `searchable`, with `searchFn`                                                                                                        |       ✅        |
+|                | Server-side `typeahead` Subject, `minTermLength`, `loading`, `notFoundText`                                                                      |       ✅        |
+| **Tags**       | `addTag` (boolean or factory) and `addTagText`                                                                                                   |       ✅        |
+|                | An asynchronous `addTag` closes the list before its promise resolves, so the panel never covers the dialog it opened (`forms-select-tagging`)    |       ✅        |
+|                | `clearSearchOnAdd`, apart from `closeOnSelect` (`forms-select-tagging`)                                                                          |       ✅        |
+| **Panel**      | `appendTo`, `closeOnSelect`, `fixedPlaceholder`                                                                                                  |       ❌        |
+|                | Renders above a `HubModal` through `--hub-select-dropdown-zindex`                                                                                |       ✅        |
 | **Templates**  | `hubSelectOption` / `hubSelectOptgroup` / `hubSelectLabel` / `hubSelectMultiLabel` / `hubSelectHeader` / `hubSelectFooter` / `hubSelectNotFound` |       ✅        |
-|                | `hubSelectTypeToSearch` / `hubSelectLoadingText` / `hubSelectLoadingSpinner` / `hubSelectTag` / `hubSelectClearButton` |       ❌        |
-|                | The vendored `ng-option-tmp` and friends — **deprecated**, removed in 23.0.0                                          |       ❌        |
-|                | `hubSelectSuffix` — **deprecated**, use `hubAppend`                                                                    |       ❌        |
-| **Addons**     | `prepend` / `append` and the `hubPrepend` / `hubAppend` slots                                                          |       ✅        |
-| **Events**     | `onOpen` / `onClose` / `onClear` / `onSearch` / `onAdd` / `onRemove` / `onFocus` / `onBlur` / `scroll` / `scrollToEnd` |       ❌        |
-| **Deprecated** | `format="buttons" \| "checkbox" \| "radio"` and `vertical` → use `hub-segmented`                                       |       ✅        |
+|                | `hubSelectTypeToSearch` / `hubSelectLoadingText` / `hubSelectLoadingSpinner` / `hubSelectTag` / `hubSelectClearButton`                           |       ❌        |
+|                | The vendored `ng-option-tmp` and friends — **deprecated**, removed in 23.0.0                                                                     |       ❌        |
+|                | `hubSelectSuffix` — **deprecated**, use `hubAppend`                                                                                              |       ❌        |
+| **Addons**     | `prepend` / `append` and the `hubPrepend` / `hubAppend` slots                                                                                    |       ✅        |
+| **Events**     | `onOpen` / `onClose` / `onClear` / `onSearch` / `onAdd` / `onRemove` / `onFocus` / `onBlur` / `scroll` / `scrollToEnd`                           |       ❌        |
+|                | `change`, carrying the selected item, for every format (`forms-select-tagging`)                                                                  |       ✅        |
+| **Deprecated** | `format="buttons" \| "checkbox" \| "radio"` and `vertical` → use `hub-segmented`                                                                 |       ✅        |
 
 ## Datepicker (`hub-datepicker`)
 
@@ -142,29 +146,42 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 
 ## File input (`hub-file-input`)
 
-| Category        | Functionality                                                              | Example Covered |
-| :-------------- | :------------------------------------------------------------------------- | :-------------: |
-| **Picking**     | Native dialog, `multiple`, `capture`                                       |       ✅        |
-|                 | Drag & drop (`dragDrop`)                                                   |       ✅        |
-|                 | Clipboard paste (`paste`)                                                  |       ❌        |
-| **Constraints** | `accept`, enforced on drops and pastes as well as in the dialog            |       ✅        |
-|                 | `maxSize` / `minSize` / `maxTotalSize` / `maxFiles` / `allowDuplicates`    |       ✅        |
-|                 | `rejected` output carrying `HubFileRejection[]`                            |       ❌        |
-| **Preview**     | `preview="none" \| "list" \| "grid" \| "inline"`; `grid` and `inline` draw tiles |       ✅        |
-|                 | Inline tile filling the field: the image, or the file-family icon and name, with a Replace pill and a remove button (`forms-file-input-inline`) |       ✅        |
-|                 | Inline grid with `multiple`, ending in an add tile, and a "3 of 5 files" counter with `maxFiles` (`forms-file-input-inline`) |       ✅        |
-|                 | A tile opens its file: a picked image in a `<dialog>` viewer, anything else in a new tab (`forms-file-input-inline`) |       ✅        |
-|                 | `imagePreview="false"`: every file as its family icon, no object URLs (`forms-file-input-inline`) |       ✅        |
-|                 | File-family icons replaceable by token (`--hub-file-input-kind-*-icon`)    |       ❌        |
-|                 | `hubFileIcon` and `hubFilePreview` templates                               |       ✅        |
-|                 | `fileRemoved` output                                                       |       ❌        |
-| **Stored files** | `currentFile`: a URL, a `HubCurrentFile` or a list, shown among the picked files (`forms-file-input-inline`) |       ✅        |
-|                 | `currentFileRemoved` output when a stored file is removed or replaced (`forms-file-input-inline`) |       ✅        |
-| **State**       | `readonly` (files open, nothing changes) and `clearable`                   |       ❌        |
-| **Dropzone**    | `dropText` / `dropSubtext` / `buttonLabel` / `hint`                        |       ✅        |
-|                 | `hubFileDropzoneNotice` projected between the glyph and the invitation     |       ✅        |
-| **Upload**      | `HUB_FILE_UPLOADER` with `autoUpload`, per-file progress, cancel and retry |       ✅        |
-|                 | `uploadStateChange` output                                                 |       ❌        |
+| Category         | Functionality                                                                                                                                   | Example Covered |
+| :--------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- | :-------------: |
+| **Picking**      | Native dialog, `multiple`, `capture`                                                                                                            |       ✅        |
+|                  | Drag & drop (`dragDrop`)                                                                                                                        |       ✅        |
+|                  | Clipboard paste (`paste`)                                                                                                                       |       ❌        |
+| **Constraints**  | `accept`, enforced on drops and pastes as well as in the dialog                                                                                 |       ✅        |
+|                  | `maxSize` / `minSize` / `maxTotalSize` / `maxFiles` / `allowDuplicates`                                                                         |       ✅        |
+|                  | `rejected` output carrying `HubFileRejection[]`                                                                                                 |       ❌        |
+| **Appearance**   | `appearance="compact"`: the field on one row, at the shared control height (`forms-file-input-compact`)                                         |       ✅        |
+| **Preview**      | `preview="none" \| "list" \| "grid" \| "inline"`; `grid` and `inline` draw tiles                                                                |       ✅        |
+|                  | Inline tile filling the field: the image, or the file-family icon and name, with a Replace pill and a remove button (`forms-file-input-inline`) |       ✅        |
+|                  | Inline grid with `multiple`, ending in an add tile, and a "3 of 5 files" counter with `maxFiles` (`forms-file-input-inline`)                    |       ✅        |
+|                  | A tile opens its file: a picked image in a `<dialog>` viewer, anything else in a new tab (`forms-file-input-inline`)                            |       ✅        |
+|                  | `imagePreview="false"`: every file as its family icon, no object URLs (`forms-file-input-inline`)                                               |       ✅        |
+|                  | File-family icons replaceable by token (`--hub-file-input-kind-*-icon`)                                                                         |       ❌        |
+|                  | `hubFileIcon` and `hubFilePreview` templates                                                                                                    |       ✅        |
+|                  | `fileRemoved` output                                                                                                                            |       ❌        |
+| **Stored files** | `currentFile`: a URL, a `HubCurrentFile` or a list, shown among the picked files (`forms-file-input-inline`)                                    |       ✅        |
+|                  | `currentFileRemoved` output when a stored file is removed or replaced (`forms-file-input-inline`)                                               |       ✅        |
+| **State**        | `readonly` (files open, nothing changes) and `clearable`                                                                                        |       ❌        |
+| **Dropzone**     | `dropText` / `dropSubtext` / `buttonLabel` / `hint`                                                                                             |       ✅        |
+|                  | `hubFileDropzoneNotice` projected between the glyph and the invitation                                                                          |       ✅        |
+| **Upload**       | `HUB_FILE_UPLOADER` with `autoUpload`, per-file progress, cancel and retry                                                                      |       ✅        |
+|                  | `uploadStateChange` output                                                                                                                      |       ❌        |
+
+## Page and container drop zone (`hubFileDrop`)
+
+| Category        | Functionality                                                                                                    | Example Covered |
+| :-------------- | :--------------------------------------------------------------------------------------------------------------- | :-------------: |
+| **Scope**       | The host element and its subtree (`hubFileDrop`), or the whole document (`hubFileDrop="window"`)                 |       ✅        |
+|                 | Claims the drag, so the browser stops opening a file dropped beside the target                                   |       ✅        |
+| **Constraints** | `accept` / `maxSize` / `minSize` / `maxFiles`, reported as `HubFileRejection[]`                                  |       ✅        |
+| **Outputs**     | `filesDropped` with what passed, `rejected` with what did not                                                    |       ✅        |
+| **Card**        | Drawn from `--hub-file-drop-*`, above the modal layer, `aria-hidden`                                             |       ✅        |
+|                 | `[overlay]="false"` keeps the behaviour and leaves the drawing to the consumer, keyed on `hub-file-drop--active` |       ❌        |
+| **State**       | `dropDisabled`, `dropText` / `dropSubtext`                                                                       |       ❌        |
 
 ## Containers and validation
 

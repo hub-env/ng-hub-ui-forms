@@ -96,8 +96,9 @@ mode — no Bootstrap dependency.
 
 ## 🎯 Features
 
-- **Fields** — `hub-input` (text/number/email/password/color/switch/checkbox/counter, the colour format as a hex field or, given a palette, a grid of swatches, with input-group addons & masks, projected in-field affixes, a built-in `clearable` button, the mixed `indeterminate` state on checkboxes and debounced typeahead `search`; the `file` format is **deprecated** → use `hub-file-input`), `hub-otp-input`, `hub-textarea` (+ `hubAutoresize`), `hub-slider` (single / dual thumb, gradient fill), `hub-segmented` (segmented control field — single & multiple selection, horizontal & vertical, with label + validation), `hub-select` (dropdown format, grouping, client-side search via `searchable` **and** server-side async typeahead via a `typeahead` Subject, tag creation with `addTag`, custom templates, `prepend` / `append` group addons and attached icons/buttons via `hubPrepend` / `hubAppend`; the `buttons` / `checkbox` / `radio` formats are **deprecated** → use `hub-segmented`), `hub-datepicker` (single & range at any granularity from a year to a second, time picking, min/max down to the minute, keyboard nav, i18n), `hub-timepicker` (a time of day as `HH:MM`, on the platform's own time control, with `min` / `max` / `step`), `hub-file-input` (drag & drop, clipboard paste, type/size limits, previews as a list, as tiles or inside the field together with the files a record already has, optional upload progress).
+- **Fields** — `hub-input` (text/number/email/password/color/switch/checkbox/counter, the colour format as a hex field or, given a palette, a grid of swatches, with input-group addons & masks, projected in-field affixes, a built-in `clearable` button, the mixed `indeterminate` state on checkboxes and debounced typeahead `search`; the `file` format is **deprecated** → use `hub-file-input`), `hub-otp-input`, `hub-textarea` (+ `hubAutoresize`), `hub-slider` (single / dual thumb, gradient fill), `hub-segmented` (segmented control field — single & multiple selection, horizontal & vertical, with label + validation), `hub-select` (dropdown format, grouping, client-side search via `searchable` **and** server-side async typeahead via a `typeahead` Subject, tag creation with `addTag`, custom templates, `prepend` / `append` group addons and attached icons/buttons via `hubPrepend` / `hubAppend`; the `buttons` / `checkbox` / `radio` formats are **deprecated** → use `hub-segmented`), `hub-datepicker` (single & range at any granularity from a year to a second, time picking, min/max down to the minute, keyboard nav, i18n), `hub-timepicker` (a time of day as `HH:MM`, on the platform's own time control, with `min` / `max` / `step`), `hub-file-input` (drag & drop, clipboard paste, type/size limits, previews as a list, as tiles or inside the field together with the files a record already has, optional upload progress, and an `appearance="compact"` that puts the whole field on one row).
 - **Automatic error display** — bind a field and its control errors render below it; `fieldset[hubFieldset]`, `form[hubForm]` and `hub-legend` surface group- and form-level (cross-field) errors the same way, with zero wiring.
+- **Drop zone** — `hubFileDrop` turns a container, or the whole page, into a target for dropped files: its own card while the drag is over it, the same constraints and the same rejection shape a file field uses, and the `preventDefault` that stops the browser opening a file dropped beside the target.
 - **Containers** — `fieldset[hubFieldset]` (or the `<hub-fieldset>` element) / `form[hubForm]` group fields and show their group errors; `hub-legend` renders an accessible legend.
 - **Configurable** — `provideHubForms({ … })` sets the invalid-feedback templates, datepicker locale/labels, file-input labels and more, app-wide or per instance.
 - **Validators & helpers** — `hubAreEqual` cross-field validator, the file validators (`hubAcceptedFiles`, `hubMaxFileSize`, `hubMinFileSize`, `hubMaxTotalSize`, `hubMaxFiles`, `hubMinFiles`), `hubValidationError` / `hubFormText` projection directives, and a set of utility pipes.
@@ -238,12 +239,12 @@ readonly palettes = HUB_COLOR_PALETTES;
 
 Which field is drawn:
 
-| `swatches`       | Application palette (`provideHubForms`) | Result                           |
-| ---------------- | --------------------------------------- | -------------------------------- |
-| `null` (default) | none (default)                          | hex field                        |
+| `swatches`       | Application palette (`provideHubForms`) | Result                            |
+| ---------------- | --------------------------------------- | --------------------------------- |
+| `null` (default) | none (default)                          | hex field                         |
 | `null`           | a list                                  | grid with the application palette |
-| `[]`             | any                                     | hex field                        |
-| a list           | any                                     | grid with the field's list       |
+| `[]`             | any                                     | hex field                         |
+| a list           | any                                     | grid with the field's list        |
 
 A list in which no entry is a colour also leaves the hex field.
 
@@ -385,20 +386,20 @@ the `ng-*-tmp` attributes of the vendored engine underneath are deprecated and d
 </hub-select>
 ```
 
-| Slot | Draws | Context |
-| --- | --- | --- |
-| `hubSelectOption` | one option in the list | `item`, `item$`, `index`, `searchTerm` |
-| `hubSelectOptgroup` | a group header, with `groupBy` | `item`, `item$`, `index`, `searchTerm` |
-| `hubSelectLabel` | the selected value, single mode | `item`, `label`, `clear` |
-| `hubSelectMultiLabel` | all selected values at once, multiple mode | `items`, `clear` |
-| `hubSelectHeader` | a fixed block above the list | `searchTerm` |
-| `hubSelectFooter` | a fixed block below the list | `searchTerm` |
-| `hubSelectNotFound` | the "no items found" message | `searchTerm` |
-| `hubSelectTypeToSearch` | the "type to search" hint | — |
-| `hubSelectLoadingText` | the "loading…" message | `searchTerm` |
-| `hubSelectLoadingSpinner` | the spinner in the control | — |
-| `hubSelectTag` | the "add \<term\>" row, with `addTag` | `searchTerm` |
-| `hubSelectClearButton` | the clear (×) control | — |
+| Slot                      | Draws                                      | Context                                |
+| ------------------------- | ------------------------------------------ | -------------------------------------- |
+| `hubSelectOption`         | one option in the list                     | `item`, `item$`, `index`, `searchTerm` |
+| `hubSelectOptgroup`       | a group header, with `groupBy`             | `item`, `item$`, `index`, `searchTerm` |
+| `hubSelectLabel`          | the selected value, single mode            | `item`, `label`, `clear`               |
+| `hubSelectMultiLabel`     | all selected values at once, multiple mode | `items`, `clear`                       |
+| `hubSelectHeader`         | a fixed block above the list               | `searchTerm`                           |
+| `hubSelectFooter`         | a fixed block below the list               | `searchTerm`                           |
+| `hubSelectNotFound`       | the "no items found" message               | `searchTerm`                           |
+| `hubSelectTypeToSearch`   | the "type to search" hint                  | —                                      |
+| `hubSelectLoadingText`    | the "loading…" message                     | `searchTerm`                           |
+| `hubSelectLoadingSpinner` | the spinner in the control                 | —                                      |
+| `hubSelectTag`            | the "add \<term\>" row, with `addTag`      | `searchTerm`                           |
+| `hubSelectClearButton`    | the clear (×) control                      | —                                      |
 
 Import the directive you use — `HubSelectOptionDirective`, `HubSelectLabelDirective` and so on.
 
@@ -659,6 +660,21 @@ Customize it without forking the template: the `--hub-file-input-*` tokens (ever
 </hub-file-input>
 ```
 
+#### One row instead of a panel
+
+`appearance="compact"` drops the glyph and the drag copy and keeps the browse control and the
+constraints, on a row that stands at the same height as the fields beside it. It is for the file
+that is not what the screen is about — a logo among four text inputs, where the panel took half a
+dialog to ask for one small image.
+
+```html
+<hub-file-input formControlName="logo" label="Logo" accept="image/*" appearance="compact" />
+```
+
+The row still takes a drop: what goes is the copy that described one, not the behaviour. A field
+that has to **show** what it holds gets its height from `preview="inline"` instead, which needs room
+for the picture and is sized through its own `--hub-file-input-inline-*` tokens.
+
 #### Inline preview and stored files
 
 `preview="inline"` puts the file inside the field. One tile fills it: the image when the browser can
@@ -742,6 +758,35 @@ The dropzone is built from a glyph, an invitation and a browse action, each them
 	</ng-template>
 </hub-file-input>
 ```
+
+### Drop zone for a container or the whole page
+
+A file field only accepts a drop inside its own box, which is right for a field and wrong for a
+screen: on a list of expenses the gesture is to drop the receipt anywhere on it. `hubFileDrop`
+watches the host and its subtree, or the whole document with `hubFileDrop="window"`.
+
+```html
+<section
+	hubFileDrop="window"
+	accept="image/*,.pdf"
+	[maxSize]="2 * 1024 * 1024"
+	[maxFiles]="4"
+	(filesDropped)="attach($event)"
+	(rejected)="warn($event)"
+>
+	<router-outlet />
+</section>
+```
+
+- It applies `accept`, `maxSize`, `minSize` and `maxFiles` itself and reports refusals as
+  `HubFileRejection[]`, the same shape `<hub-file-input>` uses, so one handler serves both.
+- The window scope also claims the drag, which is what stops the browser opening a file dropped
+  beside the target instead of on it — and with it the page, and whatever was typed into it.
+- It raises its own card, dressed from the `--hub-file-drop-*` tokens and stacked above the modal
+  layer, because a screen can be a modal. `[overlay]="false"` keeps the behaviour and leaves the
+  drawing to you; the host carries `hub-file-drop--active` while a drag is over it.
+- Dragging is a pointer gesture, so the card is `aria-hidden` and the keyboard route stays a real
+  file field's. The zone is an addition to one, never a replacement.
 
 ### Automatic errors at every level
 
@@ -949,12 +994,13 @@ import { HubSignalFieldControl, hubSignalErrorMessages } from 'ng-hub-ui-forms/s
     <hub-input formControlName="q" label="Search orders" labelType="visually-hidden" placeholder="Search" />
     ```
 
-    A hidden label rather than an `aria-label` on purpose: a label stays *associated* with its
-  control, so it is one string in the template that both the eye and the screen reader can be
-  given or denied, and it never silently replaces a name the application set for itself. The two
-  exceptions are `hub-otp-input` and `hub-segmented`, which render a group rather than a single
-  control: a `<label for>` aimed at a `<div>` names nothing, so those two carry the text on the
-  group as `aria-label`.
+    A hidden label rather than an `aria-label` on purpose: a label stays _associated_ with its
+    control, so it is one string in the template that both the eye and the screen reader can be
+    given or denied, and it never silently replaces a name the application set for itself. The two
+    exceptions are `hub-otp-input` and `hub-segmented`, which render a group rather than a single
+    control: a `<label for>` aimed at a `<div>` names nothing, so those two carry the text on the
+    group as `aria-label`.
+
 - `required` — set inline or derived from `Validators.required`, with `formControlName` **or** a direct `[formControl]` binding — is reflected as `aria-required` on every field, including the select's combobox search input, the segmented `radiogroup` and each OTP cell. On a reactive binding the control's validators decide: an inline `required` is overwritten by them, so declare it on the validators. Template-driven bindings (`ngModel`) keep honouring the inline input.
 - Validation errors render in an `role="alert"` region tied to the field.
 - The select exposes correct combobox/listbox semantics; the datepicker is fully keyboard-navigable.

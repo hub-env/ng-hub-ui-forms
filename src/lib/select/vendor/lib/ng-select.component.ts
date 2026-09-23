@@ -742,9 +742,21 @@ export class NgSelectComponent implements OnChanges, OnInit, AfterViewInit, Cont
 			tag = this._primitive ? this.searchTerm : { [this.bindLabel()]: this.searchTerm };
 		}
 
+		// Read once, up front: the panel may be closed before the promise resolves, and whether the
+		// created item joins the list or stands alone is decided by the state the user acted in.
+		const wasOpen = this.isOpen();
 		const handleTag = (item) =>
-			this.typeahead()?.observed || !this.isOpen() ? this.itemsList.mapItem(item, null) : this.itemsList.addItem(item);
+			this.typeahead()?.observed || !wasOpen ? this.itemsList.mapItem(item, null) : this.itemsList.addItem(item);
 		if (isPromise(tag)) {
+			// The panel closes now rather than when the promise resolves, which is what the
+			// synchronous branch has always done. An `addTag` that opens a dialog left the list
+			// hanging over it — a panel appended to <body>, above the modal, covering the very
+			// form the user had been sent to fill in — until the promise came back, or forever
+			// if it resolved with nothing.
+			if (this.closeOnSelect()) {
+				this.close();
+			}
+
 			// The same guard the synchronous branch has always had. An `addTag` that
 			// resolves with nothing is saying "there is nothing to add" — a creation
 			// dialog dismissed, a request refused — and selecting it anyway turned that

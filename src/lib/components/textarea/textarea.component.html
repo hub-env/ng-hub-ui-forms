@@ -63,6 +63,7 @@
 				[id]="id"
 				[hubAutoresize]="autoresize()"
 				[ngModel]="_value()"
+				[ngModelOptions]="{ standalone: true }"
 				(ngModelChange)="setValue($event)"
 				[attr.rows]="rows()"
 				[attr.cols]="cols()"

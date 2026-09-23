@@ -75,6 +75,11 @@ hub-segmented.hidden-control {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		// The track's own padding is taken off here rather than in the token, so a container that
+		// sets `--hub-segmented-min-height` is what the subtraction reads: a custom property whose
+		// value holds a `var()` resolves where it is DECLARED, so the arithmetic kept at `:root`
+		// would have ignored every local override of the height it was subtracting from.
+		min-height: calc(var(--hub-segmented-min-height) - 2 * var(--hub-segmented-gap));
 		padding: var(--hub-segmented-padding-y) var(--hub-segmented-padding-x);
 		color: var(--hub-sys-text-muted, #6c757d);
 		background: transparent;
@@ -106,13 +111,16 @@ hub-segmented.hidden-control {
 		}
 	}
 
-	// Size variants.
+	// Size variants. The height comes from the option's own minimum rather than from the padding,
+	// so the three sizes are a scale off one number instead of three sets of arithmetic that drift.
 	&--sm .hub-segmented__option {
+		min-height: calc(var(--hub-segmented-min-height) - 2 * var(--hub-segmented-gap) - var(--hub-segmented-size-step));
 		padding: calc(var(--hub-segmented-padding-y) * 0.5) calc(var(--hub-segmented-padding-x) * 0.65);
 		font-size: var(--hub-ref-font-size-sm, 0.875rem);
 	}
 
 	&--lg .hub-segmented__option {
+		min-height: calc(var(--hub-segmented-min-height) - 2 * var(--hub-segmented-gap) + var(--hub-segmented-size-step));
 		padding: calc(var(--hub-segmented-padding-y) * 1.35) calc(var(--hub-segmented-padding-x) * 1.35);
 		font-size: var(--hub-ref-font-size-lg, 1.125rem);
 	}

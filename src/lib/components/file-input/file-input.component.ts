@@ -23,6 +23,7 @@ import { HubFilePreviewContext, HubFilePreviewDirective } from '../../directives
 import { HubLabelType, HubLabelTypes } from '../../interfaces/common.interface';
 import {
 	HubCurrentFile,
+	HubFileInputAppearance,
 	HubFileItem,
 	HubFilePreview,
 	HubFileRejection,
@@ -202,6 +203,22 @@ export class HubFileInputComponent extends HubFieldControl {
 	readonly preview = input<HubFilePreview>('list');
 
 	/**
+	 * How much room the empty field takes: the tall dropzone, or one row.
+	 *
+	 * `compact` is for the field that is not the point of the screen — a logo among four text
+	 * inputs, where the panel and its glyph took half a dialog for one small file. It drops the
+	 * glyph and the drag copy and keeps the browse control and the constraints; the drop still
+	 * works, so the copy is what goes, not the behaviour. An inline grid's add tile is unaffected:
+	 * it is already a tile and has no panel to shrink.
+	 *
+	 * It is the answer for a field that only picks. A field that has to SHOW what it holds gets
+	 * its height from `preview="inline"` instead, which needs room for the picture and is sized
+	 * through its own `--hub-file-input-inline-*` tokens — the avatar in the inline example is the
+	 * compact version of that shape. Asking for both leaves the inline geometry in charge.
+	 */
+	readonly appearance = input<HubFileInputAppearance>('dropzone');
+
+	/**
 	 * The files the record already has, shown by `preview="inline"` among the picked ones: a URL,
 	 * whose name and type are read from the URL itself, a {@link HubCurrentFile} when the URL does not
 	 * reveal them, or a list of either with `multiple` (a single field shows the first). Display only:
@@ -336,6 +353,9 @@ export class HubFileInputComponent extends HubFieldControl {
 
 	/** Whether the user may remove what the field holds. */
 	protected readonly _canRemove = computed<boolean>(() => this._canChange() && this.clearable());
+
+	/** Whether the empty field is drawn as one row rather than as a panel. */
+	protected readonly _isCompact = computed<boolean>(() => this.appearance() === 'compact');
 
 	/** Whether the files sit inside the field (`preview="inline"`), single or multiple. */
 	protected readonly _isInline = computed<boolean>(() => this.preview() === 'inline');

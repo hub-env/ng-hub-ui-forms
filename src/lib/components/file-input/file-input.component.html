@@ -359,6 +359,7 @@
 		class="hub-file-input__dropzone"
 		[for]="id"
 		[class.hub-file-input__dropzone--add]="add"
+		[class.hub-file-input__dropzone--compact]="_isCompact() && !add"
 		[class.hub-file-input__dropzone--dragover]="isDragging()"
 		[class.hub-file-input__dropzone--no-drop]="!dragDrop()"
 		[class.hub-file-input__dropzone--invalid]="isInvalid"
@@ -368,7 +369,9 @@
 			<ng-container [ngTemplateOutlet]="nativeTpl" />
 		}
 
-		<span class="hub-file-input__icon" aria-hidden="true"></span>
+		@if (!_isCompact() || add) {
+			<span class="hub-file-input__icon" aria-hidden="true"></span>
+		}
 
 		@if (add) {
 			<span class="hub-file-input__browse">{{ browseLabel() }}</span>
@@ -378,10 +381,15 @@
 			}
 
 			<span class="hub-file-input__prompt">
-				@if (dragDrop()) {
+				<!--
+					The drag copy is the panel's, not the field's: a compact row invites a click, and
+					the drop keeps working whether or not anything says so. A projected notice and an
+					explicit dropSubtext are the consumer's words and stay.
+				-->
+				@if (dragDrop() && !_isCompact()) {
 					<span class="hub-file-input__drop-text">{{ dropTextLabel() }}</span>
 				}
-				@if (dropSubtextLabel()) {
+				@if (dropSubtextLabel() && (!_isCompact() || dropSubtext())) {
 					<span class="hub-file-input__drop-subtext">{{ dropSubtextLabel() }}</span>
 				}
 				<span class="hub-file-input__browse">{{ browseLabel() }}</span>

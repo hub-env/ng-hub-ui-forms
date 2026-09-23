@@ -45,7 +45,13 @@
 			@case (_selectFormats.Dropdown) {
 				<!-- [disabled] is claimed by the NgModel below (alias of its isDisabled input), not by
 				     ng-select — the engine's own `disabled` is a computed fed by setDisabledState.
-				     Dropping [ngModel] here would silently un-wire the disabled state. -->
+				     Dropping [ngModel] here would silently un-wire the disabled state.
+
+				     It is declared standalone because it is: the value this field holds travels
+				     through the ControlValueAccessor on the host, and this inner binding only
+				     drives the engine. Left undeclared, Angular saw an ngModel under a form it
+				     cannot reach across the component boundary and warned (NG01354) once per
+				     control — eight lines of console for an eight-field dialog. -->
 				<!--
 					The control and its attached action are one field: the group is what makes
 					them share a line and a border, so a select with a button beside it does not
@@ -95,6 +101,7 @@
 						[searchable]="searchable()"
 						[clearable]="clearable()"
 						[closeOnSelect]="closeOnSelect()"
+						[clearSearchOnAdd]="$any(clearSearchOnAdd())"
 						[fixedPlaceholder]="fixedPlaceholder()"
 						[loading]="loading()"
 						[readonly]="readonly()"
@@ -109,7 +116,9 @@
 						[compareWith]="$any(compareWith())"
 						[inputAttrs]="a11yInputAttrs()"
 						[ngModel]="_value()"
+						[ngModelOptions]="{ standalone: true }"
 						(ngModelChange)="setValue($event)"
+						(change)="change.emit($event)"
 						(focus)="handleControlFocus($event)"
 						(blur)="handleControlBlur($event)"
 						(open)="onOpen.emit()"

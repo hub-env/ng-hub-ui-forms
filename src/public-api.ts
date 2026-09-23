@@ -30,6 +30,7 @@ export { HubSelectComponent } from './lib/select/select.component';
 export { HubDatepickerComponent } from './lib/components/datepicker/datepicker.component';
 export { HubTimepickerComponent } from './lib/components/timepicker/timepicker.component';
 export { HubFileInputComponent } from './lib/components/file-input/file-input.component';
+export { HubFileDropOverlayComponent } from './lib/components/file-drop/file-drop-overlay.component';
 
 // Select — dropdown customization slots
 export {
@@ -106,6 +107,8 @@ export type { HubFilePreviewContext } from './lib/directives/file-preview.direct
 export { HubSegmentedOptionDirective } from './lib/directives/segmented-option.directive';
 export type { HubSegmentedOptionContext } from './lib/directives/segmented-option.directive';
 export { HubFileDropzoneNoticeDirective } from './lib/directives/file-dropzone-notice.directive';
+export { HubFileDropDirective } from './lib/directives/file-drop.directive';
+export type { HubFileDropScope } from './lib/directives/file-drop.directive';
 
 // Pipes
 export { HubInvertColorPipe } from './lib/pipes/invert-color.pipe';
@@ -157,6 +160,7 @@ export { defaultHubDatepickerConfig, defaultHubDatepickerLabels } from './lib/in
 export type {
 	HubCurrentFile,
 	HubFileConstraints,
+	HubFileInputAppearance,
 	HubFileInputLabels,
 	HubFileItem,
 	HubFilePreview,

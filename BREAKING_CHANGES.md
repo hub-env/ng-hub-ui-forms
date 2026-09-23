@@ -2,6 +2,25 @@
 
 This document tracks all breaking changes in the `ng-hub-ui-forms` library.
 
+## v22.37.0
+
+### `<hub-segmented>` stands at the height of a field
+
+- **Change**: the default (`size="md"`) bar measured 43px and now measures 38px, the height every
+  other control in a form row stands at. `size="sm"` goes from 33px to 30px and `size="lg"` to 46px,
+  one gutter either side of it. The height is read from `--hub-segmented-min-height`, which defaults
+  to the new `--hub-field-control-min-height`; `--hub-segmented-padding-y` drops from `0.5rem` to
+  `0.25rem`, because the height is now the option's minimum rather than the sum of its padding.
+- **Why**: a segmented control is a field, and a field's first job in a row is to line up with its
+  neighbours. It did not. The only way to fix it from outside was to deduce the track's internal
+  padding and hard-code the number — which is what at least one application did, and which stops
+  being right the moment the library touches its own spacing.
+- **Impact**: any row that already contained a segmented bar gets 5px shorter and, if it was
+  hand-aligned, correctly aligned. A layout that reserved a fixed height for the bar, or a visual
+  regression snapshot that includes one, changes.
+- **Migration**: remove the padding override the alignment needed — that is the point of the change.
+  To keep the old size, set `--hub-segmented-min-height: 2.6875rem` (43px) on the bar or an ancestor.
+
 ## v22.34.0
 
 ### `<hub-fieldset legend="…">` renders its text inside a `<hub-legend>`

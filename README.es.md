@@ -95,8 +95,9 @@ en tiempo de ejecución — sin dependencia de Bootstrap.
 
 ## 🎯 Características
 
-- **Campos** — `hub-input` (text/number/email/password/color/switch/checkbox/counter, con el formato de color como campo hex o, si recibe una paleta, como rejilla de muestras, con addons de input-group y máscaras, afijos de icono dentro del campo, el estado mixto `indeterminate` en checkboxes y `search` typeahead con debounce; el formato `file` está **deprecado** → usa `hub-file-input`), `hub-otp-input`, `hub-textarea` (+ `hubAutoresize`), `hub-slider` (uno / dos thumbs, relleno con degradado), `hub-segmented` (campo de control segmentado — selección simple y múltiple, horizontal y vertical, con label + validación), `hub-select` (formato dropdown, agrupación, búsqueda en cliente vía `searchable` **y** typeahead asíncrono en servidor vía un Subject `typeahead`, creación de tags con `addTag`, templates personalizados, addons de grupo `prepend` / `append` e iconos/botones acoplados vía `hubPrepend` / `hubAppend`; los formatos `buttons` / `checkbox` / `radio` están **deprecados** → usa `hub-segmented`), `hub-datepicker` (simple y rango en cualquier granularidad, del año al segundo, selección de hora, min/max al minuto, navegación por teclado, i18n), `hub-timepicker` (una hora del día como `HH:MM`, sobre el control de hora de la plataforma, con `min` / `max` / `step`), `hub-file-input` (arrastrar y soltar, pegado desde el portapapeles, límites de tipo y tamaño, previsualización en lista, en fichas o dentro del propio campo junto a los ficheros que el registro ya tiene, progreso de subida opcional).
+- **Campos** — `hub-input` (text/number/email/password/color/switch/checkbox/counter, con el formato de color como campo hex o, si recibe una paleta, como rejilla de muestras, con addons de input-group y máscaras, afijos de icono dentro del campo, el estado mixto `indeterminate` en checkboxes y `search` typeahead con debounce; el formato `file` está **deprecado** → usa `hub-file-input`), `hub-otp-input`, `hub-textarea` (+ `hubAutoresize`), `hub-slider` (uno / dos thumbs, relleno con degradado), `hub-segmented` (campo de control segmentado — selección simple y múltiple, horizontal y vertical, con label + validación), `hub-select` (formato dropdown, agrupación, búsqueda en cliente vía `searchable` **y** typeahead asíncrono en servidor vía un Subject `typeahead`, creación de tags con `addTag`, templates personalizados, addons de grupo `prepend` / `append` e iconos/botones acoplados vía `hubPrepend` / `hubAppend`; los formatos `buttons` / `checkbox` / `radio` están **deprecados** → usa `hub-segmented`), `hub-datepicker` (simple y rango en cualquier granularidad, del año al segundo, selección de hora, min/max al minuto, navegación por teclado, i18n), `hub-timepicker` (una hora del día como `HH:MM`, sobre el control de hora de la plataforma, con `min` / `max` / `step`), `hub-file-input` (arrastrar y soltar, pegado desde el portapapeles, límites de tipo y tamaño, previsualización en lista, en fichas o dentro del propio campo junto a los ficheros que el registro ya tiene, progreso de subida opcional y un `appearance="compact"` que deja el campo entero en una fila).
 - **Visualización automática de errores** — vinculas un campo y sus errores de control se renderizan debajo; `fieldset[hubFieldset]`, `form[hubForm]` y `hub-legend` muestran los errores de grupo y de formulario (cross-field) igual, sin cableado.
+- **Zona de soltado** — `hubFileDrop` convierte un contenedor, o la página entera, en destino de ficheros soltados: dibuja su propia tarjeta mientras dura el arrastre, aplica las mismas restricciones y devuelve los rechazos con la misma forma que un campo de ficheros, y hace el `preventDefault` que impide que el navegador abra un fichero soltado al lado del destino.
 - **Contenedores** — `fieldset[hubFieldset]` (o el elemento `<hub-fieldset>`) / `form[hubForm]` agrupan campos y muestran sus errores de grupo; `hub-legend` renderiza una leyenda accesible.
 - **Configurable** — `provideHubForms({ … })` define las plantillas de invalid-feedback, locale/labels del datepicker, los textos del file input y más, a nivel de app o por instancia.
 - **Validadores y helpers** — validador cross-field `hubAreEqual`, los validadores de ficheros (`hubAcceptedFiles`, `hubMaxFileSize`, `hubMinFileSize`, `hubMaxTotalSize`, `hubMaxFiles`, `hubMinFiles`), directivas de proyección `hubValidationError` / `hubFormText`, y un conjunto de pipes de utilidad.
@@ -241,12 +242,12 @@ readonly palettes = HUB_COLOR_PALETTES;
 
 Qué campo se pinta:
 
-| `swatches`             | Paleta de la aplicación (`provideHubForms`) | Resultado                            |
-| ---------------------- | ------------------------------------------- | ------------------------------------ |
-| `null` (por defecto)   | ninguna (por defecto)                       | campo hex                            |
-| `null`                 | una lista                                   | rejilla con la paleta de la aplicación |
-| `[]`                   | cualquiera                                  | campo hex                            |
-| una lista              | cualquiera                                  | rejilla con la lista del campo       |
+| `swatches`           | Paleta de la aplicación (`provideHubForms`) | Resultado                              |
+| -------------------- | ------------------------------------------- | -------------------------------------- |
+| `null` (por defecto) | ninguna (por defecto)                       | campo hex                              |
+| `null`               | una lista                                   | rejilla con la paleta de la aplicación |
+| `[]`                 | cualquiera                                  | campo hex                              |
+| una lista            | cualquiera                                  | rejilla con la lista del campo         |
 
 Una lista en la que ninguna entrada es un color también deja el campo hex.
 
@@ -392,20 +393,20 @@ desaparecen en la 23.0.0.
 </hub-select>
 ```
 
-| Ranura | Dibuja | Contexto |
-| --- | --- | --- |
-| `hubSelectOption` | una opción de la lista | `item`, `item$`, `index`, `searchTerm` |
-| `hubSelectOptgroup` | la cabecera de un grupo, con `groupBy` | `item`, `item$`, `index`, `searchTerm` |
-| `hubSelectLabel` | el valor seleccionado, en modo simple | `item`, `label`, `clear` |
-| `hubSelectMultiLabel` | todos los valores a la vez, en modo múltiple | `items`, `clear` |
-| `hubSelectHeader` | un bloque fijo sobre la lista | `searchTerm` |
-| `hubSelectFooter` | un bloque fijo bajo la lista | `searchTerm` |
-| `hubSelectNotFound` | el mensaje de «sin resultados» | `searchTerm` |
-| `hubSelectTypeToSearch` | la pista de «escribe para buscar» | — |
-| `hubSelectLoadingText` | el mensaje de «cargando…» | `searchTerm` |
-| `hubSelectLoadingSpinner` | el spinner del control | — |
-| `hubSelectTag` | la fila «añadir \<término\>», con `addTag` | `searchTerm` |
-| `hubSelectClearButton` | el control de limpiar (×) | — |
+| Ranura                    | Dibuja                                       | Contexto                               |
+| ------------------------- | -------------------------------------------- | -------------------------------------- |
+| `hubSelectOption`         | una opción de la lista                       | `item`, `item$`, `index`, `searchTerm` |
+| `hubSelectOptgroup`       | la cabecera de un grupo, con `groupBy`       | `item`, `item$`, `index`, `searchTerm` |
+| `hubSelectLabel`          | el valor seleccionado, en modo simple        | `item`, `label`, `clear`               |
+| `hubSelectMultiLabel`     | todos los valores a la vez, en modo múltiple | `items`, `clear`                       |
+| `hubSelectHeader`         | un bloque fijo sobre la lista                | `searchTerm`                           |
+| `hubSelectFooter`         | un bloque fijo bajo la lista                 | `searchTerm`                           |
+| `hubSelectNotFound`       | el mensaje de «sin resultados»               | `searchTerm`                           |
+| `hubSelectTypeToSearch`   | la pista de «escribe para buscar»            | —                                      |
+| `hubSelectLoadingText`    | el mensaje de «cargando…»                    | `searchTerm`                           |
+| `hubSelectLoadingSpinner` | el spinner del control                       | —                                      |
+| `hubSelectTag`            | la fila «añadir \<término\>», con `addTag`   | `searchTerm`                           |
+| `hubSelectClearButton`    | el control de limpiar (×)                    | —                                      |
 
 Importa la directiva que uses: `HubSelectOptionDirective`, `HubSelectLabelDirective`, etc.
 
@@ -668,6 +669,22 @@ Se personaliza sin tocar la plantilla: los tokens `--hub-file-input-*` (cada ico
 </hub-file-input>
 ```
 
+#### Una fila en vez de un panel
+
+`appearance="compact"` quita el icono y el texto de arrastre y deja el control de selección y las
+restricciones, en una fila que mide lo mismo que los campos que tiene al lado. Es para el fichero
+que no es el asunto de la pantalla: un logotipo entre cuatro campos de texto, donde el panel se
+llevaba media ventana para pedir una imagen pequeña.
+
+```html
+<hub-file-input formControlName="logo" label="Logo" accept="image/*" appearance="compact" />
+```
+
+La fila sigue aceptando que se suelte un fichero encima: lo que se va es el texto que lo describía,
+no el comportamiento. Un campo que tiene que **enseñar** lo que guarda toma su altura de
+`preview="inline"`, que necesita sitio para la imagen y se dimensiona con sus propias variables
+`--hub-file-input-inline-*`.
+
 #### Vista previa inline y ficheros guardados
 
 `preview="inline"` mete el fichero dentro del campo. Una ficha lo llena: la imagen cuando el navegador
@@ -752,6 +769,39 @@ El dropzone se compone de un glifo, una invitación y una acción de examinar, c
 	</ng-template>
 </hub-file-input>
 ```
+
+### Zona de soltado para un contenedor o la página entera
+
+Un campo de ficheros solo acepta que se suelte algo dentro de su propia caja, que está bien para un
+campo y mal para una pantalla: en un listado de gastos el gesto natural es soltar el recibo en
+cualquier parte. `hubFileDrop` vigila el elemento anfitrión y lo que cuelga de él, o el documento
+entero con `hubFileDrop="window"`.
+
+```html
+<section
+	hubFileDrop="window"
+	accept="image/*,.pdf"
+	[maxSize]="2 * 1024 * 1024"
+	[maxFiles]="4"
+	(filesDropped)="adjuntar($event)"
+	(rejected)="avisar($event)"
+>
+	<router-outlet />
+</section>
+```
+
+- Aplica `accept`, `maxSize`, `minSize` y `maxFiles` por su cuenta y comunica los rechazos como
+  `HubFileRejection[]`, la misma forma que usa `<hub-file-input>`, así que un solo manejador sirve
+  para los dos.
+- El ámbito de ventana además reclama el arrastre, que es lo que impide que el navegador abra un
+  fichero soltado al lado del destino en vez de encima, llevándose por delante la página y lo que
+  hubiera escrito en ella.
+- Dibuja su propia tarjeta, vestida con las variables `--hub-file-drop-*` y apilada por encima de la
+  capa de los modales, porque una pantalla puede ser un modal. Con `[overlay]="false"` se queda el
+  comportamiento y el dibujo es cosa tuya; el anfitrión lleva `hub-file-drop--active` mientras dura
+  el arrastre.
+- Arrastrar es un gesto de puntero, así que la tarjeta es `aria-hidden` y el camino por teclado sigue
+  siendo el de un campo de ficheros de verdad. La zona se añade a uno, nunca lo sustituye.
 
 ### Errores automáticos en todos los niveles
 
@@ -962,12 +1012,13 @@ import { HubSignalFieldControl, hubSignalErrorMessages } from 'ng-hub-ui-forms/s
     <hub-input formControlName="q" label="Buscar pedidos" labelType="visually-hidden" placeholder="Buscar" />
     ```
 
-    Etiqueta oculta y no `aria-label`, a propósito: la etiqueta sigue *asociada* a su control, así
-  que es una sola cadena en la plantilla que se le puede dar o negar al ojo y al lector de
-  pantalla, y nunca sustituye en silencio a un nombre que la aplicación haya puesto por su cuenta.
-  Las dos excepciones son `hub-otp-input` y `hub-segmented`, que renderizan un grupo y no un
-  control único: un `<label for>` apuntando a un `<div>` no nombra nada, así que esos dos llevan el
-  texto en el grupo como `aria-label`.
+    Etiqueta oculta y no `aria-label`, a propósito: la etiqueta sigue _asociada_ a su control, así
+    que es una sola cadena en la plantilla que se le puede dar o negar al ojo y al lector de
+    pantalla, y nunca sustituye en silencio a un nombre que la aplicación haya puesto por su cuenta.
+    Las dos excepciones son `hub-otp-input` y `hub-segmented`, que renderizan un grupo y no un
+    control único: un `<label for>` apuntando a un `<div>` no nombra nada, así que esos dos llevan el
+    texto en el grupo como `aria-label`.
+
 - `required` — declarado inline o derivado de `Validators.required`, con `formControlName` **o** con binding directo `[formControl]` — se refleja como `aria-required` en todos los campos, incluidos el input de búsqueda del combobox del select, el `radiogroup` del segmented y cada celda del OTP. Con un binding reactivo mandan los validadores del control: un `required` inline queda sobrescrito por ellos, así que decláralo en los validadores. Los bindings template-driven (`ngModel`) siguen respetando el input inline.
 - Los errores de validación se renderizan en una región `role="alert"` ligada al campo.
 - El select expone la semántica combobox/listbox correcta; el datepicker es totalmente navegable por teclado.

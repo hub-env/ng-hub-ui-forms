@@ -56,6 +56,19 @@ export interface HubFileItem {
 export type HubFilePreview = 'none' | 'list' | 'grid' | 'inline';
 
 /**
+ * How much room the field takes before it holds anything.
+ *
+ * `dropzone` is the invitation everybody knows: a tall panel with a glyph, a line asking for a
+ * drag and a browse control. It earns its height when files are the point of the screen.
+ *
+ * `compact` is the same field on one row — the browse control and the constraints, no glyph and
+ * no drag copy — for the case the tall one is wrong for: a logo beside four text inputs in a
+ * dialog, where the panel took half the height for one small file. It still takes a drop, and
+ * the drag copy would be a lie if it did not.
+ */
+export type HubFileInputAppearance = 'dropzone' | 'compact';
+
+/**
  * A file the record already has on the server, shown by `preview="inline"` while nothing is picked.
  *
  * Only `url` is required. `name` and `type` are for the cases where the URL does not reveal them —

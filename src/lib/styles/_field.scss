@@ -32,6 +32,15 @@ hub-timepicker {
 }
 
 .hub-field {
+	// The field is the containing block for anything absolute inside it. Only the
+	// visually-hidden label is absolute and has no closer positioned ancestor of its own —
+	// and with none at all it measured from the page, which in a scroll container put it
+	// thousands of pixels down and stretched the scroll height to reach it.
+	// The field is the containing block for anything absolute inside it. Only the
+	// visually-hidden label is absolute and has no closer positioned ancestor of its own —
+	// and with none at all it measured from the page, which in a scroll container put it
+	// thousands of pixels down and stretched the scroll height to reach it.
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: var(--hub-form-field-gap);

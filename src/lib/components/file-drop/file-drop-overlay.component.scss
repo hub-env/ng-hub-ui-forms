@@ -1,0 +1,74 @@
+// `hubFileDrop` — the card raised while files are dragged over the target.
+// Colours, spacing and the glyph read `--hub-file-drop-*` tokens declared in
+// `styles/_tokens.scss`; nothing is hard-coded here.
+
+.hub-file-drop__overlay {
+	position: absolute;
+	inset: 0;
+	z-index: var(--hub-file-drop-zindex);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--hub-file-drop-padding);
+	background-color: var(--hub-file-drop-veil-bg);
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity var(--hub-file-drop-transition);
+	// Never in the way: the drop is handled by the element underneath, and a card that took the
+	// pointer would also take the drop with it.
+	pointer-events: none;
+
+	&--fixed {
+		position: fixed;
+	}
+
+	&--visible {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		transition: none;
+	}
+}
+
+.hub-file-drop__card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--hub-file-drop-gap);
+	max-width: var(--hub-file-drop-card-max-width);
+	padding: var(--hub-file-drop-card-padding);
+	color: var(--hub-file-drop-color);
+	background-color: var(--hub-file-drop-card-bg);
+	border: var(--hub-file-drop-border-width) var(--hub-file-drop-border-style) var(--hub-file-drop-border-color);
+	border-radius: var(--hub-file-drop-radius);
+	box-shadow: var(--hub-file-drop-card-shadow);
+	text-align: center;
+}
+
+// The glyph is a CSS mask, so a consumer swaps the drawing by overriding the token.
+.hub-file-drop__icon {
+	width: var(--hub-file-drop-icon-size);
+	height: var(--hub-file-drop-icon-size);
+	background-color: var(--hub-file-drop-icon-color);
+	mask: var(--hub-file-drop-icon) center / contain no-repeat;
+}
+
+.hub-file-drop__text {
+	color: var(--hub-file-drop-text-color);
+	font-size: var(--hub-file-drop-text-font-size);
+	font-weight: var(--hub-file-drop-text-font-weight);
+}
+
+.hub-file-drop__subtext {
+	color: var(--hub-file-drop-subtext-color);
+	font-size: var(--hub-file-drop-subtext-font-size);
+}
+
+// The host of an element-scoped drop zone becomes the card's containing block. Declared from
+// here rather than asked of the consumer: a card positioned against the page instead of against
+// its container is the whole failure this replaces.
+.hub-file-drop {
+	position: relative;
+}
