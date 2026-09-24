@@ -1,4 +1,5 @@
 import { ViewContainerRef } from '@angular/core';
+import { HubLabelType } from '../interfaces/common.interface';
 import { HubInputComponent } from '../components/input/input.component';
 import { HubSelectComponent } from '../select/select.component';
 
@@ -20,6 +21,18 @@ export interface HubFormControlConfig {
 	value: unknown;
 	type?: string;
 	placeholder?: string;
+	/** The control's name. Rendered as a real `<label for>`, hidden or shown per {@link labelType}. */
+	label?: string;
+	/** Where that label goes. Defaults to `visually-hidden`, which is why a host usually omits it. */
+	labelType?: HubLabelType;
+	/**
+	 * The name to fall back on when the host has no `label` to give.
+	 *
+	 * Kept for the hosts that only ever had this one, and no longer dropped — it used to be read by
+	 * nobody at all, so a table's search box and its rows-per-page select reached a screen reader as
+	 * "edit text" and "combo box". A `label` is the better answer where a host can give one: it also
+	 * answers to voice control and survives a page translation, neither of which an `aria-label` does.
+	 */
 	ariaLabel?: string;
 	cssClass?: string;
 	options?: ReadonlyArray<HubFormControlOption>;
@@ -57,6 +70,28 @@ function markEmbedded(element: HTMLElement): void {
 }
 
 /**
+ * Names the control, out of whichever of the two the host supplied.
+ *
+ * A control built into somebody else's chrome — a table's toolbar, a paginator's row — has no room
+ * for a label and, until now, got no name either: both `label` and `ariaLabel` were ignored here, so
+ * the field rendered nameless whatever the host asked for. `visually-hidden` is the default because
+ * that is the case this adapter exists for; a host that wants the label drawn says so.
+ *
+ * @param ref - The created control's component reference.
+ * @param config - What the host asked for.
+ */
+function applyName(ref: { setInput(name: string, value: unknown): void }, config: HubFormControlConfig): void {
+	const text = config.label ?? config.ariaLabel;
+
+	if (!text) {
+		return;
+	}
+
+	ref.setInput('label', text);
+	ref.setInput('labelType', config.labelType ?? 'visually-hidden');
+}
+
+/**
  * Ready-made {@link HubFormControlAdapter} backed by `HubInputComponent` /
  * `HubSelectComponent`.
  *
@@ -74,6 +109,7 @@ export const hubFormControlAdapter: HubFormControlAdapter = {
 		if (config.kind === 'select') {
 			const ref = container.createComponent(HubSelectComponent);
 			markEmbedded(ref.location.nativeElement as HTMLElement);
+			applyName(ref, config);
 			ref.setInput(
 				'items',
 				(config.options ?? []).map((option) => ({ ...option }))
@@ -103,6 +139,7 @@ export const hubFormControlAdapter: HubFormControlAdapter = {
 
 		const ref = container.createComponent(HubInputComponent);
 		markEmbedded(ref.location.nativeElement as HTMLElement);
+		applyName(ref, config);
 		ref.setInput('type', config.type ?? 'text');
 		if (config.placeholder) {
 			ref.setInput('placeholder', config.placeholder);

@@ -5,6 +5,23 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.38.0] - 2026-09-23
+
+### Fixed
+
+- **A control built through `hubFormControlAdapter` has a name again.** The adapter is how a
+  library with no dependency on this one renders a real field — a table's search box, a paginator's
+  rows-per-page select. It read `kind`, `type`, `placeholder`, `cssClass` and `options`, and dropped
+  every route to a name the contract offered: `ariaLabel` was declared and applied nowhere, and
+  there was no `label` at all. So the two controls a table builds reached a screen reader as "edit
+  text" and "combo box", in every application that wired it. `HubFormControlConfig` now carries
+  `label` and `labelType`, and the adapter renders a real `<label for>` — clipped out of the page by
+  default, because a control built into somebody else's chrome has no room to draw one. A host that
+  only has an `ariaLabel` to give gets that instead of nothing.
+
+    A label is the better of the two where a host can give one: it also answers to voice control and
+    survives a page translation, and an `aria-label` does neither.
+
 ## [22.37.0] - 2026-09-23
 
 Eleven open rows of the debt backlog, closed together because they are all the same package and
