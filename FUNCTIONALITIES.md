@@ -102,6 +102,7 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 | Category       | Functionality                                                                                                                                    | Example Covered |
 | :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- | :-------------: |
 | **Data**       | `items` with `bindLabel` / `bindValue`, `multiple`                                                                                               |       ✅        |
+|                | The chip of a multiple selection draws its remove cross after the label, moved with `--hub-select-value-remove-order` (`forms-select`)           |       ✅        |
 |                | `groupBy`                                                                                                                                        |       ✅        |
 |                | `compareWith`                                                                                                                                    |       ❌        |
 | **Search**     | Client-side `searchable`, with `searchFn`                                                                                                        |       ✅        |

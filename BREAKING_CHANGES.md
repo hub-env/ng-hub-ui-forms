@@ -2,6 +2,49 @@
 
 This document tracks all breaking changes in the `ng-hub-ui-forms` library.
 
+## v22.40.0
+
+### A lifted floating label is darker, and no longer faded
+
+- **Change**: while it is up, the floating label of `<hub-input>` and `<hub-select>` is painted
+  with `--hub-field-floating-raised-color` (defaulting to `--hub-label-color`, i.e. the field's
+  own label colour) at full strength. It used to keep `--hub-input-placeholder-color` /
+  `--hub-select-placeholder-color` and drop to `opacity: .9`. At rest nothing changes: the label
+  is the placeholder's stand-in and is still painted like one.
+- **Why**: faded muted grey measured 3.96:1 on a white field, under the 4.5:1 WCAG AA asks of
+  body text, and a lifted label is not decoration — it is the only thing left naming the value.
+  The plain label of the field next to it was already at 15.43:1, so the two read as two kinds of
+  field in one form.
+- **Impact**: every screen with floating labels looks different — the lifted labels are darker
+  and stop being translucent. A transition that animated `opacity` on that element now animates
+  `color`; nothing else on the element used either.
+- **Migration**: to keep a lighter lifted label, set `--hub-field-floating-raised-color` to the
+  colour you want. Do not reach for `opacity` again to get the old look: the fade is what put the
+  label under the threshold.
+
+
+### The remove cross of a multiple `<hub-select>` chip moves after the label
+
+- **Change**: a selected value in a multiple select drew as `× Spain` and now draws as `Spain ×`.
+  Nothing moves in the DOM — the order is CSS, applied to the flex row the chip already was.
+- **Why**: the cross came first because the vendored engine writes it first and hard-codes the
+  position, not because anyone chose it. Every select with chips in every other catalogue puts the
+  remove affordance last, which is also where a pointer expects to find it once it has read the
+  label. And the position was unreachable: the only slot that covers the chip replaces all of it,
+  so moving one glyph meant redrawing the cross and re-wiring `clear`.
+- **Impact**: any screen with a multiple select looks different. A stylesheet that compensated for
+  the old order — asymmetric padding on `.ng-value-label`, a separator drawn on one side of
+  `.ng-value-icon` — now compensates on the wrong side, and a visual regression snapshot
+  containing a chip changes.
+- **Migration**: remove the compensation; that is the point of the change. To keep the old order,
+  set `--hub-select-value-remove-order: -1` on the field or on an ancestor.
+
+    ```css
+    .legacy-chips {
+    	--hub-select-value-remove-order: -1;
+    }
+    ```
+
 ## v22.37.0
 
 ### `<hub-segmented>` stands at the height of a field

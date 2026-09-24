@@ -92,11 +92,18 @@ hub-select.hidden-control {
 			color: var(--hub-select-value-color);
 			border-radius: var(--hub-select-value-border-radius);
 
+			// The engine emits the cross BEFORE the label and hard-codes the `left` class
+			// on it, so the chip read backwards next to any other catalogue's and the only
+			// way out was to redraw the whole chip through the label slot. The chip is a
+			// flex row, so the running order is settled here; the place of the cross is a
+			// token, and `--hub-select-value-remove-order: -1` puts it back in front.
 			.ng-value-label {
+				order: 0;
 				padding: 0.1rem 0.4rem;
 			}
 
 			.ng-value-icon {
+				order: var(--hub-select-value-remove-order, 1);
 				padding: 0.1rem 0.4rem;
 				cursor: pointer;
 
@@ -221,7 +228,7 @@ hub-select.hidden-control {
 			transform-origin: 100% 0;
 		}
 		transition:
-			opacity 0.1s ease-in-out,
+			color 0.1s ease-in-out,
 			transform 0.1s ease-in-out;
 	}
 
@@ -253,7 +260,7 @@ hub-select.hidden-control {
 
 .hub-select__group--floating.hub-select__group--raised .hub-select__label--floating {
 	transform: scale(var(--hub-field-floating-scale)) translateY(calc(-1 * var(--hub-field-floating-travel)));
-	opacity: 0.9;
+	color: var(--hub-field-floating-raised-color);
 }
 
 // Dropdown panel (appended to the control by default).

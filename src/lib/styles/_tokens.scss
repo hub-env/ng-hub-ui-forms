@@ -97,6 +97,12 @@
 	--hub-field-floating-inset: 1.125rem;
 	--hub-field-floating-travel: 0.375rem;
 	--hub-field-floating-scale: 0.75;
+	// The colour the label takes once it is up. At rest it is the placeholder and wears the
+	// placeholder's muted grey; lifted it is the field's name, the only thing left saying what
+	// the value means, and it is read for as long as the form is on screen — so it takes the
+	// same colour as the plain label of the field beside it. It shipped as that muted grey
+	// faded to 90%, which measured 3.96:1 on a white field while its neighbour sat at 16:1.
+	--hub-field-floating-raised-color: var(--hub-label-color);
 
 	// ── Label ────────────────────────────────────────────────────────────────
 	--hub-label-color: var(--hub-sys-text-primary, #212529);
@@ -600,6 +606,11 @@
 	--hub-select-value-bg: var(--hub-sys-surface-elevated, #f8f9fa);
 	--hub-select-value-color: var(--hub-sys-text-primary, #212529);
 	--hub-select-value-border-radius: var(--hub-ref-radius-sm, 0.25rem);
+	// Where the remove cross sits inside a multi-selection chip, as the flex `order` of the
+	// cross against the label's `0`. The engine emits the cross first in the DOM and offers no
+	// way to move it, so the running order is the stylesheet's: `1` draws it after the text,
+	// which is the convention everywhere else; `-1` puts it back in front.
+	--hub-select-value-remove-order: 1;
 	--hub-select-dropdown-bg: var(--hub-sys-surface-page, #fff);
 	--hub-select-dropdown-border-color: var(--hub-sys-border-color-default, #dee2e6);
 	--hub-select-dropdown-border-radius: var(--hub-ref-radius-md, 0.375rem);

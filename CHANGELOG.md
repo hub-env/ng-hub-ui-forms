@@ -5,6 +5,41 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.40.0] - 2026-09-24
+
+### Fixed
+
+- **A lifted floating label is readable again.** Up at the top of the field it kept the
+  placeholder's muted grey and faded to 90%, which measured 3.96:1 on a white field while the
+  plain label of the field beside it sat at 15.43:1 — below the 4.5:1 WCAG AA asks of body text. At
+  rest the label stands in for the placeholder and is still painted like one; once it lifts it is
+  the field's name, the only thing left saying what the value means, so it now takes the same
+  colour as any other label and no longer fades. It measures 15.43:1. `<hub-input>` and
+  `<hub-select>` both, which floated the same label with the same two declarations. Colours change
+  visibly — see `BREAKING_CHANGES.md`.
+
+### Changed
+
+- **BREAKING (visual) — the chip of a multiple `<hub-select>` carries its remove cross after the
+  label.** The vendored engine emits the cross first and hard-codes it there, so every multiple
+  select in the catalogue read `× Spain` where the rest of the world reads `Spain ×`. There was no
+  way out from outside either: the chip is the engine's markup, and the only slot that reaches it —
+  `hubSelectLabel` — replaces the whole chip, cross included, so moving one glyph meant redrawing
+  the affordance and re-wiring `clear`. The chip is a flex row, so the running order is now settled
+  in the stylesheet. See `BREAKING_CHANGES.md`.
+
+### Added
+
+- **`--hub-field-floating-raised-color`** — the colour a floating label takes once it is up. It
+  defaults to `var(--hub-label-color)`, so it follows whatever the form's labels are painted with;
+  point it somewhere else for a design that wants the lifted label tinted (Material floats it in
+  the accent while the field has focus, which this token is what you would use for).
+- **`--hub-select-value-remove-order`** — where the remove cross sits inside that chip, as its flex
+  `order` against the label's `0`. It defaults to `1`, which is the new default order; `-1` puts the
+  cross back in front, for a design that wants it there or an application that would rather not move
+  it yet. It is a token rather than an input because the answer belongs to the theme, not to one
+  field: a form with six multiple selects should not have to say it six times.
+
 ## [22.38.0] - 2026-09-23
 
 ### Fixed
