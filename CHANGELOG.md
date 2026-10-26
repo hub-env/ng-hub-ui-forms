@@ -5,6 +5,29 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.43.0] - 2026-10-26
+
+### Added
+
+- **Typing a date into `hub-datepicker`.** The text is read the way the field writes it (any
+  `granularity`, an Angular pattern, `Intl` options or the locale's month names), committed on blur
+  and on Enter, and works in `single`, `range` and `day-time-range`. Text that is not a date makes
+  the value `null`, stays visible and adds the `hubDatepickerParse` error. The new `typeable` input
+  and `datepicker.typeable` config key control it.
+- **Datepicker validators**: `hubDatepickerParse`, `hubDatepickerMin`, `hubDatepickerMax` and
+  `hubDatepickerDisabled`, with English default messages overridable like any other key. The min and
+  max errors carry `minText` and `maxText`, the bound written the way the field writes dates, so the
+  message reads `30/09/2026` where the field shows `30/09/2026`. When the text is not a date, the
+  field shows the parse message alone: the `required` error the empty value also trips stays on the
+  control, but saying "required" to someone who just typed would be wrong.
+
+### Changed
+
+- **The datepicker input is editable by default.** Use `[typeable]="false"` or
+  `datepicker: { typeable: false }` for the previous read-only input.
+- **`min`, `max` and `disabledDates` now validate** any value, typed or programmatic. Both changes
+  are in BREAKING_CHANGES.md.
+
 ## [22.42.1] - 2026-10-26
 
 ### Changed

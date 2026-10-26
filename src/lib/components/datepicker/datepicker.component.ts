@@ -2,8 +2,11 @@ import { formatDate, KeyValuePipe, NgTemplateOutlet } from '@angular/common';
 import {
 	booleanAttribute,
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	computed,
+	effect,
+	untracked,
 	inject,
 	input,
 	LOCALE_ID,
@@ -18,6 +21,7 @@ import {
 	viewChild,
 	ViewEncapsulation
 } from '@angular/core';
+import { ValidationErrors, ValidatorFn } from '@angular/forms';
 import { HUB_DROPDOWN_POSITIONS, HubTooltipDirective, OverlayRef, OverlayService } from 'ng-hub-ui-utils';
 import { HubLabelType, HubLabelTypes } from '../../interfaces/common.interface';
 import {
@@ -38,6 +42,7 @@ import { HubDatepickerTimeFieldComponent } from './time-field.component';
 import {
 	carriesTime,
 	clampToBounds,
+	compareAt,
 	compareInstant,
 	isPeriodUnit,
 	parseFlexible,
@@ -46,6 +51,7 @@ import {
 	unitOutOfBounds,
 	withTime
 } from './time-utils';
+import { parseTypedDate, parseTypedTime, TypedDateFormat, typedDateHint } from './typed-date';
 import { serializeValue } from './value-format';
 
 /** A calendar cell enriched with its selection / range / disabled / focus state. */
@@ -79,6 +85,10 @@ interface DatepickerCell {
  *   control holds) and `displayFormat` (what the user reads).
  * - `min` / `max` bounds — honouring the time, not just the day — and a `disabledDates` predicate.
  * - Keyboard navigation (arrows, Home/End, PageUp/Down, Enter, Escape) in every panel.
+ * - Typing: the input accepts the date by hand (`typeable`, on by default). The text is parsed
+ *   on blur or Enter; text that is not a date leaves the value `null`, stays visible so it can be
+ *   fixed, and raises `hubDatepickerParse`. `min`, `max` and `disabledDates` also validate as
+ *   `hubDatepickerMin`, `hubDatepickerMax` and `hubDatepickerDisabled`.
  * - `Today`, `Clear` and — while picking a time — `Done` shortcuts.
  * - Full i18n: locale-driven month, weekday and AM/PM names plus overridable `labels`,
  *   `displayFormat`, `weekdayFormat`, `firstDayOfWeek` and `rangeSeparator` — per instance or
@@ -124,6 +134,8 @@ export class HubDatepickerComponent extends HubFieldControl {
 	readonly #localeId = inject(LOCALE_ID);
 	readonly #overlays = inject(OverlayService);
 	readonly #viewContainerRef = inject(ViewContainerRef);
+	readonly #destroyRef = inject(DestroyRef);
+	readonly #changeDetector = inject(ChangeDetectorRef);
 
 	/** The field's own box: what the calendar hangs off. */
 	private readonly _trigger = viewChild.required<ElementRef<HTMLElement>>('trigger');
@@ -139,7 +151,16 @@ export class HubDatepickerComponent extends HubFieldControl {
 		// The panel lives in `document.body`, outside this component's own tree, so nothing removes
 		// it when the field goes away: a datepicker destroyed while open would leave its calendar
 		// on screen, attached to a field that no longer exists.
-		inject(DestroyRef).onDestroy(() => this.#closeOverlay());
+		this.#destroyRef.onDestroy(() => this.#closeOverlay());
+		// Bounds and the disabled predicate are inputs that can change under a value that is
+		// already set, so the control has to be judged again when they do.
+		effect(() => {
+			this._minDate();
+			this._maxDate();
+			this.disabledDates();
+			this._granularity();
+			untracked(() => this.#revalidate());
+		});
 	}
 	readonly #config = inject(HUB_FORMS_CONFIG).datepicker;
 
@@ -179,6 +200,15 @@ export class HubDatepickerComponent extends HubFieldControl {
 
 	/** Whether the calendar overlay is open. */
 	protected readonly _open = signal(false);
+
+	/**
+	 * What the user has typed and not yet committed; `null` while the input just shows the value.
+	 * Kept after a failed parse so the text can be fixed instead of being wiped.
+	 */
+	protected readonly _text = signal<string | null>(null);
+
+	/** The parse error of the committed text, read by the validator. */
+	#parseError: { text: string; format: string } | null = null;
 
 	// ── Inputs ──────────────────────────────────────────────────────────────────
 
@@ -289,6 +319,12 @@ export class HubDatepickerComponent extends HubFieldControl {
 
 	/** Whether the picker is read-only. */
 	readonly readonly = input(false, { transform: booleanAttribute });
+
+	/**
+	 * Whether the date can be typed into the input. Defaults to the global
+	 * {@link HubDatepickerConfig.typeable}; `readonly` and `disabled` still win.
+	 */
+	readonly typeable = input(this.#config.typeable, { transform: booleanAttribute });
 
 	/** Extra CSS classes applied to the host element. */
 	readonly classlist = input<string>('');
@@ -425,12 +461,18 @@ export class HubDatepickerComponent extends HubFieldControl {
 	 * open panel counts alongside focus and a value: while the calendar is up the field is in
 	 * use, and a label sliding back down under it would read as the value being cleared.
 	 */
-	protected readonly isLabelRaised = computed<boolean>(() => this._focused() || this._open() || !!this.displayValue());
+	protected readonly isLabelRaised = computed<boolean>(() => this._focused() || this._open() || !!this.inputText());
 
 	/** Tracks focus for {@link isLabelRaised}. */
 	protected setFocused(focused: boolean): void {
 		this._focused.set(focused);
 	}
+
+	/** Whether the input takes typed text. */
+	protected readonly _typeable = computed(() => this.typeable() && !this.readonly() && !this.disabled());
+
+	/** What the input shows: the text being typed, or else the formatted value. */
+	protected readonly inputText = computed<string>(() => this._text() ?? this.displayValue());
 
 	/** Locale-formatted display string for the input. */
 	protected readonly displayValue = computed<string>(() => {
@@ -543,6 +585,9 @@ export class HubDatepickerComponent extends HubFieldControl {
 	// ── CVA ───────────────────────────────────────────────────────────────────────
 
 	writeValue(value: unknown): void {
+		this._text.set(null);
+		this.#parseError = null;
+
 		const granularity = this._granularity();
 		const parse = this.parse();
 
@@ -573,6 +618,255 @@ export class HubDatepickerComponent extends HubFieldControl {
 		this._start.set(date ? startOfUnit(date, granularity) : null);
 		this._end.set(null);
 		this.#anchor(date ?? new Date());
+	}
+
+	// ── Validation ────────────────────────────────────────────────────────────────
+
+	/**
+	 * The component injects `NgControl` itself to be its own accessor, so an `NG_VALIDATORS`
+	 * provider pointing back at it would be a circular dependency. The validator is added to the
+	 * bound control instead, and removed when the field goes away.
+	 */
+	override ngAfterContentInit(): void {
+		super.ngAfterContentInit();
+
+		const control = this._control?.control;
+
+		if (!control) {
+			return;
+		}
+
+		control.addValidators(this.#validator);
+		this.#revalidate();
+		this.#destroyRef.onDestroy(() => control.removeValidators(this.#validator));
+	}
+
+	/**
+	 * Without a reactive control the base class derives errors from native validity only, which
+	 * knows nothing about parsing or bounds.
+	 */
+	protected override updateNativeErrors(target?: EventTarget | null): void {
+		super.updateNativeErrors(target);
+
+		const own = this._control ? null : this.#validate();
+
+		if (own) {
+			this._nativeErrors.set({ ...this._nativeErrors(), ...own });
+		}
+	}
+
+	/**
+	 * Text that is not a date leaves the value null, which also trips `required`. Saying "required" to
+	 * someone who just typed would be wrong, so the parse error stands alone in the messages; the
+	 * control keeps both keys.
+	 */
+	override get errors(): ValidationErrors | null {
+		const errors = super.errors;
+		if (!errors?.['hubDatepickerParse'] || !errors['required']) {
+			return errors;
+		}
+		const { required: _required, ...rest } = errors;
+		return rest;
+	}
+
+	readonly #validator: ValidatorFn = () => this.#validate();
+
+	/**
+	 * Judges the selection the component holds, not the serialized value, so a typed date and a
+	 * programmatic one meet the same bounds. Bounds compare at the granularity: `min` of 14:00
+	 * does not reject a day-granularity pick of that same day.
+	 */
+	#validate(): ValidationErrors | null {
+		const errors: ValidationErrors = {};
+		const [min, max, disabled, granularity] = [this._minDate(), this._maxDate(), this.disabledDates(), this._granularity()];
+
+		if (this.#parseError) {
+			errors['hubDatepickerParse'] = this.#parseError;
+		}
+
+		// The bound travels already written the way the field writes dates, so the message matches the input.
+		const format = this.#resolveDisplay();
+		for (const actual of [this._start(), this._end()]) {
+			if (!actual) continue;
+			if (min && compareAt(actual, min, granularity) < 0)
+				errors['hubDatepickerMin'] ??= { min, actual, minText: format(min) };
+			if (max && compareAt(actual, max, granularity) > 0)
+				errors['hubDatepickerMax'] ??= { max, actual, maxText: format(max) };
+			if (disabled?.(actual)) errors['hubDatepickerDisabled'] ??= { actual };
+		}
+
+		return Object.keys(errors).length ? errors : null;
+	}
+
+	/** Re-runs the validators of a control that already holds a value. */
+	#revalidate(): void {
+		const control = this._control?.control;
+
+		if (control && control.value != null) {
+			control.updateValueAndValidity({ emitEvent: false });
+			this.#changeDetector.markForCheck();
+		}
+	}
+
+	// ── Typing ─────────────────────────────────────────────────────────────────────
+
+	/** A click on a typeable input opens the calendar but never closes it: it may be placing the caret. */
+	protected onInputClick(): void {
+		if (!this._typeable()) {
+			this.toggleCalendar();
+		} else if (!this._open()) {
+			this.open();
+		}
+	}
+
+	/** Keeps the typed text and lets the calendar follow it while it already reads as a date. */
+	protected onInput(event: Event): void {
+		const text = (event.target as HTMLInputElement).value;
+		const parsed = this.#parseText(text.trim());
+
+		this._text.set(text);
+
+		if (parsed?.start) {
+			this.#anchor(parsed.start);
+		}
+	}
+
+	/** Commits what was typed unless focus only moved into the field's own calendar. */
+	protected onInputBlur(event: FocusEvent): void {
+		const next = event.relatedTarget;
+
+		this.setFocused(false);
+
+		if (!(next instanceof Element && next.closest('.hub-datepicker__overlay'))) {
+			this.#commitText();
+		}
+
+		this.handleBlur(event);
+	}
+
+	/** Enter commits pending text instead of submitting the form around the field. */
+	protected onInputEnter(event: Event): void {
+		if (this._text() === null) {
+			return;
+		}
+
+		event.preventDefault();
+
+		if (this.#commitText()) {
+			this.close();
+		}
+	}
+
+	/**
+	 * Turns the typed text into the selection and publishes it through {@link #emit}, the path a
+	 * calendar pick takes. Text that is not a date empties the value but stays on screen, and the
+	 * validator reports it: nothing is ever snapped to another date.
+	 *
+	 * @returns `false` when the text could not be parsed.
+	 */
+	#commitText(): boolean {
+		const text = this._text();
+
+		if (text === null) {
+			return true;
+		}
+
+		if (!text.trim()) {
+			const hadValue = !!(this._start() || this._end());
+
+			this._start.set(null);
+			this._end.set(null);
+
+			if (hadValue || this.#parseError) {
+				this.#emit();
+			}
+
+			this._text.set(null);
+
+			return true;
+		}
+
+		const parsed = this.#parseText(text.trim());
+
+		if (!parsed) {
+			this._start.set(null);
+			this._end.set(null);
+			this.#committed = { start: null, end: null };
+			this.#parseError = { text, format: this.#hint() };
+			this.#publish(null);
+			this.onTouched?.();
+
+			return false;
+		}
+
+		this._start.set(parsed.start);
+		this._end.set(parsed.end);
+		this.#anchor(parsed.start ?? new Date());
+		this.#emit();
+
+		return true;
+	}
+
+	/**
+	 * Reads the typed text as a point, or as two for the ranges. The second end of a
+	 * `day-time-range` may be a bare time, as the field displays it. Several separators are
+	 * tried so a pasted range with a plain hyphen still reads.
+	 */
+	#parseText(text: string): { start: Date | null; end: Date | null } | null {
+		const spec = this.#typedSpec();
+
+		if (!this._emitsRange()) {
+			const start = parseTypedDate(text, spec);
+
+			return start ? { start, end: null } : null;
+		}
+
+		const separator = this._rangeSeparator();
+
+		for (const candidate of new Set([separator, separator.trim(), '–', '—', ' - ', ' to '])) {
+			const parts = candidate ? text.split(candidate) : [];
+			const start = parts.length === 2 ? parseTypedDate(parts[0], spec) : null;
+
+			if (!start) continue;
+
+			let end = this._isDayTimeRange()
+				? (parseTypedTime(parts[1], spec, start) ?? parseTypedDate(parts[1], spec))
+				: parseTypedDate(parts[1], spec);
+
+			if (!end) continue;
+
+			if (this._isDayTimeRange()) {
+				end = startOfUnit(withTime(start, end.getHours(), end.getMinutes(), end.getSeconds()), this._granularity());
+			}
+
+			return compareInstant(end, start) < 0 ? null : { start, end };
+		}
+
+		return null;
+	}
+
+	/**
+	 * What the field writes, as the parser needs it. A display function cannot be inverted, so
+	 * its fields are read in the locale's own order, taken from the global `Intl` options.
+	 */
+	#typedSpec(): TypedDateFormat {
+		const format = this._displayFormat();
+
+		return {
+			locale: this.locale(),
+			granularity: this._granularity(),
+			format:
+				typeof format === 'string'
+					? format
+					: this.#narrowOptions(typeof format === 'function' ? this.#config.displayFormat : format)
+		};
+	}
+
+	/** Human hint of the expected text, for the parse error. */
+	#hint(): string {
+		const point = typedDateHint(this.#typedSpec());
+
+		return this._emitsRange() ? `${point}${this._rangeSeparator()}${point}` : point;
 	}
 
 	// ── Panel ──────────────────────────────────────────────────────────────────────
@@ -638,6 +932,10 @@ export class HubDatepickerComponent extends HubFieldControl {
 	protected close(): void {
 		if (!this._open()) {
 			return;
+		}
+
+		if (!this._focused()) {
+			this.#commitText();
 		}
 
 		this.#rollbackPendingRange();
@@ -1034,6 +1332,9 @@ export class HubDatepickerComponent extends HubFieldControl {
 
 	/** Serializes the current selection and pushes it to the control and to {@link valueChange}. */
 	#emit(): void {
+		this._text.set(null);
+		this.#parseError = null;
+
 		const granularity = this._granularity();
 		const valueFormat = this._valueFormat();
 		const start = this._start();
@@ -1059,15 +1360,21 @@ export class HubDatepickerComponent extends HubFieldControl {
 					: null;
 
 			this.#committed = { start, end };
-			this.onChange?.(value);
-			this.valueChange.emit(value as HubDateValue<any>);
+			this.#publish(value);
 
 			return;
 		}
 
-		const value = serializeValue(start, granularity, valueFormat);
+		this.#publish(serializeValue(start, granularity, valueFormat));
+	}
 
+	/** Hands a value to the control and the output, and refreshes native errors when unbound. */
+	#publish(value: unknown): void {
 		this.onChange?.(value);
 		this.valueChange.emit(value as HubDateValue<any>);
+
+		if (!this._control) {
+			this.updateNativeErrors();
+		}
 	}
 }

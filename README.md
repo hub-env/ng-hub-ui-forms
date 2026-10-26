@@ -566,6 +566,38 @@ Three independent axes control the formats:
 ISO strings of any width, `Date` instances and epoch milliseconds are detected automatically, so
 `parse` is only needed for dialects outside that set.
 
+#### Typing and validation
+
+The input is editable by default (`typeable`, default `true`; set `[typeable]="false"` or
+`datepicker: { typeable: false }` in `provideHubForms` for the read-only input of earlier versions;
+`readonly` and `disabled` still win). Clicking opens the calendar as before and typing does not
+close it. The text is committed on blur and on Enter, never on every keystroke:
+
+- It is read the way the field writes it, for every `granularity` and `displayFormat` (an Angular
+  pattern, `Intl` options, or month names of the `locale`). Any non-digit separator works, 2-digit
+  years mean 20yy, and impossible dates such as 31/02 are rejected.
+- Empty text commits `null`. Text that is not a date makes the value `null`, stays visible so it
+  can be fixed, and adds the `hubDatepickerParse` error; it is never turned into another date.
+- `single`, `range` and `day-time-range` support typing. A range is split on `rangeSeparator`
+  (a hyphen or dash also works) and needs both ends, the end not before the start.
+- A `displayFormat` function cannot be inverted, so typed text is read in the locale's own order.
+
+```html
+<hub-datepicker formControlName="due" label="Due date" [min]="today" [max]="deadline" />
+```
+
+| Error key               | Payload                    | When                                          |
+| :---------------------- | :------------------------- | :-------------------------------------------- |
+| `hubDatepickerParse`    | `{ text, format }`         | The typed text is not a date (`format`: hint) |
+| `hubDatepickerMin`      | `{ min, actual, minText }` | A date is before `min`                        |
+| `hubDatepickerMax`      | `{ max, actual, maxText }` | A date is after `max`                         |
+| `hubDatepickerDisabled` | `{ actual }`               | `disabledDates` rejects a date                |
+
+`minText` and `maxText` are the bound written the way the field displays dates, ready for a message.
+
+`min`, `max` and `disabledDates` validate any value, typed or programmatic. Their messages
+come from `invalidFeedbackTemplateFn` like the other keys.
+
 ### Timepicker
 
 A time of day, as `HH:MM`. Built on the platform's `<input type="time">`, so it brings the
@@ -895,7 +927,7 @@ bootstrapApplication(AppComponent, {
 	providers: [
 		provideHubForms({
 			showValid: true,
-			datepicker: { firstDayOfWeek: 1, displayFormat: 'dd/MM/yyyy' }
+			datepicker: { firstDayOfWeek: 1, displayFormat: 'dd/MM/yyyy', typeable: true }
 		})
 	]
 });

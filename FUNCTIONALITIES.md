@@ -124,18 +124,19 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 
 ## Datepicker (`hub-datepicker`)
 
-| Category        | Functionality                                                                         | Example Covered |
-| :-------------- | :------------------------------------------------------------------------------------ | :-------------: |
-| **Modes**       | `single`, `range`, `day-time-range`                                                   |       ✅        |
-| **Granularity** | `year` / `month` / `day` / `hour` / `minute` / `second`, each selecting its own panel |       ✅        |
-| **Time**        | `minuteStep` / `secondStep` / `hourFormat`                                            |       ✅        |
-| **Bounds**      | `min` / `max` honouring the time, and `disabledDates`                                 |       ❌        |
-| **Formats**     | `valueFormat` / `parse` / `displayFormat` / `timeDisplayFormat` / `rangeSeparator`    |       ✅        |
-| **Locale**      | `locale`, `firstDayOfWeek`, `weekdayFormat`, `monthFormat`, `labels`                  |       ✅        |
-| **Behaviour**   | `clearable`, `showToday`, `closeOnSelect`                                             |       ❌        |
-|                 | `opened` / `closed` / `cleared` / `viewChange` outputs                                |       ❌        |
-| **Keyboard**    | Arrow / Home / End / PageUp / PageDown navigation inside the panel                    |       ❌        |
-| **Overlay**     | Renders above a `HubModal` through `--hub-datepicker-overlay-zindex`                  |       ✅        |
+| Category        | Functionality                                                                                                                              | Example Covered |
+| :-------------- | :----------------------------------------------------------------------------------------------------------------------------------------- | :-------------: |
+| **Modes**       | `single`, `range`, `day-time-range`                                                                                                        |       ✅        |
+| **Granularity** | `year` / `month` / `day` / `hour` / `minute` / `second`, each selecting its own panel                                                      |       ✅        |
+| **Time**        | `minuteStep` / `secondStep` / `hourFormat`                                                                                                 |       ✅        |
+| **Bounds**      | `min` / `max` honouring the time, and `disabledDates`                                                                                      |       ❌        |
+| **Formats**     | `valueFormat` / `parse` / `displayFormat` / `timeDisplayFormat` / `rangeSeparator`                                                         |       ✅        |
+| **Typing**      | Editable input (`typeable`, on by default): parsed on blur / Enter in every mode, `hubDatepickerParse` / `Min` / `Max` / `Disabled` errors |       ✅        |
+| **Locale**      | `locale`, `firstDayOfWeek`, `weekdayFormat`, `monthFormat`, `labels`                                                                       |       ✅        |
+| **Behaviour**   | `clearable`, `showToday`, `closeOnSelect`                                                                                                  |       ❌        |
+|                 | `opened` / `closed` / `cleared` / `viewChange` outputs                                                                                     |       ❌        |
+| **Keyboard**    | Arrow / Home / End / PageUp / PageDown navigation inside the panel                                                                         |       ❌        |
+| **Overlay**     | Renders above a `HubModal` through `--hub-datepicker-overlay-zindex`                                                                       |       ✅        |
 
 ## Timepicker (`hub-timepicker`)
 

@@ -2,6 +2,21 @@
 
 This document tracks all breaking changes in the `ng-hub-ui-forms` library.
 
+## v22.43.0
+
+### The datepicker input is editable, and out-of-range dates are invalid
+
+- **Change**: the `hub-datepicker` input accepts typed text by default, and `min`, `max` and
+  `disabledDates` now add the errors `hubDatepickerMin`, `hubDatepickerMax` and
+  `hubDatepickerDisabled` to the control for any value, however it got there.
+- **Why**: the calendar was the only way in, and bounds were only enforced by the calendar.
+- **Impact**: the input no longer carries the `readonly` attribute, so a click puts a caret in it
+  and the keyboard types. A control that was set programmatically to a date outside its bounds, or
+  one `disabledDates` rejects, is now invalid where it used to be valid.
+- **Migration**: set `[typeable]="false"` on the field, or `datepicker: { typeable: false }` in
+  `provideHubForms`, to get the read-only input back. Clear or fix out-of-range values, or drop the
+  bound, to keep the control valid.
+
 ## v22.42.0
 
 ### A select's list is as wide as its options, and may open from the control's end

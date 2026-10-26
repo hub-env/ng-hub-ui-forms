@@ -115,6 +115,11 @@ export interface HubDatepickerConfig {
 	hourFormat: '12' | '24' | undefined;
 	/** `Intl` options composed over {@link displayFormat} when the granularity carries a time. */
 	timeDisplayFormat: Intl.DateTimeFormatOptions;
+	/**
+	 * Whether the date can be typed into the input. `false` restores the read-only input that
+	 * only the calendar writes to. A per-field `typeable` input overrides it.
+	 */
+	typeable: boolean;
 	/** Localizable labels. */
 	labels: HubDatepickerLabels;
 }
@@ -150,5 +155,6 @@ export const defaultHubDatepickerConfig: HubDatepickerConfig = {
 	secondStep: 1,
 	hourFormat: undefined,
 	timeDisplayFormat: { hour: '2-digit', minute: '2-digit' },
+	typeable: true,
 	labels: defaultHubDatepickerLabels
 };

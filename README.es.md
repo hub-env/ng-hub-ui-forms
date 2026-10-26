@@ -573,6 +573,40 @@ Tres ejes independientes gobiernan los formatos:
 Los strings ISO de cualquier anchura, las instancias de `Date` y los milisegundos de época se
 detectan automáticamente, así que `parse` sólo hace falta para dialectos fuera de ese conjunto.
 
+#### Escritura y validación
+
+El input es editable por defecto (`typeable`, por defecto `true`; usa `[typeable]="false"` o
+`datepicker: { typeable: false }` en `provideHubForms` para recuperar el input de solo lectura de
+versiones anteriores; `readonly` y `disabled` siguen mandando). Al hacer clic se abre el calendario
+como antes y escribir no lo cierra. El texto se confirma al perder el foco y con Enter, nunca en cada
+tecla:
+
+- Se lee tal como lo escribe el campo, para cada `granularity` y `displayFormat` (patrón de Angular,
+  opciones de `Intl` o nombres de mes del `locale`). Vale cualquier separador que no sea un dígito, un
+  año de 2 cifras significa 20aa y las fechas imposibles, como el 31/02, se rechazan.
+- Un texto vacío confirma `null`. Un texto que no es una fecha deja el valor en `null`, sigue visible
+  para poder corregirlo y añade el error `hubDatepickerParse`; nunca se convierte en otra fecha.
+- `single`, `range` y `day-time-range` admiten escritura. Un rango se separa por `rangeSeparator`
+  (también vale un guion) y necesita los dos extremos, con el final no anterior al inicio.
+- Una función en `displayFormat` no se puede invertir, así que el texto se lee en el orden propio del
+  locale.
+
+```html
+<hub-datepicker formControlName="due" label="Vencimiento" [min]="today" [max]="deadline" />
+```
+
+| Clave de error          | Datos                      | Cuándo                                        |
+| :---------------------- | :------------------------- | :-------------------------------------------- |
+| `hubDatepickerParse`    | `{ text, format }`         | El texto no es una fecha (`format`: la pista) |
+| `hubDatepickerMin`      | `{ min, actual, minText }` | Una fecha es anterior a `min`                 |
+| `hubDatepickerMax`      | `{ max, actual, maxText }` | Una fecha es posterior a `max`                |
+| `hubDatepickerDisabled` | `{ actual }`               | `disabledDates` rechaza una fecha             |
+
+`minText` y `maxText` son el límite escrito como el campo muestra las fechas, listo para un mensaje.
+
+`min`, `max` y `disabledDates` validan cualquier valor, escrito o asignado por código. Sus mensajes
+salen de `invalidFeedbackTemplateFn` como los de las demás claves.
+
 ### Timepicker
 
 Una hora del día, como `HH:MM`. Construido sobre el `<input type="time">` de la plataforma,
@@ -912,7 +946,7 @@ bootstrapApplication(AppComponent, {
 	providers: [
 		provideHubForms({
 			showValid: true,
-			datepicker: { firstDayOfWeek: 1, displayFormat: 'dd/MM/yyyy' }
+			datepicker: { firstDayOfWeek: 1, displayFormat: 'dd/MM/yyyy', typeable: true }
 		})
 	]
 });

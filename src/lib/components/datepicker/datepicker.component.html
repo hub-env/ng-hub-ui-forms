@@ -62,22 +62,25 @@
 					class="hub-field__control hub-datepicker__input"
 					[class.hub-field__control--invalid]="isInvalid"
 					[class.hub-field__control--valid]="showsValid"
-					[class.hub-datepicker__input--clearable]="clearable() && displayValue()"
+					[class.hub-datepicker__input--clearable]="clearable() && inputText()"
 					[id]="id"
 					type="text"
-					readonly
-					[value]="displayValue()"
+					autocomplete="off"
+					[readOnly]="!_typeable()"
+					[value]="inputText()"
 					[placeholder]="showsFloatingLabel() && !isLabelRaised() ? '' : placeholder()"
 					[disabled]="disabled()"
 					[required]="!!required()"
 					[attr.aria-invalid]="isInvalid"
 					[attr.aria-expanded]="_open()"
 					aria-haspopup="dialog"
-					(click)="toggleCalendar()"
+					(click)="onInputClick()"
+					(input)="onInput($event)"
+					(keydown.enter)="onInputEnter($event)"
 					(focus)="setFocused(true)"
-					(blur)="setFocused(false); handleBlur($event)"
+					(blur)="onInputBlur($event)"
 				/>
-				@if (clearable() && displayValue() && !disabled() && !readonly()) {
+				@if (clearable() && inputText() && !disabled() && !readonly()) {
 					<button type="button" class="hub-datepicker__clear" [attr.aria-label]="_labels().clear" (click)="clear()">
 						&times;
 					</button>

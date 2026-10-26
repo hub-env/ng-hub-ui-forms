@@ -1,5 +1,16 @@
 import { formatFileSize } from '../utils/file-size';
 
+/** Writes a bound of the datepicker for a message, with the time only when it carries one. */
+function formatBound(value: unknown): string {
+	if (!(value instanceof Date)) {
+		return `${value ?? ''}`;
+	}
+
+	const hasTime = value.getHours() + value.getMinutes() + value.getSeconds() > 0;
+
+	return hasTime ? value.toLocaleString() : value.toLocaleDateString();
+}
+
 /**
  * Default, human-readable messages for the most common Angular validation errors.
  *
@@ -25,6 +36,14 @@ export function defaultInvalidFeedback(key: string, value: any): string {
 			return `Select at most ${value?.max ?? ''} files.`;
 		case 'fileMinFiles':
 			return `Select at least ${value?.min ?? ''} files.`;
+		case 'hubDatepickerParse':
+			return value?.format ? `Enter a valid date (${value.format}).` : 'Enter a valid date.';
+		case 'hubDatepickerMin':
+			return `The date must be ${value?.minText ?? formatBound(value?.min)} or later.`;
+		case 'hubDatepickerMax':
+			return `The date must be ${value?.maxText ?? formatBound(value?.max)} or earlier.`;
+		case 'hubDatepickerDisabled':
+			return 'This date is not available.';
 		case 'required':
 			return 'This field is required.';
 		case 'email':
