@@ -5,6 +5,34 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.42.0] - 2026-10-26
+
+### Added
+
+- **`hubScrollToError`, the button that takes you to the mistake.** Put it on a submit or «Next»
+  button. It walks the button's own form — the one it sits in, or the one its `form` attribute
+  names — or any block of the page you give it. Each press that leaves errors on screen scrolls to
+  the next one and focuses its control, and after the last it starts again from the first, so a
+  long form with three mistakes is walked in three presses instead of hunted by eye; a field's
+  control and the message under it count as one. It reads the
+  page rather than a form model, since errors come from reactive controls, fields drawn from a
+  schema and the cells of a sheet alike: the hub fields' invalid state counts out of the box, and
+  `hubScrollToErrorSelector` adds a product's own error marks. It waits a frame for the errors to be
+  painted, does nothing when there are none and scrolls without animation under reduced motion.
+
+### Fixed
+
+- **The list of a `<hub-select>` is as wide as its options.** Opened on the body, the panel took
+  the control's exact width, so a narrow control (a filter chip reading «Payment: All») cut its
+  options to «Pai…». The control's width is now the minimum and the panel grows to its longest
+  option, up to `--hub-select-dropdown-max-width` (24rem by default) and never past the screen.
+- **A wide list opens towards the side where it fits.** It lines up with the control's start and,
+  when that would run off the screen, with the control's end; in right-to-left documents the other
+  way round. A list wider than either side is kept on the screen.
+- **The caret no longer drops when the list opens.** Turned upwards, it lost the half edge that
+  gave the closed caret its height, and sat about two pixels lower. It keeps the same box now and
+  only turns. Both changes are visible — see `BREAKING_CHANGES.md`.
+
 ## [22.41.0] - 2026-09-27
 
 ### Added

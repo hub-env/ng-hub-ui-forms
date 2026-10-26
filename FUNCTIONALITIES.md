@@ -99,27 +99,28 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 
 ## Select (`hub-select`)
 
-| Category       | Functionality                                                                                                                                    | Example Covered |
-| :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- | :-------------: |
-| **Data**       | `items` with `bindLabel` / `bindValue`, `multiple`                                                                                               |       ✅        |
-|                | The chip of a multiple selection draws its remove cross after the label, moved with `--hub-select-value-remove-order` (`forms-select`)           |       ✅        |
-|                | `groupBy`                                                                                                                                        |       ✅        |
-|                | `compareWith`                                                                                                                                    |       ❌        |
-| **Search**     | Client-side `searchable`, with `searchFn`                                                                                                        |       ✅        |
-|                | Server-side `typeahead` Subject, `minTermLength`, `loading`, `notFoundText`                                                                      |       ✅        |
-| **Tags**       | `addTag` (boolean or factory) and `addTagText`                                                                                                   |       ✅        |
-|                | An asynchronous `addTag` closes the list before its promise resolves, so the panel never covers the dialog it opened (`forms-select-tagging`)    |       ✅        |
-|                | `clearSearchOnAdd`, apart from `closeOnSelect` (`forms-select-tagging`)                                                                          |       ✅        |
-| **Panel**      | `appendTo`, `closeOnSelect`, `fixedPlaceholder`                                                                                                  |       ❌        |
-|                | Renders above a `HubModal` through `--hub-select-dropdown-zindex`                                                                                |       ✅        |
-| **Templates**  | `hubSelectOption` / `hubSelectOptgroup` / `hubSelectLabel` / `hubSelectMultiLabel` / `hubSelectHeader` / `hubSelectFooter` / `hubSelectNotFound` |       ✅        |
-|                | `hubSelectTypeToSearch` / `hubSelectLoadingText` / `hubSelectLoadingSpinner` / `hubSelectTag` / `hubSelectClearButton`                           |       ❌        |
-|                | The vendored `ng-option-tmp` and friends — **deprecated**, removed in 23.0.0                                                                     |       ❌        |
-|                | `hubSelectSuffix` — **deprecated**, use `hubAppend`                                                                                              |       ❌        |
-| **Addons**     | `prepend` / `append` and the `hubPrepend` / `hubAppend` slots                                                                                    |       ✅        |
-| **Events**     | `onOpen` / `onClose` / `onClear` / `onSearch` / `onAdd` / `onRemove` / `onFocus` / `onBlur` / `scroll` / `scrollToEnd`                           |       ❌        |
-|                | `change`, carrying the selected item, for every format (`forms-select-tagging`)                                                                  |       ✅        |
-| **Deprecated** | `format="buttons" \| "checkbox" \| "radio"` and `vertical` → use `hub-segmented`                                                                 |       ✅        |
+| Category       | Functionality                                                                                                                                            | Example Covered |
+| :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------: |
+| **Data**       | `items` with `bindLabel` / `bindValue`, `multiple`                                                                                                       |       ✅        |
+|                | The chip of a multiple selection draws its remove cross after the label, moved with `--hub-select-value-remove-order` (`forms-select`)                   |       ✅        |
+|                | `groupBy`                                                                                                                                                |       ✅        |
+|                | `compareWith`                                                                                                                                            |       ❌        |
+| **Search**     | Client-side `searchable`, with `searchFn`                                                                                                                |       ✅        |
+|                | Server-side `typeahead` Subject, `minTermLength`, `loading`, `notFoundText`                                                                              |       ✅        |
+| **Tags**       | `addTag` (boolean or factory) and `addTagText`                                                                                                           |       ✅        |
+|                | An asynchronous `addTag` closes the list before its promise resolves, so the panel never covers the dialog it opened (`forms-select-tagging`)            |       ✅        |
+|                | `clearSearchOnAdd`, apart from `closeOnSelect` (`forms-select-tagging`)                                                                                  |       ✅        |
+| **Panel**      | `appendTo`, `closeOnSelect`, `fixedPlaceholder`                                                                                                          |       ❌        |
+|                | Renders above a `HubModal` through `--hub-select-dropdown-zindex`                                                                                        |       ✅        |
+|                | As wide as its options (up to `--hub-select-dropdown-max-width`), and opens from the control's end when it would leave the screen (`forms-select-width`) |       ✅        |
+| **Templates**  | `hubSelectOption` / `hubSelectOptgroup` / `hubSelectLabel` / `hubSelectMultiLabel` / `hubSelectHeader` / `hubSelectFooter` / `hubSelectNotFound`         |       ✅        |
+|                | `hubSelectTypeToSearch` / `hubSelectLoadingText` / `hubSelectLoadingSpinner` / `hubSelectTag` / `hubSelectClearButton`                                   |       ❌        |
+|                | The vendored `ng-option-tmp` and friends — **deprecated**, removed in 23.0.0                                                                             |       ❌        |
+|                | `hubSelectSuffix` — **deprecated**, use `hubAppend`                                                                                                      |       ❌        |
+| **Addons**     | `prepend` / `append` and the `hubPrepend` / `hubAppend` slots                                                                                            |       ✅        |
+| **Events**     | `onOpen` / `onClose` / `onClear` / `onSearch` / `onAdd` / `onRemove` / `onFocus` / `onBlur` / `scroll` / `scrollToEnd`                                   |       ❌        |
+|                | `change`, carrying the selected item, for every format (`forms-select-tagging`)                                                                          |       ✅        |
+| **Deprecated** | `format="buttons" \| "checkbox" \| "radio"` and `vertical` → use `hub-segmented`                                                                         |       ✅        |
 
 ## Datepicker (`hub-datepicker`)
 
@@ -186,15 +187,16 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 
 ## Containers and validation
 
-| Category       | Functionality                                                                                           | Example Covered |
-| :------------- | :------------------------------------------------------------------------------------------------------ | :-------------: |
-| **Grouping**   | `fieldset[hubFieldset]` (or the `hub-fieldset` element) with `legend`, `group` / `groupName`            |       ✅        |
-|                | `form[hubForm]` surfacing form-level errors                                                             |       ✅        |
-|                | `hub-legend`, with `required` / `invalid`, projected into the fieldset's `<legend>`                     |       ✅        |
-|                | `hubLegend` template slot — **deprecated**, project a `hub-legend` instead; removed in 23.0.0           |       ❌        |
-| **Trigger**    | `errorTrigger="touched" \| "submit" \| "always"`                                                        |       ❌        |
-| **Validators** | `hubAreEqual` cross-field validator                                                                     |       ✅        |
-|                | `hubAcceptedFiles`, `hubMaxFileSize`, `hubMinFileSize`, `hubMaxTotalSize`, `hubMaxFiles`, `hubMinFiles` |       ❌        |
+| Category       | Functionality                                                                                                                                                                                     | Example Covered |
+| :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------: |
+| **Grouping**   | `fieldset[hubFieldset]` (or the `hub-fieldset` element) with `legend`, `group` / `groupName`                                                                                                      |       ✅        |
+|                | `form[hubForm]` surfacing form-level errors                                                                                                                                                       |       ✅        |
+|                | `hub-legend`, with `required` / `invalid`, projected into the fieldset's `<legend>`                                                                                                               |       ✅        |
+|                | `hubLegend` template slot — **deprecated**, project a `hub-legend` instead; removed in 23.0.0                                                                                                     |       ❌        |
+| **Trigger**    | `errorTrigger="touched" \| "submit" \| "always"`                                                                                                                                                  |       ❌        |
+| **Navigation** | `hubScrollToError` on a button: each press scrolls to and focuses the next error, in the button's own form or a given block; extra marks via `hubScrollToErrorSelector` (`forms-scroll-to-error`) |       ✅        |
+| **Validators** | `hubAreEqual` cross-field validator                                                                                                                                                               |       ✅        |
+|                | `hubAcceptedFiles`, `hubMaxFileSize`, `hubMinFileSize`, `hubMaxTotalSize`, `hubMaxFiles`, `hubMinFiles`                                                                                           |       ❌        |
 
 ## Configuration and integration
 

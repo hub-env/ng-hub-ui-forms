@@ -615,6 +615,8 @@
 	--hub-select-dropdown-border-color: var(--hub-sys-border-color-default, #dee2e6);
 	--hub-select-dropdown-border-radius: var(--hub-ref-radius-md, 0.375rem);
 	--hub-select-dropdown-box-shadow: var(--hub-sys-shadow, 0 0.5rem 1rem rgba(0, 0, 0, 0.15));
+	// How far a list may grow past its control to show its options whole.
+	--hub-select-dropdown-max-width: 24rem;
 	// Dropdown panel stacking. The vendored ng-select hard-codes `z-index: 1050` on
 	// `.ng-dropdown-panel` — one below HubModal (`--hub-sys-zindex-modal`, 1055) — so a
 	// select opened inside a modal was clipped underneath it. Sit a few layers above

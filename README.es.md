@@ -826,6 +826,25 @@ form = new FormGroup(
 Al enviar, cada campo inválido muestra su error y el error cross-field de
 `hubAreEqual` lo muestra el fieldset/form — sin marcado de errores manual.
 
+#### Llevar a los errores
+
+`hubScrollToError` en el botón de enviar desplaza hasta el primer error que queda en pantalla y
+enfoca su control; cada pulsación siguiente pasa al próximo, y tras el último vuelve a empezar. El
+control de un campo y su mensaje cuentan una sola vez. Vacío, recorre el formulario del propio
+botón: aquel en el que está o el que nombra su atributo `form`:
+
+```html
+<form id="customer" [formGroup]="form" hubForm (submit)="save()">…</form>
+<button hubButton type="submit" form="customer" hubScrollToError>Save</button>
+
+<!-- cualquier otro bloque, también con las marcas de error propias de un producto -->
+<section #sheet>…</section>
+<button [hubScrollToError]="sheet" hubScrollToErrorSelector=".my-error">Check</button>
+```
+
+Una referencia de plantilla sobre `<form hubForm>` nombra al componente y no al elemento; por eso
+el formulario se alcanza a través del botón en lugar de pasarse como argumento.
+
 #### Dos maneras de escribir el fieldset
 
 `hubFieldset` es un atributo sobre el elemento nativo, así que el grupo cuesta un elemento en
@@ -962,6 +981,8 @@ muestra).
 ```
 
 **`hub-select` dentro de un modal** — el panel del desplegable se apila con `--hub-select-dropdown-zindex` (por defecto `calc(var(--hub-sys-zindex-modal, 1055) + 5)`; la grafía anterior `--hub-select-dropdown-z-index` queda deprecada pero se sigue respetando), así que un select abierto dentro de un `HubModal` se renderiza por encima del diálogo en vez de quedar recortado debajo.
+
+**Ancho de la lista** — el panel nunca es más estrecho que el control y crece hasta su opción más larga, con un tope en `--hub-select-dropdown-max-width` (por defecto `24rem`) y sin salirse de la pantalla. Si desde el inicio del control se saldría, se alinea con su final.
 
 **`hub-datepicker` dentro de un modal** — la misma garantía, con `--hub-datepicker-overlay-zindex` (por defecto `calc(var(--hub-sys-zindex-modal, 1055) + 5)`): un calendario abierto dentro de un `HubModal` se dibuja por encima del diálogo, y su backdrop una capa por debajo del calendario pero aún por encima del diálogo, así que el clic fuera lo cierra. Un solo token mueve los dos:
 

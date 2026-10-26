@@ -132,10 +132,13 @@ hub-select.hidden-control {
 		border-color: var(--hub-select-arrow-color) transparent transparent;
 	}
 
-	// Open panel — flip to an upward triangle (top edge collapsed, bottom painted).
+	// Open panel — flip to an upward triangle. Same box as the closed caret (the half-size edge
+	// moves to the top), lifted by that half, so the point turns without moving: with the top edge
+	// collapsed the box was shorter and the caret sat about two pixels low.
 	&.ng-select-opened .ng-arrow-wrapper .ng-arrow {
-		border-width: 0 var(--hub-select-arrow-size) var(--hub-select-arrow-size);
+		border-width: calc(var(--hub-select-arrow-size) / 2) var(--hub-select-arrow-size) var(--hub-select-arrow-size);
 		border-color: transparent transparent var(--hub-select-arrow-color);
+		transform: translateY(calc(var(--hub-select-arrow-size) / -2));
 	}
 
 	.ng-clear-wrapper {

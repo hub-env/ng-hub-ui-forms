@@ -74,11 +74,14 @@ describe('hub-select caret (regression: the full triangle declaration is publish
 		expect(closed).toMatch(/border-color:\s*var\(--hub-select-arrow-color\)\s+transparent\s+transparent/);
 	});
 
-	it('flips the caret upwards while the panel is open', () => {
+	it('flips the caret upwards while the panel is open, in the same box and at the same height', () => {
 		const open = declarationsFor(publishedCss(), /\.ng-select-opened\s+\.ng-arrow-wrapper\s+\.ng-arrow\s*$/).join('\n');
 
-		expect(open).toMatch(/border-width:\s*0\s+var\(--hub-select-arrow-size\)\s+var\(--hub-select-arrow-size\)/);
+		expect(open).toMatch(
+			/border-width:\s*calc\(var\(--hub-select-arrow-size\)\s*\/\s*2\)\s+var\(--hub-select-arrow-size\)\s+var\(--hub-select-arrow-size\)/
+		);
 		expect(open).toMatch(/border-color:\s*transparent\s+transparent\s+var\(--hub-select-arrow-color\)/);
+		expect(open).toMatch(/transform:\s*translateY\(calc\(var\(--hub-select-arrow-size\)\s*\/\s*-2\)\)/);
 	});
 
 	it('gives the caret clearance from the value via --hub-select-arrow-gap', () => {

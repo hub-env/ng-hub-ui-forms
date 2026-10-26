@@ -95,6 +95,7 @@ export { HubFormTextDirective } from './lib/directives/form-text.directive';
 export { HubValidationErrorDirective } from './lib/directives/validation-error.directive';
 export { HubLegendDirective } from './lib/directives/legend.directive';
 export { HubAutoresizeDirective } from './lib/directives/autoresize.directive';
+export { HubScrollToErrorDirective } from './lib/directives/scroll-to-error.directive';
 export { HubInputPrefixDirective } from './lib/directives/input-prefix.directive';
 export { HubInputSuffixDirective } from './lib/directives/input-suffix.directive';
 export { HubPrependDirective } from './lib/directives/prepend.directive';

@@ -200,6 +200,8 @@ export class NgDropdownPanelComponent implements OnInit, OnChanges {
 		}
 
 		if (this.appendTo() || this.popover()) {
+			// Again now the options are drawn: they decide how wide the panel is.
+			this._updateXPosition();
 			this._updateYPosition();
 		}
 
@@ -415,23 +417,31 @@ export class NgDropdownPanelComponent implements OnInit, OnChanges {
 		this._parent.appendChild(this._dropdown);
 	}
 
+	/**
+	 * Lines the panel up with the control: from its start, or from its end when the panel,
+	 * wider than the control, would otherwise run off the screen.
+	 *
+	 * Only the minimum width is set here. How much wider than the control the panel grows is
+	 * the stylesheet's call (`--hub-select-dropdown-max-width`), so its width is measured
+	 * after the minimum is in place and the side is chosen from that.
+	 */
 	private _updateXPosition() {
 		const select = this._select.getBoundingClientRect();
 		const parent = this._parent.getBoundingClientRect();
 		const isRTL = document.documentElement.dir === 'rtl';
-		const offsetLeft = select.left - parent.left;
 
-		if (isRTL) {
-			const offsetRight = parent.right - select.right;
-			this._dropdown.style.right = offsetRight + 'px';
-			this._dropdown.style.left = 'auto';
-		} else {
-			this._dropdown.style.left = offsetLeft + 'px';
-			this._dropdown.style.right = 'auto';
-		}
-
-		this._dropdown.style.width = select.width + 'px';
 		this._dropdown.style.minWidth = select.width + 'px';
+		const width = this._dropdown.getBoundingClientRect().width;
+		const viewport = document.documentElement.clientWidth;
+
+		const fitsFromStart = isRTL ? select.right - width >= 0 : select.left + width <= viewport;
+		const fromStart = isRTL ? select.right - width : select.left;
+		const fromEnd = isRTL ? select.left : select.right - width;
+		// Wider than either side allows: kept on the screen rather than lined up with anything.
+		const left = Math.min(Math.max(fitsFromStart ? fromStart : fromEnd, 0), Math.max(viewport - width, 0));
+
+		this._dropdown.style.left = left - parent.left + 'px';
+		this._dropdown.style.right = 'auto';
 	}
 
 	private _updateYPosition() {

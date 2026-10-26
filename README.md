@@ -811,6 +811,25 @@ form = new FormGroup(
 On submit, each invalid field shows its error and the cross-field `hubAreEqual`
 error is surfaced by the fieldset/form — no manual error markup anywhere.
 
+#### Taking the reader to the errors
+
+`hubScrollToError` on the submit button scrolls to the first error left on screen and focuses its
+control; each further press moves to the next one, and after the last it starts again. A field's
+control and its message count once. Left empty it walks the button's own form, the one it sits in
+or the one its `form` attribute names:
+
+```html
+<form id="customer" [formGroup]="form" hubForm (submit)="save()">…</form>
+<button hubButton type="submit" form="customer" hubScrollToError>Save</button>
+
+<!-- any other block, with a product's own error marks as well -->
+<section #sheet>…</section>
+<button [hubScrollToError]="sheet" hubScrollToErrorSelector=".my-error">Check</button>
+```
+
+A template reference on `<form hubForm>` names the component, not the element, which is why the
+form is reached through the button rather than passed in.
+
 #### Two ways to write the fieldset
 
 `hubFieldset` is an attribute on the native element, so the group costs one element instead of
@@ -944,6 +963,8 @@ check mark (unset, each mark is black or white, whichever reads on its swatch).
 ```
 
 **`hub-select` inside a modal** — the dropdown panel stacks through `--hub-select-dropdown-zindex` (default `calc(var(--hub-sys-zindex-modal, 1055) + 5)`; the previous `--hub-select-dropdown-z-index` spelling is deprecated but still honoured), so a select opened inside a `HubModal` renders above the dialog instead of being clipped underneath it.
+
+**Width of the list** — the panel is never narrower than the control and grows to its longest option, up to `--hub-select-dropdown-max-width` (default `24rem`) and never past the screen. When it would run off the screen from the control's start, it lines up with the control's end.
 
 **`hub-datepicker` inside a modal** — the same guarantee, through `--hub-datepicker-overlay-zindex` (default `calc(var(--hub-sys-zindex-modal, 1055) + 5)`): a calendar opened inside a `HubModal` is drawn over the dialog, and its backdrop one layer under the calendar but still over the dialog, so clicking outside closes it. One token moves both:
 

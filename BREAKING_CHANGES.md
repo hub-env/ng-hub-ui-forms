@@ -2,6 +2,32 @@
 
 This document tracks all breaking changes in the `ng-hub-ui-forms` library.
 
+## v22.42.0
+
+### A select's list is as wide as its options, and may open from the control's end
+
+- **Change**: a panel appended to the body no longer gets an inline `width`; it keeps the control's
+  width as `min-width` and the stylesheet sizes it to `max-content`, capped by
+  `--hub-select-dropdown-max-width` (24rem) and the screen. When it would run off the screen from
+  the control's start it lines up with the control's end. A panel left in place grows the same way
+  from a `min-width: 100%`.
+- **Why**: a list sized to a narrow control cut its options, and a wider list pinned to the start
+  ran off the right edge.
+- **Impact**: lists of narrow selects are wider, and one near the right edge opens leftwards. A
+  stylesheet that widened the panel itself (`width: max-content !important` or similar) is now
+  redundant.
+- **Migration**: drop such overrides. To bring back the old width, set
+  `--hub-select-dropdown-max-width` to `0` so the minimum, the control's width, wins.
+
+### The open caret keeps its height
+
+- **Change**: open, the caret is drawn with `border-width: calc(size / 2) size size` and lifted by
+  half its size, instead of `0 size size`.
+- **Why**: the shorter box put the turned caret about two pixels below the closed one.
+- **Impact**: a stylesheet that nudged `.ng-select-opened .ng-arrow` (`top: -2px` or similar) now
+  lifts it too far.
+- **Migration**: remove the nudge.
+
 ## v22.40.0
 
 ### A lifted floating label is darker, and no longer faded
@@ -21,7 +47,6 @@ This document tracks all breaking changes in the `ng-hub-ui-forms` library.
 - **Migration**: to keep a lighter lifted label, set `--hub-field-floating-raised-color` to the
   colour you want. Do not reach for `opacity` again to get the old look: the fade is what put the
   label under the threshold.
-
 
 ### The remove cross of a multiple `<hub-select>` chip moves after the label
 

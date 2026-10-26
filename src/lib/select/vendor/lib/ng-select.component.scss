@@ -244,7 +244,12 @@
 	box-sizing: border-box;
 	position: absolute;
 	opacity: 0;
-	width: 100%;
+	// As wide as its options, never narrower than the control, up to a limit: a list sized to
+	// a narrow control cut its options to «Pag…». A panel appended elsewhere gets the control's
+	// width as an inline minimum, since 100% there would be the page.
+	width: max-content;
+	min-width: 100%;
+	max-width: min(var(--hub-select-dropdown-max-width, 24rem), calc(100vw - 2rem));
 	z-index: 1050;
 	-webkit-overflow-scrolling: touch;
 
