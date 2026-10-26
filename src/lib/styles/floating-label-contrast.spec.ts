@@ -25,7 +25,7 @@ const MIN_CONTRAST = 4.5;
  */
 const THEME: Record<string, string> = {
 	'--hub-sys-surface-page': '#ffffff',
-	'--hub-sys-text-primary': '#212529',
+	'--hub-sys-text-body': '#212529',
 	'--hub-sys-text-muted': '#6a737b'
 };
 
