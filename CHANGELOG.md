@@ -5,6 +5,18 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.44.0] - 2026-10-27
+
+### Added
+
+- **Validation messages in a tooltip when the container asks for one.** Under a `HUB_FIELD_FEEDBACK`
+  provider that answers `'tooltip'`, a field no longer writes its message under the control. It
+  rings its own box in the danger colour, and the message opens on hover in a danger tooltip, with
+  white or black text depending on contrast. The ring sits on the control and not on the label, so
+  a horizontal field's required mark stays outside it. The message stays in the page, visually
+  hidden, so screen readers still announce it. Without the provider nothing changes. Needs
+  `ng-hub-ui-utils` 22.21.0.
+
 ## [22.43.0] - 2026-10-26
 
 ### Added

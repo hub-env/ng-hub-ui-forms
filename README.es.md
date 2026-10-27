@@ -147,7 +147,7 @@ npm install ng-hub-ui-forms ng-hub-ui-utils ng-hub-ui-ds
 	"@angular/forms": ">=21.0.0",
 	"@angular/platform-browser": ">=21.0.0",
 	"ng-hub-ui-ds": ">=22.14.1",
-	"ng-hub-ui-utils": ">=22.12.0"
+	"ng-hub-ui-utils": ">=22.21.0"
 }
 ```
 
@@ -859,6 +859,13 @@ form = new FormGroup(
 
 Al enviar, cada campo inválido muestra su error y el error cross-field de
 `hubAreEqual` lo muestra el fieldset/form — sin marcado de errores manual.
+
+Dentro de un contenedor que coloca los campos como celdas, un mensaje bajo el control haría la
+fila más alta. Ese contenedor da `HUB_FIELD_FEEDBACK` (de `ng-hub-ui-utils`) con `'tooltip'`, y
+los campos que lleva dentro se rodean con el color de peligro y guardan el mensaje para un tooltip
+al pasar el ratón, en ese mismo color y con letra blanca o negra según el contraste. El mensaje
+sigue en la página, oculto a la vista, así que los lectores de pantalla lo siguen anunciando. La
+tabla de paginable lo hace con `flushFields`, y el spreadsheet con los campos que abre en una celda.
 
 #### Llevar a los errores
 

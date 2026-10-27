@@ -288,6 +288,39 @@ hub-timepicker {
 }
 
 /**
+ * Feedback as a tooltip, asked for by a container through `HUB_FIELD_FEEDBACK` (the paginable
+ * table does it under `flushFields`).
+ *
+ * The message leaves the page but not the accessibility tree, the same clipped box as the
+ * visually-hidden label, so the row keeps its height and the alert is still read out. The
+ * field says it is wrong with a danger ring drawn inside its own box, which survives the
+ * table taking the border away and never moves the layout. The tooltip takes the danger
+ * colour from here: the controller copies `--hub-tooltip-*` off the host when it opens.
+ */
+.hub-field-host--feedback-tooltip {
+	--hub-tooltip-bg: var(--hub-form-invalid-border-color);
+	--hub-tooltip-color: var(--hub-sys-color-danger-on, #fff);
+
+	.hub-field__feedback {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	// On the body rather than the field, so a horizontal field's label and required mark stay outside.
+	.hub-field--invalid > .hub-field__body {
+		border-radius: var(--hub-input-border-radius);
+		box-shadow: inset 0 0 0 var(--hub-input-border-width, 1px) var(--hub-form-invalid-border-color);
+	}
+}
+
+/**
  * Read-only fields.
  *
  * Applied from the field's own `readonly` state, so nothing has to be remembered at

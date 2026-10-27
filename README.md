@@ -148,7 +148,7 @@ npm install ng-hub-ui-forms ng-hub-ui-utils ng-hub-ui-ds
 	"@angular/forms": ">=21.0.0",
 	"@angular/platform-browser": ">=21.0.0",
 	"ng-hub-ui-ds": ">=22.14.1",
-	"ng-hub-ui-utils": ">=22.12.0"
+	"ng-hub-ui-utils": ">=22.21.0"
 }
 ```
 
@@ -842,6 +842,13 @@ form = new FormGroup(
 
 On submit, each invalid field shows its error and the cross-field `hubAreEqual`
 error is surfaced by the fieldset/form — no manual error markup anywhere.
+
+Inside a container that lays fields out as cells, a message under the control would make the
+row taller. Such a container provides `HUB_FIELD_FEEDBACK` (from `ng-hub-ui-utils`) with
+`'tooltip'`, and the fields inside it ring themselves in the danger colour and keep the message
+for a tooltip on hover, in the danger colour with white or black text by contrast. The message
+stays in the page, visually hidden, so screen readers still announce it. The paginable table does
+this under `flushFields`, and the spreadsheet for the fields it opens in a cell.
 
 #### Taking the reader to the errors
 

@@ -1,9 +1,11 @@
 import {
 	AfterContentInit,
+	afterEveryRender,
 	ChangeDetectorRef,
 	computed,
 	contentChild,
 	contentChildren,
+	DestroyRef,
 	Directive,
 	ElementRef,
 	inject,
@@ -13,6 +15,7 @@ import {
 	TemplateRef
 } from '@angular/core';
 import { ControlContainer, ControlValueAccessor, NgControl, ValidationErrors } from '@angular/forms';
+import { HUB_FIELD_FEEDBACK, HubTooltipController } from 'ng-hub-ui-utils';
 import { takeUntil } from 'rxjs';
 import { HubFormTextDirective } from '../directives/form-text.directive';
 import { FormTextType, FormTextTypes } from '../interfaces/common.interface';
@@ -38,13 +41,18 @@ import { isDefined, uuid } from '../utils/utils';
  */
 @Directive({
 	host: {
-		'(focusout)': 'handleBlur($event)'
+		'(focusout)': 'handleBlur($event)',
+		'[class.hub-field-host--feedback-tooltip]': 'feedbackAsTooltip()'
 	}
 })
 export abstract class HubFieldControl extends HubFormControl implements ControlValueAccessor, AfterContentInit {
 	protected readonly _elementRef = inject(ElementRef);
 	readonly #config = inject(HUB_FORMS_CONFIG);
 	readonly #cdr = inject(ChangeDetectorRef);
+	readonly #feedbackPlacement = inject(HUB_FIELD_FEEDBACK, { optional: true });
+
+	/** Built on the first render that has a message to carry, and never for a field that shows it below. */
+	#feedbackTooltip: HubTooltipController | null = null;
 
 	protected readonly _control = inject(NgControl, { self: true, optional: true })!;
 	protected readonly _controlContainer = inject(ControlContainer, { skipSelf: true, host: true, optional: true })!;
@@ -104,6 +112,13 @@ export abstract class HubFieldControl extends HubFormControl implements ControlV
 		() => this.formTextType() === FormTextTypes.Tooltip && !!this.formText()
 	);
 
+	/**
+	 * Whether a container above asked for the validation message as a tooltip
+	 * (see `HUB_FIELD_FEEDBACK`). The message block stays in the page, out of sight, so it is
+	 * still announced; the field marks itself in the danger colour instead.
+	 */
+	protected readonly feedbackAsTooltip = computed(() => this.#feedbackPlacement?.() === 'tooltip');
+
 	onChange: (value: any) => void = () => {};
 	onTouched: () => void = () => {};
 
@@ -115,6 +130,30 @@ export abstract class HubFieldControl extends HubFormControl implements ControlV
 
 		if (this._control) {
 			this._control.valueAccessor = this;
+		}
+
+		afterEveryRender(() => this.#syncFeedbackTooltip());
+		inject(DestroyRef).onDestroy(() => this.#feedbackTooltip?.destroy());
+	}
+
+	/**
+	 * Hands the rendered message to the tooltip. Read off the DOM rather than rebuilt from the
+	 * errors, so projected `hubValidationError` templates and HTML messages come through as the
+	 * text the reader would have seen under the control.
+	 */
+	#syncFeedbackTooltip(): void {
+		if (!this.feedbackAsTooltip()) {
+			this.#feedbackTooltip?.setText('');
+			return;
+		}
+
+		const host: HTMLElement = this._elementRef.nativeElement;
+		const message = this.isInvalid
+			? (host.querySelector('.hub-field__feedback[role="alert"]')?.textContent ?? '').replace(/\s+/g, ' ').trim()
+			: '';
+
+		if (message || this.#feedbackTooltip) {
+			(this.#feedbackTooltip ??= new HubTooltipController(host)).setText(message);
 		}
 	}
 

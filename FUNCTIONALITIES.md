@@ -18,6 +18,7 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 |                 | Message templates overridden per key with `hubValidationError`                                     |       ✅        |
 |                 | Global templates through `provideHubForms({ invalidFeedback })`                                    |       ❌        |
 |                 | `invalidFeedbackTemplateFn` per field                                                              |       ❌        |
+|                 | Message in a danger tooltip when a container provides `HUB_FIELD_FEEDBACK` with `'tooltip'`        |       ✅        |
 | **Valid state** | Opt-in success border and ring (`showValid`, `validFeedback`)                                      |       ❌        |
 | **Helper text** | `formText` under the control                                                                       |       ✅        |
 |                 | `formTextType="tooltip"` — the hint behind a question mark                                         |       ✅        |
