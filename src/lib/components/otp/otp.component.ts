@@ -43,7 +43,7 @@ export type HubOtpMode = 'numeric' | 'alphanumeric' | 'alpha';
 	template: `
 		<div
 			class="hub-field hub-otp"
-			[class.hub-field--horizontal]="labelType() === _labelTypes.Horizontal"
+			[class.hub-field--horizontal]="labelType() === _labelTypes.Horizontal || (!label() && showsFormTextTooltip())"
 			[class.hub-field--disabled]="disabled()"
 			[class.hub-field--invalid]="isInvalid"
 			[class.hub-field--valid]="showsValid"

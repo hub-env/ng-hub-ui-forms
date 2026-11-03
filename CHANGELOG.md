@@ -5,6 +5,19 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.44.1] - 2026-11-03
+
+### Fixed
+
+- **`formTextType="tooltip"` mark and helper text now reach a field with no label of its own.**
+  The mark used to sit flush with the label, but with no label to sit beside, it drifted to the
+  far edge of whatever row the field was given. That never showed on fields that fill their row
+  edge to edge, but it stranded the mark on `hub-segmented`, which never does. The mark now sits
+  one gap after the label, or after nothing when there is none, in every layout; the row switches
+  to the horizontal grid on its own once there is a mark to place beside the control. Helper text
+  shown below the control, not behind the mark, now spans the label column too in a
+  `labelType="horizontal"` field, instead of starting under the control alone.
+
 ## [22.44.0] - 2026-10-27
 
 ### Added

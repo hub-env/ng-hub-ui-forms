@@ -47,7 +47,7 @@ import { HubTooltipDirective } from 'ng-hub-ui-utils';
 	template: `
 		<div
 			class="hub-field hub-timepicker"
-			[class.hub-field--horizontal]="labelType() === _labelTypes.Horizontal"
+			[class.hub-field--horizontal]="labelType() === _labelTypes.Horizontal || (!label() && showsFormTextTooltip())"
 			[class.hub-field--disabled]="disabled()"
 			[class.hub-field--invalid]="isInvalid"
 			[class.hub-field--valid]="showsValid"

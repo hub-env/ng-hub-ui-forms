@@ -76,13 +76,20 @@ hub-timepicker {
 			text-overflow: ellipsis;
 		}
 
-		// Control, helper text and validation feedback all stack in the second
-		// column, so the form-text / errors stay BELOW the control even when the
-		// label is placed horizontally.
-		> .hub-field__body,
+		// The control sits in the second column, under the label's own row.
+		> .hub-field__body {
+			grid-column: 2;
+			min-width: 0;
+		}
+
+		// Helper text and validation feedback run the full row instead: anchored to the
+		// label's column only, they would start wherever the label happens to end and
+		// read as attached to the control alone; anchored to the control's column only,
+		// as before, they would start short of the label with nothing above them there.
+		// Spanning both keeps one left edge for the field, horizontal or not.
 		> .hub-field__form-text,
 		> .hub-field__feedback {
-			grid-column: 2;
+			grid-column: 1 / -1;
 			min-width: 0;
 		}
 	}
@@ -119,17 +126,16 @@ hub-timepicker {
 	}
 
 	/**
-	 * Label row: the label at one end, the helper-text trigger at the other.
+	 * Label row: the label, then the helper-text trigger right beside it.
 	 *
 	 * Only rendered when a field asks for `formTextType="tooltip"`. The label stays a
 	 * direct child of `.hub-field` in every other case, because that is what the
 	 * horizontal grid and a good deal of existing markup address.
 	 *
-	 * The mark is pushed to the end with an auto margin rather than with
-	 * `justify-content: space-between`, which only separates two children: a floating-label
-	 * field puts the hint in the row on its own, and space-between would leave it hanging at
-	 * the start. The auto margin sends it to the end either way, so a column of fields lines
-	 * its question marks up instead of scattering them wherever each label happens to stop.
+	 * The mark sits immediately after the label, one `gap` away, in both the stacked and the
+	 * horizontal layout — never pushed to the row's far edge: the row can be as wide as the
+	 * control below it, which the label rarely is, and a mark parked out at that edge reads as
+	 * unrelated to the label it explains.
 	 */
 	&__label-row {
 		display: flex;
@@ -138,10 +144,6 @@ hub-timepicker {
 
 		> .hub-field__label {
 			min-width: 0;
-		}
-
-		> .hub-field__hint {
-			margin-inline-start: auto;
 		}
 	}
 

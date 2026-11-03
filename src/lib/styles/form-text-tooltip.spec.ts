@@ -6,6 +6,7 @@ import { provideHubForms } from '../services/forms-config';
 import { HubFormTextDirective } from '../directives/form-text.directive';
 import { HubInputComponent } from '../components/input/input.component';
 import { HubOtpInputComponent } from '../components/otp/otp.component';
+import { HubSegmentedComponent, HubSegmentedOption } from '../components/segmented/segmented.component';
 import { HubTextareaComponent } from '../components/textarea/textarea.component';
 
 /**
@@ -56,6 +57,32 @@ class FormTextHostComponent {
 class CheckableHostComponent {
 	readonly ctrl = new FormControl<any>(false);
 	readonly text = 'Turning this on cannot be undone.';
+}
+
+/**
+ * No `label` at all — a host paints it elsewhere (a column shared with a read-only view,
+ * for instance) and leaves the field with none. `hub-segmented` is the control that exposes
+ * this: unlike the rest, it never stretches to fill its row, so a mark or a helper-text block
+ * anchored to the row's own width lands away from the control it explains rather than beside
+ * or under it. `labelType` is left at its default on purpose — the horizontal layout has to
+ * switch on by itself once there is something (here, the mark) to put beside the control.
+ */
+@Component({
+	standalone: true,
+	imports: [HubInputComponent, HubSegmentedComponent, ReactiveFormsModule],
+	template: `
+		<hub-input [formControl]="ctrl" [formText]="text()" [formTextType]="type()" />
+		<hub-segmented [formControl]="ctrl" [options]="options" [formText]="text()" [formTextType]="type()" />
+	`
+})
+class NoLabelHostComponent {
+	readonly ctrl = new FormControl<any>(null);
+	readonly text = signal('What this role can do in this section.');
+	readonly type = signal<FormTextType>('bottom');
+	readonly options: HubSegmentedOption[] = [
+		{ value: 'view', label: 'View' },
+		{ value: 'edit', label: 'Edit' }
+	];
 }
 
 describe('helper text as a tooltip', () => {
@@ -206,5 +233,44 @@ describe('helper text as a tooltip', () => {
 		// markup without a word, so a field with one keeps its text where it renders.
 		const templated = all('.hub-field__form-text').map((el) => el.textContent?.trim());
 		expect(templated).toContain('Rich helper text');
+	});
+});
+
+describe('helper text on a field with no label of its own', () => {
+	let fixture: any;
+
+	beforeEach(async () => {
+		TestBed.resetTestingModule();
+		await TestBed.configureTestingModule({
+			imports: [NoLabelHostComponent],
+			providers: [provideZonelessChangeDetection(), provideHubForms()]
+		}).compileComponents();
+
+		fixture = TestBed.createComponent(NoLabelHostComponent);
+		await fixture.whenStable();
+	});
+
+	const host = (): HTMLElement => fixture.nativeElement;
+	const horizontal = (): HTMLElement[] => Array.from(host().querySelectorAll('.hub-field--horizontal'));
+
+	it('stays in the stacked layout while there is nothing to put beside the control', () => {
+		expect(horizontal()).toEqual([]);
+	});
+
+	it('switches to the horizontal layout once the mark needs somewhere to sit beside the control', async () => {
+		fixture.componentInstance.type.set('tooltip');
+		await fixture.whenStable();
+
+		// Both fields: the one that always fills its row (hub-input) and the one that
+		// never does (hub-segmented) — the row it never fills is exactly where the mark
+		// used to end up stranded.
+		expect(horizontal().length).toBe(2);
+
+		const hints = Array.from(host().querySelectorAll('.hub-field__hint')) as HTMLButtonElement[];
+		expect(hints.length).toBe(2);
+		hints.forEach((hint) => {
+			expect(hint.closest('.hub-field--horizontal')).toBeTruthy();
+			expect(hint.parentElement?.classList.contains('hub-field__label-row')).toBe(true);
+		});
 	});
 });
