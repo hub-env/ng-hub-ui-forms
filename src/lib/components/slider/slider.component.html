@@ -1,6 +1,9 @@
 <div
 	class="hub-field hub-slider"
-	[class.hub-field--horizontal]="(label() && labelType() === _labelTypes.Horizontal) || (!label() && showsFormTextTooltip())"
+	[class.hub-field--horizontal]="
+		(label() && labelType() === _labelTypes.Horizontal) ||
+		((!label() || labelType() === _labelTypes.VisuallyHidden) && showsFormTextTooltip())
+	"
 	[class.hub-field--disabled]="disabled()"
 	[class.hub-field--invalid]="isInvalid"
 	[class.hub-field--valid]="showsValid"

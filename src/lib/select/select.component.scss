@@ -3,6 +3,7 @@
 // from the global `styles/_field.scss` + `_tokens.scss`. No `::ng-deep`.
 
 @use '../styles/group-addons';
+@use '../styles/mixins/select-chip';
 
 hub-select {
 	display: block;
@@ -72,8 +73,11 @@ hub-select.hidden-control {
 
 	// Multiple-selection chips.
 	&.ng-select-multiple {
+		// The gap parts the chips, also between wrapped rows. The padding keeps them off the
+		// border by the same amount above and below, so a single row sits in the middle; a margin
+		// under each chip used to do that job from one side only and left them 2px high.
 		.ng-value-container {
-			padding-top: 0;
+			padding-block: 0.25rem;
 			padding-inline-start: var(--hub-select-padding-x);
 			gap: 0.25rem;
 		}
@@ -87,7 +91,7 @@ hub-select.hidden-control {
 		.ng-value {
 			display: inline-flex;
 			align-items: center;
-			margin: 0 0 0.25rem 0;
+			margin: 0;
 			background: var(--hub-select-value-bg);
 			color: var(--hub-select-value-color);
 			border-radius: var(--hub-select-value-border-radius);
@@ -320,6 +324,22 @@ hub-select.hidden-control {
 	// Canonical hook first (`zindex` spelling); the deprecated `z-index` name keeps
 	// working one cycle as the fallback/default carrier declared in _tokens.scss.
 	z-index: var(--hub-select-dropdown-zindex, var(--hub-select-dropdown-z-index));
+}
+
+// ── chip ────────────────────────────────────────────────────────────────────
+// A list filter drawn as a pill: `class="hub-select-chip"`, plus one of the nine accents the
+// buttons take (`hub-select-chip-success`…) or none for primary. The look itself is the
+// `hub-select-chip` mixin, so a product can put it on a class of its own.
+.hub-select-chip {
+	@include select-chip.hub-select-chip;
+}
+
+$hub-select-chip-accents: primary, secondary, success, danger, warning, info, neutral, light, dark;
+
+@each $accent in $hub-select-chip-accents {
+	.hub-select-chip-#{$accent} {
+		--hub-select-chip-accent: var(--hub-sys-color-#{$accent}, var(--hub-sys-color-primary));
+	}
 }
 
 // ── buttons format ──────────────────────────────────────────────────────────

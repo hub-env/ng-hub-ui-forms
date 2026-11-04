@@ -1,7 +1,10 @@
 <div
 	class="hub-field hub-input"
 	[class.hub-field--horizontal]="
-		!isCheckable() && (labelType() === _labelTypes.Horizontal || (!label() && (required() || showsFormTextTooltip())))
+		!isCheckable() &&
+		(labelType() === _labelTypes.Horizontal ||
+			(!label() && required()) ||
+			((!label() || labelType() === _labelTypes.VisuallyHidden) && showsFormTextTooltip()))
 	"
 	[class.hub-input--checkable]="isCheckable()"
 	[class.hub-field--disabled]="disabled()"

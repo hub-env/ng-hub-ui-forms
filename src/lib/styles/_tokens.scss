@@ -46,7 +46,7 @@
 	--hub-form-feedback-font-size: var(--hub-ref-font-size-sm, 0.875rem);
 	--hub-form-feedback-margin-top: var(--hub-ref-space-1, 0.25rem);
 
-	--hub-form-text-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-form-text-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-form-text-font-size: var(--hub-ref-font-size-sm, 0.875rem);
 	--hub-form-text-margin-top: var(--hub-ref-space-1, 0.25rem);
 
@@ -62,7 +62,7 @@
 	--hub-form-hint-size: 1.15em;
 	--hub-form-hint-font-size: var(--hub-ref-font-size-xs, 0.75rem);
 	--hub-form-hint-font-weight: var(--hub-ref-font-weight-bold, 700);
-	--hub-form-hint-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-form-hint-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-form-hint-bg: transparent;
 	--hub-form-hint-border-width: 1px;
 	--hub-form-hint-border-color: var(--hub-sys-border-color-default, #dee2e6);
@@ -133,7 +133,7 @@
 	--hub-input-border-radius: var(--hub-ref-radius-md, 0.375rem);
 	--hub-input-focus-border-color: var(--hub-sys-color-primary, #0d6efd);
 	--hub-input-focus-box-shadow: 0 0 0 var(--hub-form-focus-ring-width) var(--hub-form-focus-ring-color);
-	--hub-input-placeholder-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-input-placeholder-color: var(--hub-sys-text-muted, #6a737b);
 
 	// Read-only fields. Not a faded variant of disabled: a read-only value is there
 	// to be read, so it keeps full contrast and loses only the chrome that promises
@@ -170,7 +170,7 @@
 	// standing beside it, so the group reads as one box with a unit written inside.
 	// The fill is spent on what can be operated instead — see the action tokens below.
 	--hub-input-group-addon-bg: var(--hub-input-bg);
-	--hub-input-group-addon-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-input-group-addon-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-input-group-addon-border-color: var(--hub-input-border-color);
 
 	// Whatever is attached and operable. Carries the fill so the eye lands on the thing
@@ -190,7 +190,7 @@
 	--hub-input-group-attached-border-color: var(--hub-input-border-color);
 
 	// Input · affix (projected leading/trailing content, e.g. a <hub-icon>)
-	--hub-input-icon-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-input-icon-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-input-icon-size: var(--hub-ref-font-size-base, 1rem);
 	--hub-input-affix-inset: var(--hub-input-padding-x);
 	--hub-input-affix-gap: var(--hub-ref-space-2, 0.5rem);
@@ -198,7 +198,7 @@
 	// Input · clear button ([clearable]) — glyph is a swappable mask
 	--hub-input-clear-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='black' d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708'/%3E%3C/svg%3E");
 	--hub-input-clear-size: var(--hub-ref-font-size-base, 1rem);
-	--hub-input-clear-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-input-clear-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-input-clear-hover-color: var(--hub-sys-color-danger, #dc3545);
 
 	// Input · password format (reveal toggle, Caps Lock hint, strength meter)
@@ -289,7 +289,7 @@
 	// Dropzone copy. The prompt is a row by default (invitation and browse action side by
 	// side); `--hub-file-input-prompt-direction: column` stacks them, which is what a
 	// dropzone carrying a `dropSubtext` wants.
-	--hub-file-input-prompt-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-file-input-prompt-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-file-input-prompt-font-size: var(--hub-ref-font-size-base, 1rem);
 	--hub-file-input-prompt-direction: row;
 	// `baseline` aligns a row of text; a column prompt wants `center`.
@@ -300,7 +300,7 @@
 	--hub-file-input-drop-text-font-weight: inherit;
 	--hub-file-input-drop-subtext-color: var(--hub-file-input-hint-color);
 	--hub-file-input-drop-subtext-font-size: var(--hub-file-input-hint-font-size);
-	--hub-file-input-hint-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-file-input-hint-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-file-input-hint-font-size: var(--hub-ref-font-size-sm, 0.875rem);
 
 	// Browse action — a transparent, underlined text affordance by default. Give it a
@@ -327,7 +327,7 @@
 	// `<ng-template hubFileIcon>` to replace the per-file glyph with a component.
 	--hub-file-input-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='black' d='M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5'/%3E%3Cpath fill='black' d='M7.646.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 1.707V10.5a.5.5 0 0 1-1 0V1.707L5.354 3.854a.5.5 0 1 1-.708-.708z'/%3E%3C/svg%3E");
 	--hub-file-input-icon-size: 2rem;
-	--hub-file-input-icon-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-file-input-icon-color: var(--hub-sys-text-muted, #6a737b);
 	// The glyph can sit on a medallion: a tinted, rounded surface behind it. Off by default
 	// (transparent, square, exactly the glyph's box), so the dropzone renders unchanged.
 	--hub-file-input-icon-bg: transparent;
@@ -335,7 +335,7 @@
 	--hub-file-input-icon-chip-radius: 0;
 	--hub-file-input-file-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='black' d='M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.414A1.5 1.5 0 0 0 13.56 3.35L10.65.44A1.5 1.5 0 0 0 9.586 0zm5.5 1.5v2a1 1 0 0 0 1 1h2z'/%3E%3C/svg%3E");
 	--hub-file-input-file-icon-size: 1.5rem;
-	--hub-file-input-file-icon-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-file-input-file-icon-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-file-input-remove-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='black' d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708'/%3E%3C/svg%3E");
 	--hub-file-input-cancel-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='black' d='M5 3.5h6a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5'/%3E%3C/svg%3E");
 	--hub-file-input-retry-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='black' d='M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z'/%3E%3Cpath fill='black' d='M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466'/%3E%3C/svg%3E");
@@ -344,7 +344,7 @@
 
 	// Per-file action buttons
 	--hub-file-input-action-size: 1rem;
-	--hub-file-input-action-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-file-input-action-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-file-input-action-hover-color: var(--hub-sys-text-body, #212529);
 	--hub-file-input-remove-hover-color: var(--hub-sys-color-danger, #dc3545);
 
@@ -359,11 +359,11 @@
 	--hub-file-input-item-padding-y: var(--hub-ref-space-2, 0.5rem);
 	--hub-file-input-item-gap: var(--hub-ref-space-2, 0.5rem);
 	--hub-file-input-name-font-size: var(--hub-ref-font-size-sm, 0.875rem);
-	--hub-file-input-size-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-file-input-size-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-file-input-size-font-size: var(--hub-ref-font-size-sm, 0.875rem);
 	--hub-file-input-error-color: var(--hub-sys-color-danger, #dc3545);
 	--hub-file-input-error-font-size: var(--hub-ref-font-size-sm, 0.875rem);
-	--hub-file-input-clear-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-file-input-clear-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-file-input-clear-font-size: var(--hub-ref-font-size-sm, 0.875rem);
 
 	// Thumbnail
@@ -492,7 +492,7 @@
 	--hub-file-drop-text-color: var(--hub-sys-text-body, #212529);
 	--hub-file-drop-text-font-size: var(--hub-ref-font-size-lg, 1.125rem);
 	--hub-file-drop-text-font-weight: var(--hub-ref-font-weight-medium, 500);
-	--hub-file-drop-subtext-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-file-drop-subtext-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-file-drop-subtext-font-size: var(--hub-ref-font-size-sm, 0.875rem);
 	--hub-file-drop-transition: 0.15s ease-in-out;
 	// Above a modal, because a screen can be a modal: a drop zone that lands under the dialog it
@@ -582,13 +582,13 @@
 	--hub-select-group-attached-gap: var(--hub-input-group-attached-gap);
 	--hub-select-group-attached-border-width: var(--hub-select-border-width);
 	--hub-select-group-attached-border-color: var(--hub-select-border-color);
-	--hub-select-arrow-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-select-arrow-color: var(--hub-sys-text-muted, #6a737b);
 	// Caret geometry — the border of the CSS triangle and the wrapper's inline
 	// padding (clearance from the value and from the field edge). Tune both to
 	// follow a denser field scale (`--hub-select-font-size` / `-min-height`).
 	--hub-select-arrow-size: 5px;
 	--hub-select-arrow-gap: var(--hub-ref-space-2, 0.5rem);
-	--hub-select-clear-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-select-clear-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-select-clear-hover-color: var(--hub-sys-color-danger, #dc3545);
 	--hub-select-option-color: var(--hub-sys-text-body, #212529);
 	--hub-select-option-padding-x: var(--hub-ref-space-3, 1rem);
@@ -602,7 +602,7 @@
 	// Text on the selected option sits on the primary accent — read the derived
 	// contrast token so a light/custom primary keeps the label legible.
 	--hub-select-option-selected-color: var(--hub-sys-color-primary-on, var(--hub-ref-color-white, #fff));
-	--hub-select-optgroup-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-select-optgroup-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-select-value-bg: var(--hub-sys-surface-elevated, #f8f9fa);
 	--hub-select-value-color: var(--hub-sys-text-body, #212529);
 	--hub-select-value-border-radius: var(--hub-ref-radius-sm, 0.25rem);
@@ -625,6 +625,14 @@
 	// carrier and override bridge; the canonical hook is `--hub-select-dropdown-zindex`,
 	// read first at the consumption point (select.component.scss).
 	--hub-select-dropdown-z-index: calc(var(--hub-sys-zindex-modal, 1055) + 5);
+	// `.hub-select-chip`: the one colour the pill is drawn in (border, tints, focus ring, and the
+	// name and value with their lightness capped). The `hub-select-chip-<accent>` classes point it
+	// at a semantic colour, as a button's colour does.
+	--hub-select-chip-accent: var(--hub-sys-color-primary, #0d6efd);
+	// What the open list lines up with: `control`, the part that holds the value, or `group`, the
+	// whole field with its prepend and append. Read when the list opens, so a stylesheet decides
+	// it; the chip asks for `group`, so the list starts under the filter's name.
+	--hub-select-dropdown-anchor: control;
 
 	// ── Datepicker ──────────────────────────────────────────────────────────────
 	--hub-datepicker-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%236c757d' d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/%3E%3C/svg%3E");
@@ -655,8 +663,8 @@
 	// so retinting the range moves the preview with it — the two must never drift apart, or
 	// the tentative state stops reading as weaker than the settled one.
 	--hub-daterangepicker-preview-bg: color-mix(in oklch, var(--hub-daterangepicker-in-range-bg) 50%, transparent);
-	--hub-daterangepicker-off-color: var(--hub-sys-text-muted, #6c757d);
-	--hub-daterangepicker-nav-arrow-color: var(--hub-sys-text-muted, #6c757d);
+	--hub-daterangepicker-off-color: var(--hub-sys-text-muted, #6a737b);
+	--hub-daterangepicker-nav-arrow-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-daterangepicker-nav-arrow-hover-color: var(--hub-sys-text-body, #212529);
 
 	// Select · buttons format
@@ -680,6 +688,10 @@
 	--hub-segmented-accent: var(--hub-sys-color-primary, #0d6efd);
 	--hub-segmented-selected-bg: var(--hub-sys-surface-page, #fff);
 	--hub-segmented-selected-color: var(--hub-sys-text-body, #212529);
+	// Disabled keeps the selection readable: a flat grey pill with body-coloured text, while the
+	// unselected options fade with `--hub-form-disabled-opacity`.
+	--hub-segmented-disabled-selected-bg: var(--hub-sys-border-color-default, #dee2e6);
+	--hub-segmented-disabled-selected-color: var(--hub-sys-text-body, #212529);
 	--hub-segmented-radius: var(--hub-ref-radius-md, 0.375rem);
 	--hub-segmented-gap: 0.25rem;
 	--hub-segmented-padding-x: var(--hub-ref-space-3, 1rem);

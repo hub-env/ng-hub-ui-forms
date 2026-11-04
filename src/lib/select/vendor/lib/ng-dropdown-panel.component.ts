@@ -73,6 +73,19 @@ export class NgDropdownPanelComponent implements OnInit, OnChanges {
 	 */
 	readonly outsideClickEvent = input<'click' | 'mousedown'>('click');
 	readonly popover = input(false, { transform: booleanAttribute });
+	/**
+	 * Finds the element the list lines up with instead of the control. A select that wears a name
+	 * in front of its value (a chip) is wider than the part that holds the value, and the list
+	 * belongs under the whole thing. A function rather than an element, asked each time the list
+	 * is placed, because what decides it is the stylesheet, which can change between openings.
+	 * Unset, or answering `null`, the control itself is the reference, as upstream.
+	 */
+	readonly anchor = input<(() => HTMLElement | null) | null>(null);
+
+	/** The anchor element for this placement, or `null` for the control. */
+	private _anchorElement(): HTMLElement | null {
+		return this.anchor()?.() ?? null;
+	}
 	readonly update = output<any[]>();
 	readonly scroll = output<{
 		start: number;
@@ -203,6 +216,11 @@ export class NgDropdownPanelComponent implements OnInit, OnChanges {
 			// Again now the options are drawn: they decide how wide the panel is.
 			this._updateXPosition();
 			this._updateYPosition();
+		} else {
+			const anchor = this._anchorElement();
+			if (anchor) {
+				this._alignInlineToAnchor(anchor);
+			}
 		}
 
 		this._dropdown.style.opacity = '1';
@@ -426,7 +444,7 @@ export class NgDropdownPanelComponent implements OnInit, OnChanges {
 	 * after the minimum is in place and the side is chosen from that.
 	 */
 	private _updateXPosition() {
-		const select = this._select.getBoundingClientRect();
+		const select = (this._anchorElement() ?? this._select).getBoundingClientRect();
 		const parent = this._parent.getBoundingClientRect();
 		const isRTL = document.documentElement.dir === 'rtl';
 
@@ -444,10 +462,28 @@ export class NgDropdownPanelComponent implements OnInit, OnChanges {
 		this._dropdown.style.right = 'auto';
 	}
 
+	/**
+	 * Same alignment for a list that stays inside the control (no `appendTo`): it is positioned
+	 * against `.ng-select`, so the anchor's offset from it is what moves the list. The width is
+	 * left to the stylesheet; only the minimum is set.
+	 */
+	private _alignInlineToAnchor(element: HTMLElement) {
+		const anchor = element.getBoundingClientRect();
+		const select = this._select.getBoundingClientRect();
+		const isRTL = document.documentElement.dir === 'rtl';
+
+		this._dropdown.style.minWidth = anchor.width + 'px';
+		if (isRTL) {
+			this._dropdown.style.right = select.right - anchor.right + 'px';
+		} else {
+			this._dropdown.style.left = anchor.left - select.left + 'px';
+		}
+	}
+
 	private _updateYPosition() {
 		const select = this._select.getBoundingClientRect();
 		const parent = this._parent.getBoundingClientRect();
-		const selectContainer = this._select.querySelector('.ng-select-container') as HTMLElement;
+		const selectContainer = (this._anchorElement() ?? this._select.querySelector('.ng-select-container')) as HTMLElement;
 		const containerRect = selectContainer?.getBoundingClientRect() ?? select;
 
 		// Both branches measure from the parent's top edge. An unpositioned `body` is not the

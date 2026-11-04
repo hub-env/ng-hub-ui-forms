@@ -6,6 +6,7 @@ import {
 	Component,
 	computed,
 	contentChild,
+	ElementRef,
 	inject,
 	input,
 	numberAttribute,
@@ -117,6 +118,20 @@ export class HubSelectComponent extends HubFieldControl {
 	 * seeing the list takes another.
 	 */
 	private readonly _engine = viewChild(NgSelectComponent);
+	private readonly _group = viewChild<ElementRef<HTMLElement>>('selectGroup');
+
+	/**
+	 * What the open list lines up with, asked each time it opens: the whole group when
+	 * `--hub-select-dropdown-anchor` says `group` (the chip does), the value part otherwise.
+	 *
+	 * A stylesheet decides it rather than an input, so a chip built with the `hub-select-chip`
+	 * mixin on a product's own class gets the same list as the ready-made class.
+	 */
+	protected readonly _dropdownAnchor = (): HTMLElement | null => {
+		const host = this._elementRef.nativeElement as HTMLElement;
+		const wanted = getComputedStyle(host).getPropertyValue('--hub-select-dropdown-anchor').trim();
+		return wanted === 'group' ? (this._group()?.nativeElement ?? null) : null;
+	};
 
 	/**
 	 * Honours {@link autoOpen} once, after the first render.

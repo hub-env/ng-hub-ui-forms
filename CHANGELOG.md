@@ -5,6 +5,50 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.45.0] - 2026-11-04
+
+### Added
+
+- **Filter chips for `hub-select`.** `class="hub-select-chip"` draws the select as the pill a list
+  filter wears: the `prepend` as the filter's name with a colon, the value, and the clear button
+  as the chip's ×, with a soft tint at rest and a stronger tint and a solid border while it holds a
+  value. `hub-select-chip-<accent>` picks one of the nine accents a button takes (`primary` when
+  none is given), and the new `hub-select-chip` mixin puts the same look on a class of your own or
+  in an accent the nine do not cover. The name and the value take the accent with its lightness
+  capped, so a warning chip does not write yellow on yellow. Hubana's list filters have worn this
+  look on six screens.
+- **The open list can line up with the whole field.** The new `--hub-select-dropdown-anchor`
+  token is `control` by default, the part that holds the value, as before. Set to `group`, which
+  the chip does, the list starts under the filter's name and is at least as wide as the pill, with
+  or without `appendTo`, opening down or up. It is read each time the list opens, so a stylesheet
+  decides it.
+- **`readonly` on `hub-segmented`.** Shows the value at full strength and lets nothing change it,
+  by pointer or keyboard; the options stay focusable, and in single mode the radiogroup carries
+  `aria-readonly`. Multiple mode's `group` role does not allow that attribute, so it is left off.
+
+### Fixed
+
+- **A disabled `hub-segmented` shows which option is selected.** The whole bar used to fade, the
+  selected option with it, so a role opened read-only could not show its access level. Only the
+  unselected options fade now; the selected one keeps a flat pill, painted with the new
+  `--hub-segmented-disabled-selected-bg` and `--hub-segmented-disabled-selected-color`.
+- **A checkbox or switch sits on the first line of a long label.** The box was centred on the whole
+  label, so a consent text of three lines had it halfway down. It now lines up with the first
+  line, measured in the label's own font size.
+- **A visually hidden label counts as no label for the `?` mark.** 22.44.1 placed the
+  `formTextType="tooltip"` mark in line with a field that has no label; a field whose label is
+  `labelType="visually-hidden"` still put the mark in a row of its own above the control. It now
+  gets the same placement in `hub-input`, `hub-textarea`, `hub-datepicker`, `hub-select`,
+  `hub-slider` and `hub-segmented`, so a page that draws its own label in a column of its own can
+  keep the field named and still show the mark in line.
+- **The chips of a multiple select sit in the middle of the field.** Each chip carried a 4px margin
+  underneath only, which left a row of them 2px high; the value container now pads them equally
+  above and below, wrapped rows included.
+- **The muted-text fallback is the accessible grey.** Every `var(--hub-sys-text-muted, …)` and
+  `var(--hub-sys-color-text-subtle, …)` in the package wrote `#6c757d` after the comma; it is now
+  `#6a737b`, the grey `ng-hub-ui-ds` moved to because `#6c757d` reads 4.44:1 on the elevated
+  surface. It only paints when the design system is not loaded.
+
 ## [22.44.2] - 2026-11-04
 
 ### Fixed

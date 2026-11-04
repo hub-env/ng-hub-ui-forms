@@ -1,0 +1,108 @@
+// ─────────────────────────────────────────────────────────────────────────
+// hub-select-chip — a `<hub-select>` drawn as a filter pill
+// ─────────────────────────────────────────────────────────────────────────
+//
+// A filter above a list that picks one value (or several) from a list: the filter's name in
+// front (the select's `prepend`), the chosen value, and the clear button as the chip's ×. A soft
+// tint at rest, a stronger one and a solid border while it holds a value, so the row says at a
+// glance what the list is narrowed by. Only a look: the select still does the list, the search,
+// the keyboard and the clearing.
+//
+// Ready-made, with no Sass at all, as classes on the select:
+//
+//   <hub-select class="hub-select-chip hub-select-chip-success" prepend="Status" … />
+//
+// The mixin is for a class of your own, or an accent the nine built-in ones do not cover:
+//
+//   @use 'ng-hub-ui-forms/styles' as *;
+//
+//   .filter-chip {
+//     @include hub-select-chip($accent: var(--hub-sys-color-brand));
+//   }
+//
+// Wherever it is applied it also sets `--hub-select-dropdown-anchor: group`, so the open list
+// starts under the name, not under the value, and is at least as wide as the whole pill.
+//
+// scss-docs-start hub-select-chip
+@mixin hub-select-chip(
+	// the one colour the pill is drawn in; null keeps `--hub-select-chip-accent`
+	$accent: null
+) {
+	@if $accent != null {
+		--hub-select-chip-accent: #{$accent};
+	}
+
+	// The name and the value are text on a pale tint of the accent, so they take the accent with
+	// its lightness capped, the derivation buttons use for an outline label. A warning chip would
+	// otherwise write yellow on yellow.
+	--hub-select-chip-accent-emphasis: oklch(from var(--hub-select-chip-accent) min(l, 0.45) c h);
+	--hub-select-dropdown-anchor: group;
+	--hub-select-min-height: 2.25rem;
+	--hub-select-border-width: 0;
+	--hub-select-bg: transparent;
+	--hub-select-group-addon-bg: transparent;
+	--hub-select-group-addon-border-color: transparent;
+	--hub-select-group-addon-color: var(--hub-select-chip-accent-emphasis);
+	--hub-select-focus-box-shadow: none;
+
+	display: inline-block;
+	margin-bottom: 0;
+
+	.hub-select__group {
+		align-items: center;
+		padding-inline-start: var(--hub-ref-space-3, 1rem);
+		border: 1px solid color-mix(in oklch, var(--hub-select-chip-accent) 30%, transparent);
+		border-radius: 999px;
+		background: color-mix(in oklch, var(--hub-select-chip-accent) 8%, var(--hub-sys-surface-page, #fff));
+		cursor: pointer;
+		transition:
+			background-color 150ms ease,
+			border-color 150ms ease;
+
+		&:focus-within {
+			outline: var(--hub-form-focus-ring-width, 0.25rem) solid
+				color-mix(in oklch, var(--hub-select-chip-accent) 25%, transparent);
+		}
+
+		// A chip of many labels needs a cap; one with a field attached needs the room, or its
+		// own value is what gives way.
+		&:not(:has(.hub-select__attached)) {
+			max-inline-size: 30rem;
+		}
+	}
+
+	.hub-select__addon--prepend {
+		padding: 0;
+		font-size: 0.875em;
+		font-weight: 600;
+
+		&::after {
+			content: ':';
+		}
+	}
+
+	.ng-select-container {
+		cursor: pointer;
+	}
+
+	.ng-clear-wrapper {
+		margin-inline-start: var(--hub-ref-space-2, 0.5rem);
+	}
+
+	&:has(.ng-has-value) .hub-select__group {
+		border-color: var(--hub-select-chip-accent);
+		background: color-mix(in oklch, var(--hub-select-chip-accent) 16%, var(--hub-sys-surface-page, #fff));
+	}
+
+	&:has(.ng-has-value) .ng-value-label {
+		color: var(--hub-select-chip-accent-emphasis);
+		font-weight: 600;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hub-select__group {
+			transition: none;
+		}
+	}
+}
+// scss-docs-end hub-select-chip

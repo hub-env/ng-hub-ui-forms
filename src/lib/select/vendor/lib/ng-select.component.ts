@@ -273,6 +273,8 @@ export class NgSelectComponent implements OnChanges, OnInit, AfterViewInit, Cont
 
 	readonly _popover = input(false, { alias: 'popover', transform: booleanAttribute });
 	readonly popover = linkedSignal(() => this._popover());
+	/** Finds the element the open list lines up with instead of this control; see the panel's `anchor`. */
+	readonly dropdownAnchor = input<(() => HTMLElement | null) | null>(null);
 
 	// models
 	readonly bindLabel = model<string>(undefined);

@@ -1,7 +1,9 @@
 <div
 	class="hub-field hub-textarea"
 	[class.hub-field--horizontal]="
-		labelType() === _labelTypes.Horizontal || (!label() && (required() || showsFormTextTooltip()))
+		labelType() === _labelTypes.Horizontal ||
+		(!label() && required()) ||
+		((!label() || labelType() === _labelTypes.VisuallyHidden) && showsFormTextTooltip())
 	"
 	[class.hub-field--disabled]="disabled()"
 	[class.hub-field--readonly]="readonly() && !plaintext()"

@@ -1,6 +1,6 @@
 import { Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormTextType, HubLabelType } from '../interfaces/common.interface';
 import { provideHubForms } from '../services/forms-config';
 import { HubFormTextDirective } from '../directives/form-text.directive';
@@ -8,6 +8,9 @@ import { HubInputComponent } from '../components/input/input.component';
 import { HubOtpInputComponent } from '../components/otp/otp.component';
 import { HubSegmentedComponent, HubSegmentedOption } from '../components/segmented/segmented.component';
 import { HubTextareaComponent } from '../components/textarea/textarea.component';
+import { HubDatepickerComponent } from '../components/datepicker/datepicker.component';
+import { HubSliderComponent } from '../components/slider/slider.component';
+import { HubSelectComponent } from '../select/select.component';
 
 /**
  * Helper text as a tooltip instead of a line under the control.
@@ -83,6 +86,62 @@ class NoLabelHostComponent {
 		{ value: 'view', label: 'View' },
 		{ value: 'edit', label: 'Edit' }
 	];
+}
+
+/**
+ * A label that is only visually hidden still names the field for assistive tech, but takes no room
+ * on screen: the mark has to be given the same place a missing label would give it.
+ */
+@Component({
+	standalone: true,
+	imports: [
+		HubInputComponent,
+		HubTextareaComponent,
+		HubDatepickerComponent,
+		HubSelectComponent,
+		HubSliderComponent,
+		HubSegmentedComponent,
+		ReactiveFormsModule
+	],
+	template: `
+		<hub-input [formControl]="ctrl" label="L" labelType="visually-hidden" formText="T" [formTextType]="type()" />
+		<hub-textarea [formControl]="ctrl" label="L" labelType="visually-hidden" formText="T" [formTextType]="type()" />
+		<hub-datepicker [formControl]="ctrl" label="L" labelType="visually-hidden" formText="T" [formTextType]="type()" />
+		<hub-select [formControl]="ctrl" label="L" labelType="visually-hidden" formText="T" [formTextType]="type()" />
+		<hub-slider [formControl]="ctrl" label="L" labelType="visually-hidden" formText="T" [formTextType]="type()" />
+		<hub-segmented
+			[formControl]="ctrl"
+			[options]="options"
+			label="L"
+			labelType="visually-hidden"
+			formText="T"
+			[formTextType]="type()"
+		/>
+	`
+})
+class HiddenLabelHostComponent {
+	readonly ctrl = new FormControl<any>(null);
+	readonly type = signal<FormTextType>('bottom');
+	readonly options: HubSegmentedOption[] = [{ value: 'a', label: 'A' }];
+}
+
+/** `required` with no label, and `required` with a visually hidden one, on the fields that stack by default. */
+@Component({
+	standalone: true,
+	imports: [HubInputComponent, HubTextareaComponent, HubDatepickerComponent, HubSelectComponent, ReactiveFormsModule],
+	template: `
+		<hub-input [formControl]="ctrl" />
+		<hub-textarea [formControl]="ctrl" />
+		<hub-datepicker [formControl]="ctrl" />
+		<hub-select [formControl]="ctrl" />
+		<hub-input [formControl]="ctrl" label="L" labelType="visually-hidden" />
+		<hub-textarea [formControl]="ctrl" label="L" labelType="visually-hidden" />
+		<hub-datepicker [formControl]="ctrl" label="L" labelType="visually-hidden" />
+		<hub-select [formControl]="ctrl" label="L" labelType="visually-hidden" />
+	`
+})
+class RequiredHostComponent {
+	readonly ctrl = new FormControl<any>(null, Validators.required);
 }
 
 describe('helper text as a tooltip', () => {
@@ -272,5 +331,55 @@ describe('helper text on a field with no label of its own', () => {
 			expect(hint.closest('.hub-field--horizontal')).toBeTruthy();
 			expect(hint.parentElement?.classList.contains('hub-field__label-row')).toBe(true);
 		});
+	});
+});
+
+describe('helper text on a field whose label is visually hidden', () => {
+	let fixture: any;
+
+	beforeEach(async () => {
+		TestBed.resetTestingModule();
+		await TestBed.configureTestingModule({
+			imports: [HiddenLabelHostComponent],
+			providers: [provideZonelessChangeDetection(), provideHubForms()]
+		}).compileComponents();
+
+		fixture = TestBed.createComponent(HiddenLabelHostComponent);
+		await fixture.whenStable();
+	});
+
+	const fields = (): HTMLElement[] => Array.from(fixture.nativeElement.querySelectorAll('.hub-field'));
+
+	it('stays stacked while the text is below', () => {
+		expect(fields().length).toBe(6);
+		expect(fields().some((el) => el.classList.contains('hub-field--horizontal'))).toBe(false);
+	});
+
+	it('goes horizontal with the mark in the label row once the type is tooltip', async () => {
+		fixture.componentInstance.type.set('tooltip');
+		await fixture.whenStable();
+
+		expect(fields().length).toBe(6);
+		fields().forEach((field) => {
+			expect(field.classList.contains('hub-field--horizontal')).toBe(true);
+			expect(field.querySelector('.hub-field__label-row > .hub-field__hint')).toBeTruthy();
+		});
+	});
+});
+
+describe('required on a field with no visible label', () => {
+	it('goes horizontal for no label at all, but not for a visually hidden one', async () => {
+		TestBed.resetTestingModule();
+		await TestBed.configureTestingModule({
+			imports: [RequiredHostComponent],
+			providers: [provideZonelessChangeDetection(), provideHubForms()]
+		}).compileComponents();
+		const fixture = TestBed.createComponent(RequiredHostComponent);
+		await fixture.whenStable();
+
+		const fields = Array.from(fixture.nativeElement.querySelectorAll('.hub-field')) as HTMLElement[];
+		const horizontal = fields.map((el) => el.classList.contains('hub-field--horizontal'));
+
+		expect(horizontal).toEqual([true, true, true, true, false, false, false, false]);
 	});
 });

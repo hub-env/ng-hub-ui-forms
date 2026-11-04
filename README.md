@@ -1005,6 +1005,32 @@ check mark (unset, each mark is black or white, whichever reads on its swatch).
 
 **Width of the list** — the panel is never narrower than the control and grows to its longest option, up to `--hub-select-dropdown-max-width` (default `24rem`) and never past the screen. When it would run off the screen from the control's start, it lines up with the control's end.
 
+**Filter chips** — a select that narrows a list can wear the pill a filter usually wears: the `prepend` as the filter's name, the value, and the clear button as the chip's ×. Classes do it, with no Sass; `hub-select-chip-<accent>` takes any of the nine accents a button takes, `primary` when none is given:
+
+```html
+<hub-select
+	class="hub-select-chip hub-select-chip-success"
+	label="Company"
+	labelType="visually-hidden"
+	[prepend]="['Company']"
+	[items]="companies"
+	[searchable]="false"
+	placeholder="All"
+/>
+```
+
+For a class of your own, or a colour outside the nine, include the mixin:
+
+```scss
+@use 'ng-hub-ui-forms/styles' as *;
+
+.filter-chip {
+	@include hub-select-chip($accent: var(--hub-sys-color-brand));
+}
+```
+
+The chip's open list starts under the filter's name and is at least as wide as the pill. That comes from `--hub-select-dropdown-anchor`: `control` by default (the part that holds the value), `group` for the whole field with its prepend and append, read each time the list opens.
+
 **`hub-datepicker` inside a modal** — the same guarantee, through `--hub-datepicker-overlay-zindex` (default `calc(var(--hub-sys-zindex-modal, 1055) + 5)`): a calendar opened inside a `HubModal` is drawn over the dialog, and its backdrop one layer under the calendar but still over the dialog, so clicking outside closes it. One token moves both:
 
 ```css
@@ -1024,6 +1050,8 @@ check mark (unset, each mark is black or white, whichever reads on its swatch).
 ```
 
 In single-select mode the selected pill slides between options (`--hub-segmented-indicator-transition`, default `0.2s ease`; disabled under `prefers-reduced-motion`).
+
+`readonly` shows the value at full strength and lets nothing change it; the options stay focusable. `disabled` fades only the options that are not selected, so the one that is stays readable (`--hub-segmented-disabled-selected-bg`, `--hub-segmented-disabled-selected-color`).
 
 ---
 

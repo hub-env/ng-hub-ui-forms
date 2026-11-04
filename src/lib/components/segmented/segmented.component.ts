@@ -111,6 +111,13 @@ export class HubSegmentedComponent extends HubFieldControl {
 	/** When `true`, the segments stack vertically instead of sitting in a row. */
 	readonly vertical = input(false, { transform: booleanAttribute });
 
+	/**
+	 * Shows the value at full legibility but refuses to change it. Unlike `disabled` the control
+	 * stays focusable and keeps its tab stop, so keyboard and screen-reader users can still reach it
+	 * and hear the selection. Never marks the control touched or dirty, since no click changes anything.
+	 */
+	readonly readonly = input(false, { transform: booleanAttribute });
+
 	/** Currently selected value — a scalar in single mode, an array in multiple mode. */
 	readonly value = model<unknown>();
 
@@ -197,10 +204,10 @@ export class HubSegmentedComponent extends HubFieldControl {
 
 	/**
 	 * Selects (single) or toggles (multiple) an option and notifies the form. No-op when the
-	 * control or the option is disabled.
+	 * control is disabled or read-only, or the option is disabled.
 	 */
 	select(option: HubSegmentedOption): void {
-		if (this.disabled() || option.disabled) return;
+		if (this.disabled() || this.readonly() || option.disabled) return;
 
 		if (this.multiple()) {
 			const current = Array.isArray(this.value()) ? (this.value() as unknown[]) : [];

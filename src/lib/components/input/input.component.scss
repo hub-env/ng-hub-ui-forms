@@ -545,13 +545,15 @@ hub-input.hidden-control {
 
 	&__strength-label {
 		font-size: var(--hub-ref-font-size-sm, 0.875rem);
-		color: var(--hub-sys-text-muted, #6c757d);
+		color: var(--hub-sys-text-muted, #6a737b);
 	}
 
 	// Checkbox / switch (control with the label beside it).
+	// The box sits on the first line of its label, not halfway down it: a consent text that wraps
+	// onto three lines reads as a sentence that starts with the box.
 	&--checkable .hub-input__check {
 		display: inline-flex;
-		align-items: center;
+		align-items: flex-start;
 		gap: var(--hub-check-label-gap);
 		cursor: pointer;
 	}
@@ -560,7 +562,12 @@ hub-input.hidden-control {
 		flex: 0 0 auto;
 		width: var(--hub-check-input-width);
 		height: var(--hub-check-input-height);
-		margin: 0;
+		// `1lh` is one line of the label only if the box measures its line the way the label does,
+		// so it takes the label's font size and the inherited line height instead of the browser's
+		// smaller control font.
+		font-size: var(--hub-input-font-size);
+		line-height: inherit;
+		margin: calc((1lh - var(--hub-check-input-height)) / 2) 0 0;
 		appearance: none;
 		background: var(--hub-check-input-bg);
 		border: var(--hub-check-input-border-width) solid var(--hub-check-input-border-color);
@@ -599,6 +606,7 @@ hub-input.hidden-control {
 			position: relative;
 			width: var(--hub-switch-width);
 			height: var(--hub-switch-height);
+			margin-block-start: calc((1lh - var(--hub-switch-height)) / 2);
 			border: 0;
 			border-radius: var(--hub-ref-radius-pill, 50rem);
 			background: var(--hub-switch-track-off);

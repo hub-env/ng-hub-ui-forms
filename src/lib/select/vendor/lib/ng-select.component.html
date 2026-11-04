@@ -115,6 +115,7 @@
 		[id]="dropdownId"
 		[ariaLabelDropdown]="ariaLabelDropdown() ?? config.ariaLabelDropdown"
 		[popover]="popover()"
+		[anchor]="dropdownAnchor()"
 	>
 		<ng-container>
 			@for (item of viewPortItems; track trackByOption($index, item)) {

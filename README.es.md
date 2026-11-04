@@ -1025,6 +1025,32 @@ muestra).
 
 **Ancho de la lista** — el panel nunca es más estrecho que el control y crece hasta su opción más larga, con un tope en `--hub-select-dropdown-max-width` (por defecto `24rem`) y sin salirse de la pantalla. Si desde el inicio del control se saldría, se alinea con su final.
 
+**Chips de filtro** — un selector que filtra una lista puede llevar la forma de píldora habitual de un filtro: el `prepend` como nombre del filtro, el valor y el botón de limpiar como la × del chip. Basta con clases, sin Sass; `hub-select-chip-<acento>` acepta cualquiera de los nueve acentos de un botón, y `primary` si no se indica ninguno:
+
+```html
+<hub-select
+	class="hub-select-chip hub-select-chip-success"
+	label="Empresa"
+	labelType="visually-hidden"
+	[prepend]="['Empresa']"
+	[items]="companies"
+	[searchable]="false"
+	placeholder="Todas"
+/>
+```
+
+Para una clase propia, o un color fuera de los nueve, se incluye el mixin:
+
+```scss
+@use 'ng-hub-ui-forms/styles' as *;
+
+.filter-chip {
+	@include hub-select-chip($accent: var(--hub-sys-color-brand));
+}
+```
+
+La lista abierta de un chip empieza bajo el nombre del filtro y mide al menos lo que la píldora. Lo decide `--hub-select-dropdown-anchor`: `control` por defecto (la parte que muestra el valor), `group` para el campo entero con su prepend y su append. Se lee cada vez que se abre la lista.
+
 **`hub-datepicker` dentro de un modal** — la misma garantía, con `--hub-datepicker-overlay-zindex` (por defecto `calc(var(--hub-sys-zindex-modal, 1055) + 5)`): un calendario abierto dentro de un `HubModal` se dibuja por encima del diálogo, y su backdrop una capa por debajo del calendario pero aún por encima del diálogo, así que el clic fuera lo cierra. Un solo token mueve los dos:
 
 ```css
@@ -1044,6 +1070,8 @@ muestra).
 ```
 
 En modo single, la píldora seleccionada se desliza entre opciones (`--hub-segmented-indicator-transition`, por defecto `0.2s ease`; desactivado con `prefers-reduced-motion`).
+
+`readonly` muestra el valor con toda su fuerza y no deja cambiarlo; las opciones siguen recibiendo el foco. `disabled` solo atenúa las opciones no seleccionadas, así que la seleccionada se sigue leyendo (`--hub-segmented-disabled-selected-bg`, `--hub-segmented-disabled-selected-color`).
 
 ---
 

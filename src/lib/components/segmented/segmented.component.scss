@@ -45,9 +45,27 @@ hub-segmented.hidden-control {
 		}
 	}
 
+	// Disabled dims the unselected options only (see `__option:disabled`). Dimming the whole bar made
+	// the selected pill as faint as the rest, so the value could not be read; the selected option
+	// instead takes its own flat surface and full-strength text from the `-disabled-selected-*` tokens.
 	&--disabled {
-		opacity: var(--hub-form-disabled-opacity);
 		cursor: not-allowed;
+
+		.hub-segmented__indicator,
+		&.hub-segmented--multiple .hub-segmented__option--selected {
+			background: var(--hub-segmented-disabled-selected-bg);
+			box-shadow: none;
+		}
+
+		.hub-segmented__option--selected:disabled {
+			color: var(--hub-segmented-disabled-selected-color);
+			opacity: 1;
+		}
+	}
+
+	// Read-only: full legibility, no pointer affordance. Options stay enabled so they remain focusable.
+	&--readonly .hub-segmented__option {
+		cursor: var(--hub-input-readonly-cursor);
 	}
 
 	// Vertical stack: segments flow top-to-bottom and stretch to a common width.
@@ -81,7 +99,7 @@ hub-segmented.hidden-control {
 		// would have ignored every local override of the height it was subtracting from.
 		min-height: calc(var(--hub-segmented-min-height) - 2 * var(--hub-segmented-gap));
 		padding: var(--hub-segmented-padding-y) var(--hub-segmented-padding-x);
-		color: var(--hub-sys-text-muted, #6c757d);
+		color: var(--hub-sys-text-muted, #6a737b);
 		background: transparent;
 		font: inherit;
 		line-height: 1.2;

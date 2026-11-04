@@ -6,27 +6,28 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 
 ## Shared field contract (every field)
 
-| Category        | Functionality                                                                                      | Example Covered |
-| :-------------- | :------------------------------------------------------------------------------------------------- | :-------------: |
-| **Binding**     | `formControlName` / `[formControl]` / `[(ngModel)]` through `ControlValueAccessor`                 |       ✅        |
-|                 | `valueChange` output (every field but `hub-timepicker`, which publishes through the bound control) |       ❌        |
-| **Label**       | `label` with `labelType="stacked"` (default)                                                       |       ✅        |
-|                 | `labelType="floating"` (`hub-input`, `hub-select`, `hub-datepicker`)                               |       ✅        |
-|                 | `labelType="horizontal"` (every field but `hub-file-input`)                                        |       ❌        |
-|                 | `labelType="visually-hidden"` — named for assistive technology, clipped out of the page            |       ✅        |
-| **Errors**      | Control errors rendered automatically below the field                                              |       ✅        |
-|                 | Message templates overridden per key with `hubValidationError`                                     |       ✅        |
-|                 | Global templates through `provideHubForms({ invalidFeedback })`                                    |       ❌        |
-|                 | `invalidFeedbackTemplateFn` per field                                                              |       ❌        |
-|                 | Message in a danger tooltip when a container provides `HUB_FIELD_FEEDBACK` with `'tooltip'`        |       ✅        |
-| **Valid state** | Opt-in success border and ring (`showValid`, `validFeedback`)                                      |       ❌        |
-| **Helper text** | `formText` under the control                                                                       |       ✅        |
-|                 | `formTextType="tooltip"` — the hint behind a question mark                                         |       ✅        |
-|                 | `hubFormText` projection template for rich helper text                                             |       ❌        |
-| **State**       | `disabled` (two-way `model`) and `required` (two-way `model`)                                      |       ✅        |
-|                 | `readonly` (every field but `hub-slider` and `hub-segmented`)                                      |       ❌        |
-|                 | `classlist` forwarded to the host                                                                  |       ❌        |
-| **Direction**   | Every field mirrors under `dir="rtl"`                                                              |       ✅        |
+| Category        | Functionality                                                                                           | Example Covered |
+| :-------------- | :------------------------------------------------------------------------------------------------------ | :-------------: |
+| **Binding**     | `formControlName` / `[formControl]` / `[(ngModel)]` through `ControlValueAccessor`                      |       ✅        |
+|                 | `valueChange` output (every field but `hub-timepicker`, which publishes through the bound control)      |       ❌        |
+| **Label**       | `label` with `labelType="stacked"` (default)                                                            |       ✅        |
+|                 | `labelType="floating"` (`hub-input`, `hub-select`, `hub-datepicker`)                                    |       ✅        |
+|                 | `labelType="horizontal"` (every field but `hub-file-input`)                                             |       ❌        |
+|                 | `labelType="visually-hidden"` — named for assistive technology, clipped out of the page                 |       ✅        |
+| **Errors**      | Control errors rendered automatically below the field                                                   |       ✅        |
+|                 | Message templates overridden per key with `hubValidationError`                                          |       ✅        |
+|                 | Global templates through `provideHubForms({ invalidFeedback })`                                         |       ❌        |
+|                 | `invalidFeedbackTemplateFn` per field                                                                   |       ❌        |
+|                 | Message in a danger tooltip when a container provides `HUB_FIELD_FEEDBACK` with `'tooltip'`             |       ✅        |
+| **Valid state** | Opt-in success border and ring (`showValid`, `validFeedback`)                                           |       ❌        |
+| **Helper text** | `formText` under the control                                                                            |       ✅        |
+|                 | `formTextType="tooltip"` — the hint behind a question mark                                              |       ✅        |
+|                 | The mark sits in line with a field whose label is absent or visually hidden (`forms-form-text-tooltip`) |       ✅        |
+|                 | `hubFormText` projection template for rich helper text                                                  |       ❌        |
+| **State**       | `disabled` (two-way `model`) and `required` (two-way `model`)                                           |       ✅        |
+|                 | `readonly` (every field but `hub-slider`)                                                               |       ✅        |
+|                 | `classlist` forwarded to the host                                                                       |       ❌        |
+| **Direction**   | Every field mirrors under `dir="rtl"`                                                                   |       ✅        |
 
 ## Input (`hub-input`)
 
@@ -96,6 +97,7 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 |               | Stands at the shared control height, so it lines up with a `hub-select` beside it (`forms-field-row-alignment`) |       ✅        |
 | **Accent**    | `color` from the semantic families, or any CSS colour                                                           |       ✅        |
 | **Template**  | `hubSegmentedOption` for custom option content                                                                  |       ✅        |
+| **State**     | `readonly`, and a `disabled` bar that keeps the selected option readable (`forms-segmented-states`)             |       ✅        |
 | **Motion**    | The indicator slides between options, and stands still under `prefers-reduced-motion`                           |       ❌        |
 
 ## Select (`hub-select`)
@@ -119,6 +121,8 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 |                | The vendored `ng-option-tmp` and friends — **deprecated**, removed in 23.0.0                                                                             |       ❌        |
 |                | `hubSelectSuffix` — **deprecated**, use `hubAppend`                                                                                                      |       ❌        |
 | **Addons**     | `prepend` / `append` and the `hubPrepend` / `hubAppend` slots                                                                                            |       ✅        |
+| **Chips**      | `hub-select-chip` and the nine `hub-select-chip-<accent>` classes, or the `hub-select-chip()` mixin, for list filters (`forms-select-chip`)              |       ✅        |
+|                | The open list lines up with the whole field through `--hub-select-dropdown-anchor: group`, which the chip sets (`forms-select-chip`)                     |       ✅        |
 | **Events**     | `onOpen` / `onClose` / `onClear` / `onSearch` / `onAdd` / `onRemove` / `onFocus` / `onBlur` / `scroll` / `scrollToEnd`                                   |       ❌        |
 |                | `change`, carrying the selected item, for every format (`forms-select-tagging`)                                                                          |       ✅        |
 | **Deprecated** | `format="buttons" \| "checkbox" \| "radio"` and `vertical` → use `hub-segmented`                                                                         |       ✅        |
@@ -220,6 +224,7 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 |              | `hub-forms-theme()` mixin                                               |       ✅        |
 |              | `hub-segmented-theme()` mixin                                           |       ✅        |
 |              | `hub-file-input-theme()` mixin                                          |       ✅        |
+|              | `hub-select-chip()` mixin                                               |       ✅        |
 | **Groups**   | `--hub-input-group-attached-*` tokens undoing the seam of a group       |       ❌        |
 | **Stacking** | `--hub-field-stack-gap`, the space a field leaves under itself          |       ❌        |
 

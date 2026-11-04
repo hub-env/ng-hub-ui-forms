@@ -1,7 +1,9 @@
 <div
 	class="hub-field hub-select"
 	[class.hub-field--horizontal]="
-		labelType() === _labelTypes.Horizontal || (!label() && (required() || showsFormTextTooltip()))
+		labelType() === _labelTypes.Horizontal ||
+		(!label() && required()) ||
+		((!label() || labelType() === _labelTypes.VisuallyHidden) && showsFormTextTooltip())
 	"
 	[class.hub-field--disabled]="disabled()"
 	[class.hub-field--readonly]="readonly()"
@@ -60,6 +62,7 @@
 					read as two unrelated things that happen to be adjacent.
 				-->
 				<div
+					#selectGroup
 					class="hub-select__group"
 					[class.hub-select__group--floating]="showsFloatingLabel()"
 					[class.hub-select__group--raised]="showsFloatingLabel() && isLabelRaised()"
@@ -117,6 +120,7 @@
 						[typeahead]="$any(typeahead())"
 						[compareWith]="$any(compareWith())"
 						[inputAttrs]="a11yInputAttrs()"
+						[dropdownAnchor]="_dropdownAnchor"
 						[ngModel]="_value()"
 						[ngModelOptions]="{ standalone: true }"
 						(ngModelChange)="setValue($event)"
