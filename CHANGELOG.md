@@ -5,6 +5,16 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.45.1] - 2026-11-04
+
+### Fixed
+
+- **`hub-textarea` with `autoresize` fits its text when the value changes from code.** The
+  `hubAutoresize` directive measured only while the reader typed, so a `setValue`, a `reset` or a
+  new `ngModel` left the box at its old height: emptied after sending a long message, it stayed
+  tall. It now measures again whenever a form control on the same textarea changes, which covers
+  `hub-textarea` and a plain `<textarea hubAutoresize [formControl]>` alike.
+
 ## [22.45.0] - 2026-11-04
 
 ### Added

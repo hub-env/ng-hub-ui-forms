@@ -1,6 +1,8 @@
 import { Component, signal, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { HubTextareaComponent } from '../components/textarea/textarea.component';
 import { HubAutoresizeDirective } from './autoresize.directive';
 
 @Component({
@@ -70,5 +72,64 @@ describe('HubAutoresizeDirective', () => {
 		} finally {
 			vi.useRealTimers();
 		}
+	});
+});
+
+/**
+ * A value written from code reaches the textarea without an `input` event, so the box has to be
+ * measured when the control changes: a message box emptied after sending must shrink back.
+ */
+describe('HubAutoresizeDirective with a form control', () => {
+	@Component({
+		standalone: true,
+		imports: [HubAutoresizeDirective, ReactiveFormsModule],
+		template: `<textarea hubAutoresize [formControl]="message"></textarea>`
+	})
+	class ControlHostComponent {
+		readonly message = new FormControl('');
+		readonly directive = viewChild.required(HubAutoresizeDirective);
+	}
+
+	@Component({
+		standalone: true,
+		imports: [HubTextareaComponent, ReactiveFormsModule],
+		template: `<hub-textarea label="Message" [autoresize]="true" [formControl]="message" />`
+	})
+	class TextareaHostComponent {
+		readonly message = new FormControl('');
+	}
+
+	it('measures again when the control is set or reset from code', () => {
+		const fixture = TestBed.createComponent(ControlHostComponent);
+		fixture.detectChanges();
+
+		const resize = vi.spyOn(fixture.componentInstance.directive(), 'resize');
+
+		fixture.componentInstance.message.setValue('A long message\nover\nseveral lines');
+		expect(resize).toHaveBeenCalledTimes(1);
+
+		fixture.componentInstance.message.reset('');
+		expect(resize).toHaveBeenCalledTimes(2);
+	});
+
+	it('measures again inside hub-textarea when the form writes its value', async () => {
+		const fixture = TestBed.createComponent(TextareaHostComponent);
+		fixture.detectChanges();
+
+		const directive = fixture.debugElement.query(By.directive(HubAutoresizeDirective)).injector.get(HubAutoresizeDirective);
+		const resize = vi.spyOn(directive, 'resize');
+
+		fixture.componentInstance.message.setValue('A long message');
+		fixture.detectChanges();
+		await fixture.whenStable();
+
+		expect(resize).toHaveBeenCalled();
+
+		resize.mockClear();
+		fixture.componentInstance.message.reset('');
+		fixture.detectChanges();
+		await fixture.whenStable();
+
+		expect(resize).toHaveBeenCalled();
 	});
 });
