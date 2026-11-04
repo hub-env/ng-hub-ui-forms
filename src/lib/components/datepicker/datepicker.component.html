@@ -75,6 +75,7 @@
 					[required]="!!required()"
 					[attr.aria-invalid]="isInvalid"
 					[attr.aria-expanded]="_open()"
+					[attr.aria-controls]="_open() ? id + '-calendar' : null"
 					aria-haspopup="dialog"
 					(click)="onInputClick()"
 					(input)="onInput($event)"
@@ -154,7 +155,15 @@
 </div>
 
 <ng-template #panel>
-	<div class="hub-datepicker__panel" role="dialog" [attr.aria-label]="_isPeriod() ? periodLabel() : monthYearLabel()">
+	<!-- Named from the field through aria-controls: the calendar opens on <body>, nowhere near the
+	field, and that name is how assistive technology, and a host such as a sheet cell, knows the two
+	belong together. -->
+	<div
+		class="hub-datepicker__panel"
+		role="dialog"
+		[id]="id + '-calendar'"
+		[attr.aria-label]="_isPeriod() ? periodLabel() : monthYearLabel()"
+	>
 		@if (_isPeriod()) {
 			<header class="hub-datepicker__header">
 				<button

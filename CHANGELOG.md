@@ -5,6 +5,16 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.44.2] - 2026-11-04
+
+### Fixed
+
+- **`hub-datepicker` names its open calendar from the field.** The calendar opens in an overlay on
+  `<body>`, far from the field, and nothing tied the two together. While it is open the field now
+  carries `aria-controls` with the panel's id, so assistive technology reads them as one control,
+  and a host that closes an editor when the focus leaves it, such as a `hub-spreadsheet` cell, sees
+  the calendar as part of the field instead of closing on it.
+
 ## [22.44.1] - 2026-11-03
 
 ### Fixed
