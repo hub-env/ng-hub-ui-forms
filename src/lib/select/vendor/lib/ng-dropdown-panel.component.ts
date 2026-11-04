@@ -59,7 +59,7 @@ const SCROLL_SCHEDULER = typeof requestAnimationFrame !== 'undefined' ? animatio
 export class NgDropdownPanelComponent implements OnInit, OnChanges {
 	readonly items = input<NgOption[]>([]);
 	readonly showAddTag = input(false, { transform: booleanAttribute });
-	readonly markedItem = input<NgOption>(undefined);
+	readonly markedItem = input<NgOption | undefined>(undefined);
 	readonly position = input<DropdownPosition>('auto');
 	readonly appendTo = input<string>(undefined);
 	readonly bufferAmount = input<number>(undefined);

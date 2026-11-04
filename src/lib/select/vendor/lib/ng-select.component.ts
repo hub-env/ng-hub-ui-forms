@@ -121,7 +121,7 @@ export class NgSelectComponent implements OnChanges, OnInit, AfterViewInit, Cont
 	readonly _markFirst = input(true, { alias: 'markFirst', transform: booleanAttribute });
 	readonly markFirst = linkedSignal(() => this._markFirst());
 
-	readonly _placeholder = input<string>(this.config.placeholder, { alias: 'placeholder' });
+	readonly _placeholder = input<string | undefined>(this.config.placeholder, { alias: 'placeholder' });
 	readonly placeholder = linkedSignal(() => this._placeholder());
 
 	readonly _fixedPlaceholder = input<boolean>(true, { alias: 'fixedPlaceholder' });

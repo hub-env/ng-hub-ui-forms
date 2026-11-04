@@ -6,7 +6,7 @@
 	class="ng-select-container"
 >
 	<div class="ng-value-container">
-		@if ((selectedItems.length === 0 && !searchTerm) || (fixedPlaceholder() ?? config.fixedPlaceholder)) {
+		@if ((selectedItems.length === 0 && !searchTerm) || fixedPlaceholder()) {
 			<ng-template #defaultPlaceholderTemplate>
 				<div class="ng-placeholder">{{ placeholder() ?? config.placeholder }}</div>
 			</ng-template>
@@ -46,7 +46,7 @@
 				(compositionstart)="onCompositionStart()"
 				(focus)="onInputFocus($event)"
 				(input)="filter(searchInput.value)"
-				[attr.aria-activedescendant]="isOpen() ? itemsList?.markedItem?.htmlId : null"
+				[attr.aria-activedescendant]="isOpen() ? itemsList.markedItem?.htmlId : null"
 				[attr.aria-controls]="isOpen() ? dropdownId : null"
 				[attr.aria-expanded]="isOpen()"
 				[attr.aria-label]="ariaLabel()"
@@ -54,7 +54,7 @@
 				[attr.tabindex]="tabIndex()"
 				[disabled]="disabled()"
 				[readOnly]="!searchable() || itemsList.maxItemsSelected"
-				[value]="searchTerm ?? ''"
+				[value]="searchTerm || ''"
 				aria-autocomplete="list"
 				role="combobox"
 			/>

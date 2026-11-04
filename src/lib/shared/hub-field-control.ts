@@ -58,7 +58,7 @@ export abstract class HubFieldControl extends HubFormControl implements ControlV
 	protected readonly _controlContainer = inject(ControlContainer, { skipSelf: true, host: true, optional: true })!;
 
 	/** Resolved templates that override the default message of a given error key. */
-	protected _errorTemplates: { [key: string]: TemplateRef<any> } = {};
+	protected _errorTemplates: { [key: string]: TemplateRef<any> | undefined } = {};
 
 	/** Stable unique id linking the label and the control. */
 	readonly id = uuid();

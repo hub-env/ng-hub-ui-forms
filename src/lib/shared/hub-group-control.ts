@@ -53,7 +53,7 @@ export abstract class HubGroupControl implements AfterContentInit, OnDestroy {
 	/** Query for projected `hubValidationError` templates. */
 	readonly errorTpts = contentChildren(HubValidationErrorDirective);
 
-	protected _errorTemplates: { [key: string]: TemplateRef<any> } = {};
+	protected _errorTemplates: { [key: string]: TemplateRef<any> | undefined } = {};
 
 	/**
 	 * The currently bound group control. A `computed` (not an `effect`-fed signal) so it resolves

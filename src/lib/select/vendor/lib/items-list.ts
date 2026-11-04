@@ -38,7 +38,7 @@ export class ItemsList {
 		return this._selectionModel.value;
 	}
 
-	get markedItem(): NgOption {
+	get markedItem(): NgOption | undefined {
 		return this._filteredItems[this._markedIndex];
 	}
 

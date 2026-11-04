@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   tall. It now measures again whenever a form control on the same textarea changes, which covers
   `hub-textarea` and a plain `<textarea hubAutoresize [formControl]>` alike.
 
+### Changed
+
+- **The library builds without Angular's template warnings** (NG8102, NG8107). The types now say
+  where a value can be missing (an error key with no template of its own, the select's placeholder,
+  the option the keyboard has marked), so the fallbacks those values need are kept rather than
+  removed. Nothing changes at runtime.
+
 ## [22.45.0] - 2026-11-04
 
 ### Added

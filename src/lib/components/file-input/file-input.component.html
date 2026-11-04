@@ -116,15 +116,15 @@
 							@if (tile.item?.status === 'uploading') {
 								<span
 									class="hub-file-input__progress hub-file-input__tile-progress"
-									[class.hub-file-input__progress--indeterminate]="tile.item?.progress === null"
+									[class.hub-file-input__progress--indeterminate]="tile.item.progress === null"
 									role="progressbar"
 									aria-valuemin="0"
 									aria-valuemax="100"
-									[attr.aria-valuenow]="tile.item?.progress"
+									[attr.aria-valuenow]="tile.item.progress"
 								>
 									<span
 										class="hub-file-input__progress-bar"
-										[style.--hub-file-input-progress-value]="tile.item?.progress ?? 0"
+										[style.--hub-file-input-progress-value]="tile.item.progress ?? 0"
 									></span>
 								</span>
 							}
