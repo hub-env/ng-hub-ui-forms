@@ -5,6 +5,14 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.47.1] - 2026-11-19
+
+### Fixed
+
+- **The README's peer block matches the package.** It still listed the Angular 21 peers and left
+  out `@angular/cdk`, which 22.47.0 made required. It now shows the real block: Angular 22 or
+  later, `@angular/cdk` 22 or later, `ng-hub-ui-ds` and `ng-hub-ui-utils`. Code is unchanged.
+
 ## [22.47.0] - 2026-11-19
 
 ### Added

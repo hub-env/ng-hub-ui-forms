@@ -148,10 +148,11 @@ npm install ng-hub-ui-forms @angular/cdk ng-hub-ui-utils ng-hub-ui-ds
 
 ```json
 {
-	"@angular/common": ">=21.0.0",
-	"@angular/core": ">=21.0.0",
-	"@angular/forms": ">=21.0.0",
-	"@angular/platform-browser": ">=21.0.0",
+	"@angular/cdk": ">=22.0.0",
+	"@angular/common": ">=22.0.0",
+	"@angular/core": ">=22.0.0",
+	"@angular/forms": ">=22.0.0",
+	"@angular/platform-browser": ">=22.0.0",
 	"ng-hub-ui-ds": ">=22.14.1",
 	"ng-hub-ui-utils": ">=22.21.0"
 }
