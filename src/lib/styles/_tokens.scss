@@ -45,6 +45,9 @@
 	--hub-form-feedback-color: var(--hub-form-invalid-color);
 	--hub-form-feedback-font-size: var(--hub-ref-font-size-sm, 0.875rem);
 	--hub-form-feedback-margin-top: var(--hub-ref-space-1, 0.25rem);
+	--hub-form-feedback-motion-duration: var(--hub-sys-transition-duration-base, 260ms);
+	--hub-form-feedback-motion-easing: cubic-bezier(0.2, 0, 0, 1);
+	--hub-form-feedback-slide-distance: var(--hub-ref-space-1, 0.25rem);
 
 	--hub-form-text-color: var(--hub-sys-text-muted, #6a737b);
 	--hub-form-text-font-size: var(--hub-ref-font-size-sm, 0.875rem);

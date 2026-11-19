@@ -104,7 +104,12 @@
 	}
 
 	@if (isInvalid) {
-		<div class="hub-field__feedback" role="alert">
+		<div
+			class="hub-field__feedback"
+			role="alert"
+			[animate.enter]="feedbackMotion.enter"
+			[animate.leave]="feedbackMotion.leave"
+		>
 			<ul>
 				@for (error of errors | keyvalue; track error.key) {
 					<li>
@@ -125,7 +130,12 @@
 	}
 
 	@if (showsValid && validFeedback()) {
-		<div class="hub-field__feedback hub-field__feedback--valid" role="status">
+		<div
+			class="hub-field__feedback hub-field__feedback--valid"
+			role="status"
+			[animate.enter]="feedbackMotion.enter"
+			[animate.leave]="feedbackMotion.leave"
+		>
 			<span class="hub-field__feedback-text">{{ validFeedback() }}</span>
 		</div>
 	}

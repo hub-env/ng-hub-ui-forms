@@ -9,6 +9,24 @@ import {
 } from '../interfaces/input.interface';
 import { defaultInvalidFeedback } from '../shared/hub-error-display';
 
+/** Built-in motions for validation messages; `none` shows and hides them at once. */
+export type HubFeedbackAnimationPreset = 'collapse' | 'fade' | 'slide' | 'none';
+
+/**
+ * Your own motion for validation messages: CSS classes Angular adds while the message
+ * enters and while it leaves. Their rules must be global (not encapsulated in a component),
+ * because the class lands on the field's feedback element.
+ */
+export interface HubFeedbackAnimationClasses {
+	/** Classes added while the message appears (an `animation` or a `transition` on them). */
+	enter: string;
+	/** Classes added while the message goes; without them it is removed at once. */
+	leave?: string;
+}
+
+/** How validation messages appear and go: a built-in preset or your own classes. */
+export type HubFeedbackAnimation = HubFeedbackAnimationPreset | HubFeedbackAnimationClasses;
+
 /**
  * Global configuration contract for `ng-hub-ui-forms`.
  */
@@ -28,6 +46,15 @@ export interface HubFormsConfig {
 	 * (only invalid is automatic); a per-field `showValid` input overrides this.
 	 */
 	showValid: boolean;
+
+	/**
+	 * How the validation messages under a field appear and go. `collapse` (the default) opens
+	 * the space the message needs while it fades in, so the fields below slide instead of
+	 * jumping; `fade` and `slide` keep the jump and only soften the text; `none` turns motion
+	 * off. Pass {@link HubFeedbackAnimationClasses} for your own. Every built-in preset stops
+	 * under `prefers-reduced-motion`.
+	 */
+	feedbackAnimation: HubFeedbackAnimation;
 
 	/** Global datepicker defaults (locale labels, formats, first day of week…). */
 	datepicker: HubDatepickerConfig;
@@ -52,6 +79,7 @@ export interface HubFormsConfig {
 export const defaultHubFormsConfig: HubFormsConfig = {
 	invalidFeedbackTemplateFn: defaultInvalidFeedback,
 	showValid: false,
+	feedbackAnimation: 'collapse',
 	datepicker: defaultHubDatepickerConfig,
 	fileInput: defaultHubFileInputLabels,
 	password: defaultHubPasswordLabels,

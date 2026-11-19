@@ -1,3 +1,4 @@
+import type { HubFeedbackAnimation } from '../services/forms-config';
 import { formatFileSize } from '../utils/file-size';
 
 /** Writes a bound of the datepicker for a message, with the time only when it carries one. */
@@ -65,4 +66,21 @@ export function defaultInvalidFeedback(key: string, value: any): string {
 		default:
 			return `The field has the following error: ${key}.`;
 	}
+}
+
+/**
+ * Turns the configured feedback motion into the classes bound to `animate.enter` and
+ * `animate.leave`. An empty string tells Angular there is nothing to wait for, so `none`
+ * and a custom motion without `leave` add and remove the message at once.
+ */
+export function feedbackAnimationClasses(animation: HubFeedbackAnimation): { enter: string; leave: string } {
+	if (typeof animation === 'object') {
+		return { enter: animation.enter, leave: animation.leave ?? '' };
+	}
+
+	if (animation === 'none') {
+		return { enter: '', leave: '' };
+	}
+
+	return { enter: `hub-field__feedback--${animation}-enter`, leave: `hub-field__feedback--${animation}-leave` };
 }

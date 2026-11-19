@@ -11,7 +11,12 @@ export { defaultInvalidFeedback } from './lib/shared/hub-error-display';
 
 // Configuration
 export { HUB_FORMS_CONFIG, defaultHubFormsConfig, provideHubForms } from './lib/services/forms-config';
-export type { HubFormsConfig } from './lib/services/forms-config';
+export type {
+	HubFeedbackAnimation,
+	HubFeedbackAnimationClasses,
+	HubFeedbackAnimationPreset,
+	HubFormsConfig
+} from './lib/services/forms-config';
 export { HUB_FILE_UPLOADER, provideHubFileUploader } from './lib/services/file-uploader';
 
 // Components

@@ -5,6 +5,25 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.46.0] - 2026-11-19
+
+### Added
+
+- **Validation messages animate in and out.** `provideHubForms({ feedbackAnimation })` picks the
+  motion for every field and container. `collapse`, the default, opens the room the message needs
+  while it fades in, so the fields below slide down instead of jumping. `fade` and `slide` only
+  soften the text, and `none` shows and hides it at once, as before. Your own motion is
+  `{ enter, leave }`: classes Angular adds while the message enters and leaves, styled in a global
+  stylesheet. It runs on Angular's `animate.enter` / `animate.leave`, so it adds no dependency, and
+  it stops under `prefers-reduced-motion` and for messages shown as a tooltip. New tokens:
+  `--hub-form-feedback-motion-duration`, `--hub-form-feedback-motion-easing` and
+  `--hub-form-feedback-slide-distance`.
+
+### Changed
+
+- **Validation messages are animated by default.** An application that wants them to appear at once,
+  as before, sets `provideHubForms({ feedbackAnimation: 'none' })`.
+
 ## [22.45.1] - 2026-11-04
 
 ### Fixed

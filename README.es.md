@@ -964,6 +964,21 @@ los campos cuando están tocados y son válidos. El estado inválido no se ve af
 — siempre es automático; solo el éxito queda detrás de este flag. Un input
 `showValid` por campo tiene prioridad sobre el valor por defecto global.
 
+`feedbackAnimation` decide cómo aparecen y se van los mensajes de validación. `collapse` (por
+defecto) abre el hueco que necesita el mensaje mientras aparece con un fundido, así que los campos
+de debajo se desplazan en vez de saltar; `fade` y `slide` solo suavizan el texto; `none` lo muestra
+y lo quita de golpe. Una animación propia es un par de clases que Angular añade mientras el mensaje
+entra y sale. Sus estilos van en una hoja global, porque se aplican al elemento del mensaje del
+campo, fuera del alcance de un estilo encapsulado de componente. Sin `leave`, el mensaje se quita de
+golpe. Todas las animaciones incluidas se detienen con `prefers-reduced-motion`, y un mensaje
+mostrado como tooltip no se anima nunca. Los tiempos salen de `--hub-form-feedback-motion-duration`,
+`--hub-form-feedback-motion-easing` y `--hub-form-feedback-slide-distance`.
+
+```ts
+provideHubForms({ feedbackAnimation: 'slide' });
+provideHubForms({ feedbackAnimation: { enter: 'error-in', leave: 'error-out' } });
+```
+
 `color` define una paleta de aplicación para todos los campos de color sin `swatches` propios (por
 defecto no hay ninguna) y los dos nombres accesibles que añade el campo de color: `customColorLabel`
 (`'Custom color'`) para la última celda de la rejilla y `pickerLabel` (`'Choose color'`) para el cuadrado

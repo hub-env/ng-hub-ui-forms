@@ -15,6 +15,7 @@ import { AbstractControl, ControlContainer, ValidationErrors } from '@angular/fo
 import { Subject, takeUntil } from 'rxjs';
 import { HubValidationErrorDirective } from '../directives/validation-error.directive';
 import { HUB_FORMS_CONFIG } from '../services/forms-config';
+import { feedbackAnimationClasses } from './hub-error-display';
 
 /** When a container reveals its group-level validation errors. */
 export type HubGroupErrorTrigger = 'touched' | 'submit' | 'always';
@@ -54,6 +55,9 @@ export abstract class HubGroupControl implements AfterContentInit, OnDestroy {
 	readonly errorTpts = contentChildren(HubValidationErrorDirective);
 
 	protected _errorTemplates: { [key: string]: TemplateRef<any> | undefined } = {};
+
+	/** Classes that animate the group's error message in and out, from the global config. */
+	protected readonly feedbackMotion = feedbackAnimationClasses(this._config.feedbackAnimation);
 
 	/**
 	 * The currently bound group control. A `computed` (not an `effect`-fed signal) so it resolves

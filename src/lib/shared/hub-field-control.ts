@@ -21,6 +21,7 @@ import { HubFormTextDirective } from '../directives/form-text.directive';
 import { FormTextType, FormTextTypes } from '../interfaces/common.interface';
 import { HubValidationErrorDirective } from '../directives/validation-error.directive';
 import { HUB_FORMS_CONFIG } from '../services/forms-config';
+import { feedbackAnimationClasses } from './hub-error-display';
 import { HubFormControl } from './hub-form-control';
 import { isDefined, uuid } from '../utils/utils';
 
@@ -59,6 +60,9 @@ export abstract class HubFieldControl extends HubFormControl implements ControlV
 
 	/** Resolved templates that override the default message of a given error key. */
 	protected _errorTemplates: { [key: string]: TemplateRef<any> | undefined } = {};
+
+	/** Classes that animate the messages under the field in and out, from the global config. */
+	protected readonly feedbackMotion = feedbackAnimationClasses(this.#config.feedbackAnimation);
 
 	/** Stable unique id linking the label and the control. */
 	readonly id = uuid();

@@ -17,7 +17,12 @@
 	</div>
 
 	@if (isInvalid) {
-		<div class="hub-field__feedback" role="alert">
+		<div
+			class="hub-field__feedback"
+			role="alert"
+			[animate.enter]="feedbackMotion.enter"
+			[animate.leave]="feedbackMotion.leave"
+		>
 			<ul>
 				@for (error of errors | keyvalue; track error.key) {
 					<li>

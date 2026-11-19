@@ -945,6 +945,20 @@ field once it is touched and valid. The invalid state is unaffected — it is al
 automatic; only success is gated behind this flag. A per-field `showValid` input
 overrides the global default.
 
+`feedbackAnimation` sets how validation messages appear and go. `collapse` (the default) opens the
+room the message needs while it fades in, so the fields below slide down instead of jumping; `fade`
+and `slide` only soften the text; `none` shows and hides it at once. Your own motion is a pair of
+classes Angular adds while the message enters and leaves. Style them in a global stylesheet, because
+they land on the field's feedback element, out of reach of an encapsulated component style. Without
+`leave`, the message goes at once. Every preset stops under `prefers-reduced-motion`, and a message
+shown as a tooltip is never animated. Timing comes from `--hub-form-feedback-motion-duration`,
+`--hub-form-feedback-motion-easing` and `--hub-form-feedback-slide-distance`.
+
+```ts
+provideHubForms({ feedbackAnimation: 'slide' });
+provideHubForms({ feedbackAnimation: { enter: 'error-in', leave: 'error-out' } });
+```
+
 `color` sets an application palette for every colour field without `swatches` of its own (there is
 none by default) and the two accessible names the colour field adds: `customColorLabel`
 (`'Custom color'`) for the grid's last cell and `pickerLabel` (`'Choose color'`) for the hex field's
