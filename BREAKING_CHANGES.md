@@ -2,6 +2,25 @@
 
 This document tracks all breaking changes in the `ng-hub-ui-forms` library.
 
+## v22.47.0
+
+### The select needs `@angular/cdk` 22 and Angular 22
+
+- **Change**: `hub-select` is now built on ng-select 24.2.1, whose list renders in an Angular CDK
+  overlay. `@angular/cdk` `>=22.0.0` is a required peer, and the `@angular/*` peers rise from
+  `>=21.0.0` to `>=22.0.0`.
+- **Why**: the CDK overlay replaces the hand-made positioning, and brings the top layer and
+  viewport-based placement for free.
+- **Impact**: without `@angular/cdk` installed, npm refuses the install on the missing peer, or the
+  build fails on `@angular/cdk/overlay`. An application on Angular 21 gets a peer conflict. In the
+  select, `appendTo` only chooses the element that holds the overlay container, `popover` is a no-op,
+  and `--hub-select-dropdown-zindex` / `--hub-select-dropdown-z-index` no longer stack the list
+  (the top layer does). A `typeahead` Subject emits only while the reader types, and Escape is kept
+  from the page only when it closes an open list. An item that is not an array now warns with
+  "should be an array".
+- **Migration**: `npm install @angular/cdk` at the same major as Angular and upgrade Angular to 22.
+  Drop any z-index override of the select list, and any code that relied on `popover`.
+
 ## v22.43.0
 
 ### The datepicker input is editable, and out-of-range dates are invalid

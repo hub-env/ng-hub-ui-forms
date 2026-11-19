@@ -4,7 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { provideHubForms } from '../services/forms-config';
 import { HubSelectComponent } from './select.component';
-import { NgSelectComponent } from './vendor/lib/ng-select.component';
+import { NgSelectComponent } from './vendor/lib/ng-select/ng-select.component';
 
 /** Mounts a host and hands back the engine the wrapper is driving. */
 async function render<T>(host: Type<T>) {

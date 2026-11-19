@@ -1,0 +1,28 @@
+--- a/src/lib/select/vendor/lib/ng-select/ng-select.component.ts
++++ b/src/lib/select/vendor/lib/ng-select/ng-select.component.ts
+@@ -1098,9 +1098,23 @@
+ 			tag = this._primitive ? this.searchTerm : { [this.bindLabel()]: this.searchTerm };
+ 		}
+ 
+-		const handleTag = (item) => (this.typeahead()?.observed || !this.isOpen() ? this.itemsList.mapItem(item, null) : this.itemsList.addItem(item));
++		// Read once, up front: the panel may close before the promise resolves, and whether the
++		// created item joins the list is decided by the state the user acted in.
++		const wasOpen = this.isOpen();
++		const handleTag = (item) => (this.typeahead()?.observed || !wasOpen ? this.itemsList.mapItem(item, null) : this.itemsList.addItem(item));
+ 		if (isPromise(tag)) {
+-			tag.then((item) => this.select(handleTag(item))).catch(() => {});
++			// Close now, as the synchronous branch does: an `addTag` that opens a dialog must not
++			// leave the panel hanging over it until the promise resolves.
++			if (this.closeOnSelect()) {
++				this.close();
++			}
++
++			// Same guard as the synchronous branch: resolving with nothing means "nothing to add".
++			tag.then((item) => {
++				if (item) {
++					this.select(handleTag(item));
++				}
++			}).catch(() => {});
+ 		} else if (tag) {
+ 			this.select(handleTag(tag));
+ 		}

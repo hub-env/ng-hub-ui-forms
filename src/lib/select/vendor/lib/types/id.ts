@@ -1,4 +1,9 @@
 // @ts-nocheck -- vendored ng-select source (type-checked upstream); see ../PATCHES.md
+/**
+ * Creates a unique identifier for an ng-select element.
+ *
+ * @since 3.0.0
+ */
 export function newId() {
 	// First character is an 'a', it's good practice to tag id to begin with a letter
 	return 'axxxxxxxxxxx'.replace(/[x]/g, () => {

@@ -184,7 +184,7 @@ hub-select.hidden-control {
 	// later in the DOM — so at the same layer it paints last, and the label went under an
 	// opaque background and vanished. A `z-index: 1` fixed the closed field and not the open
 	// one: while the panel is up the engine lifts that same container to `z-index: 1001`
-	// (`vendor/lib/ng-select.component.scss`, `&.ng-select-opened`), so the label went out
+	// (`vendor/lib/ng-select/ng-select.component.scss`, `&.ng-select-opened`), so the label went out
 	// for exactly as long as you were choosing — the one moment you are looking at the field.
 	//
 	// A literal above that constant rather than a token: this is not a taste anybody should
@@ -272,10 +272,15 @@ hub-select.hidden-control {
 
 // Dropdown panel (appended to the control by default).
 .ng-dropdown-panel {
-	background: var(--hub-select-dropdown-bg);
+	// Glass when an ancestor turns the layer on (ng-hub-ui-ds); opaque otherwise. The panel carries
+	// `hub-glass-surface` through the select's `panelClass`.
+	background-color: color-mix(in srgb, var(--hub-select-dropdown-bg) var(--hub-sys-glass-opacity, 100%), transparent);
+	background-image: var(--hub-sys-glass-sheen, none);
+	-webkit-backdrop-filter: var(--hub-sys-glass-filter, none);
+	backdrop-filter: var(--hub-sys-glass-filter, none);
 	border: var(--hub-select-border-width) solid var(--hub-select-dropdown-border-color);
 	border-radius: var(--hub-select-dropdown-border-radius);
-	box-shadow: var(--hub-select-dropdown-box-shadow);
+	box-shadow: var(--hub-sys-glass-rim, 0 0 #0000), var(--hub-select-dropdown-box-shadow);
 
 	.ng-dropdown-panel-items .ng-option {
 		padding: var(--hub-select-option-padding-y) var(--hub-select-option-padding-x);
@@ -312,18 +317,13 @@ hub-select.hidden-control {
 	}
 }
 
-// Panel stacking — must beat the vendored `.ng-dropdown-panel { z-index: 1050 }`.
-// The vendored ng-select is a child component with `ViewEncapsulation.None`, so its
-// stylesheet is injected AFTER this theme; an equal-specificity rule here would lose
-// on source order. These higher-specificity selectors win regardless of load order and
-// cover both placements: the inline panel (descendant of the control) and the
-// body-appended panel (ng-select forwards its host classes, incl. `hub-select__control`,
-// onto the panel when `appendTo` is set).
-.hub-select__control .ng-dropdown-panel,
-.ng-dropdown-panel.hub-select__control {
-	// Canonical hook first (`zindex` spelling); the deprecated `z-index` name keeps
-	// working one cycle as the fallback/default carrier declared in _tokens.scss.
-	z-index: var(--hub-select-dropdown-zindex, var(--hub-select-dropdown-z-index));
+// The list is never narrower than its control (the overlay pane carries that minimum) and grows
+// to its options up to `--hub-select-dropdown-max-width`. `.hub-select__panel` is ours, unlike
+// the mirrored host classes, and its specificity beats the engine's `width: 100%`.
+.ng-dropdown-panel.hub-select__panel {
+	width: max-content;
+	min-width: 100%;
+	max-width: min(var(--hub-select-dropdown-max-width, 24rem), calc(100vw - 2rem));
 }
 
 // ── chip ────────────────────────────────────────────────────────────────────

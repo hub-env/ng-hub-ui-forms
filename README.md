@@ -52,6 +52,12 @@ This library is part of the **ng-hub-ui** ecosystem:
 npm install ng-hub-ui-forms
 ```
 
+`@angular/cdk` (22 or later) is a required peer: the select's list renders in a CDK overlay.
+
+```bash
+npm install @angular/cdk
+```
+
 `ng-hub-ui-utils` is a peer dependency (the datepicker opens its panel through its overlay
 service, and every field renders its tooltip helper text with `hubTooltip`). `ng-hub-ui-ds`
 carries the design tokens the fields read; it is optional, because every token is read with a
@@ -136,7 +142,7 @@ section.
 ## 📦 Installation
 
 ```bash
-npm install ng-hub-ui-forms ng-hub-ui-utils ng-hub-ui-ds
+npm install ng-hub-ui-forms @angular/cdk ng-hub-ui-utils ng-hub-ui-ds
 ```
 
 ### Peer Dependencies
@@ -1015,7 +1021,9 @@ check mark (unset, each mark is black or white, whichever reads on its swatch).
 }
 ```
 
-**`hub-select` inside a modal** — the dropdown panel stacks through `--hub-select-dropdown-zindex` (default `calc(var(--hub-sys-zindex-modal, 1055) + 5)`; the previous `--hub-select-dropdown-z-index` spelling is deprecated but still honoured), so a select opened inside a `HubModal` renders above the dialog instead of being clipped underneath it.
+**`hub-select` inside a modal** — the list renders in a CDK overlay, which uses the browser's top layer, so a select opened inside a `HubModal` is drawn above the dialog with no z-index to tune. `appendTo` only chooses the element the overlay container is placed in; the position is computed against the viewport. `popover` is deprecated and has no effect.
+
+**Glass** — when `ng-hub-ui-ds` turns its glass layer on (`[data-hub-glass]` or `data-theme="glass"` on an ancestor), the select list and the datepicker calendar become translucent, blurred and rimmed. Inputs and the other fields stay opaque on purpose, for readability. With the layer off, nothing changes.
 
 **Width of the list** — the panel is never narrower than the control and grows to its longest option, up to `--hub-select-dropdown-max-width` (default `24rem`) and never past the screen. When it would run off the screen from the control's start, it lines up with the control's end.
 

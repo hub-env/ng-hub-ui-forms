@@ -76,7 +76,7 @@ describe('hub-select list anchor', () => {
 		expect(anchorOf(fixture)).toBeNull();
 	});
 
-	/** Opens the list with the group at 40..340 and the control at 100..220. */
+	/** Opens the list with the group 300px wide and the control 120px wide. */
 	const openList = async (anchor: string) => {
 		vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
 			if (this === document.body) return box(0, 1000, 0, 2000);
@@ -98,17 +98,13 @@ describe('hub-select list anchor', () => {
 		return document.querySelector('ng-dropdown-panel') as HTMLElement;
 	};
 
-	it('lines the appended list up with the group left edge and at least its width', async () => {
-		const panel = await openList('group');
+	const paneMinWidth = (panel: HTMLElement) => (panel.closest('.cdk-overlay-pane') as HTMLElement).style.minWidth;
 
-		expect(panel.style.left).toBe('40px');
-		expect(panel.style.minWidth).toBe('300px');
+	it('gives the list the group width as its minimum when the host asks for group', async () => {
+		expect(paneMinWidth(await openList('group'))).toBe('300px');
 	});
 
 	it('leaves the list on the control when there is no group anchor', async () => {
-		const panel = await openList('control');
-
-		expect(panel.style.left).toBe('100px');
-		expect(panel.style.minWidth).toBe('120px');
+		expect(paneMinWidth(await openList('control'))).toBe('120px');
 	});
 });

@@ -4,7 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { provideHubForms } from '../services/forms-config';
 import { HubSelectComponent } from './select.component';
-import { NgSelectConfig } from './vendor/lib/config.service';
+import { NgSelectConfig } from './vendor/lib/services/config.service';
 
 /**
  * Regression spec for the dropdown's own strings staying English in a translated app

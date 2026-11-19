@@ -25,8 +25,8 @@ import { HubAppendDirective } from '../directives/append.directive';
 import { HubPrependDirective } from '../directives/prepend.directive';
 import { HubFieldControl } from '../shared/hub-field-control';
 import { areEqual, get } from '../utils/utils';
-import { NgSelectComponent } from './vendor/lib/ng-select.component';
-import { NgSelectConfig } from './vendor/lib/config.service';
+import { NgSelectComponent } from './vendor/lib/ng-select/ng-select.component';
+import { NgSelectConfig } from './vendor/lib/services/config.service';
 import {
 	NgClearButtonTemplateDirective,
 	NgFooterTemplateDirective,
@@ -40,7 +40,7 @@ import {
 	NgOptionTemplateDirective,
 	NgTagTemplateDirective,
 	NgTypeToSearchTemplateDirective
-} from './vendor/lib/ng-templates.directive';
+} from './vendor/lib/directives/ng-templates.directive';
 import {
 	HubSelectClearButtonDirective,
 	HubSelectFooterDirective,

@@ -1,14 +1,22 @@
 // @ts-nocheck -- vendored ng-select source (type-checked upstream); see ../PATCHES.md
 import { Injectable, isDevMode } from '@angular/core';
 
+/**
+ * Reports developer-facing warnings through the configured console.
+ *
+ * @since 3.0.0
+ */
 @Injectable({ providedIn: 'root' })
 export class ConsoleService {
 	/**
-	 * The engine's write-value diagnostics are advice for whoever wrote the form, so they are
-	 * kept — a dropped model is worse in silence — but held to development, where that person
-	 * is the one reading, and attributed so the message is traceable to this package.
+	 * Writes a developer-facing warning to the console.
+	 *
+	 * @param message - The message.
+	 *
+	 * @since 3.0.0
 	 */
 	warn(message: string) {
+		// Advice for whoever wrote the form: kept, but only where that person reads it, and attributed.
 		if (!isDevMode()) {
 			return;
 		}

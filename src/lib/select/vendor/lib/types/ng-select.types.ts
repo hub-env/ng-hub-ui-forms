@@ -1,4 +1,9 @@
 // @ts-nocheck -- vendored ng-select source (type-checked upstream); see ../PATCHES.md
+/**
+ * Defines the ng option contract used by ng-select.
+ *
+ * @since 3.0.0
+ */
 export interface NgOption {
 	[name: string]: any;
 
@@ -9,6 +14,7 @@ export interface NgOption {
 	marked?: boolean;
 	label?: string;
 	value?: string | any;
+	classes?: string;
 	parent?: NgOption;
 	children?: NgOption[];
 }
@@ -20,7 +26,7 @@ export enum KeyCode {
 	Space = ' ',
 	ArrowUp = 'ArrowUp',
 	ArrowDown = 'ArrowDown',
-	Backspace = 'Backspace'
+	Backspace = 'Backspace',
 }
 
 export type DropdownPosition = 'top' | 'right' | 'bottom' | 'left' | 'auto';

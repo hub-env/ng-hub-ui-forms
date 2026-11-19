@@ -1,0 +1,20 @@
+--- a/src/lib/select/vendor/lib/ng-select/ng-select.component.ts
++++ b/src/lib/select/vendor/lib/ng-select/ng-select.component.ts
+@@ -304,6 +304,8 @@
+ 	readonly _popover = input(false, { alias: 'popover', transform: booleanAttribute });
+ 	/** @deprecated Has no effect: the CDK overlay renders in the native Popover API top layer automatically in supporting browsers. Will be removed in a future major version. */
+ 	readonly popover = linkedSignal(() => this._popover());
++	/** Finds the element the open list lines up with instead of this control; asked each time the list opens. */
++	readonly dropdownAnchor = input<(() => HTMLElement | null) | null>(null);
+ 	// models
+ 	/** Object property to use for label. Default `label` */
+ 	readonly bindLabel = model<string>(undefined);
+@@ -1734,7 +1736,7 @@
+ 	 * @since 23.7.0
+ 	 */
+ 	private _dropdownOrigin(): HTMLElement {
+-		return this._selectContainer()?.nativeElement ?? this.element;
++		return this.dropdownAnchor()?.() ?? this._selectContainer()?.nativeElement ?? this.element;
+ 	}
+ 
+ 	/**

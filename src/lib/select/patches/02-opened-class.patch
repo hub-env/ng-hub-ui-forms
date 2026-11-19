@@ -1,0 +1,67 @@
+--- a/src/lib/select/vendor/lib/ng-select/ng-select.component.ts
++++ b/src/lib/select/vendor/lib/ng-select/ng-select.component.ts
+@@ -28,6 +28,7 @@
+ 	OnChanges,
+ 	OnInit,
+ 	output,
++	Renderer2,
+ 	signal,
+ 	SimpleChanges,
+ 	TemplateRef,
+@@ -119,7 +120,6 @@
+ 		'[class.ng-select-taggable]': 'addTag()',
+ 		'[class.ng-select-searchable]': 'searchable()',
+ 		'[class.ng-select-clearable]': 'clearable()',
+-		'[class.ng-select-opened]': 'isOpen()',
+ 		'[class.ng-select-filtered]': 'filtered',
+ 		'[class.ng-select-disabled]': 'disabled()',
+ 	},
+@@ -439,6 +439,9 @@
+ 		);
+ 	});
+ 
++	/** Adds/removes `ng-select-opened` on the host — assigned in the constructor. */
++	private _reflectOpenState!: (open: boolean) => void;
++
+ 	/**
+ 	 * Creates an instance of NgSelectComponent.
+ 	 *
+@@ -448,11 +451,22 @@
+ 		const config = this.config;
+ 		const newSelectionModel = inject<SelectionModelFactory | undefined>(SELECTION_MODEL_FACTORY, { optional: true });
+ 		const _elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
++		const _renderer = inject(Renderer2);
+ 
+ 		this._mergeGlobalConfig(config);
+ 		this.itemsList = new ItemsList(this, newSelectionModel ? newSelectionModel() : DefaultSelectionModelFactory());
+ 		this.element = _elementRef.nativeElement;
+ 		this._dropdownOverlay = new DropdownOverlayManager(this._injector, this._document, this.element);
++		// A host binding only runs while the PARENT view refreshes, and open() ends in a local
++		// detectChanges(), so the class never appeared without a global tick (zoneless/OnPush).
++		this._reflectOpenState = (open: boolean) => {
++			if (open) {
++				_renderer.addClass(this.element, 'ng-select-opened');
++			} else {
++				_renderer.removeClass(this.element, 'ng-select-opened');
++			}
++		};
++		effect(() => this._reflectOpenState(this.isOpen() ?? false));
+ 		this._handleSignalChanges();
+ 		afterEveryRender({
+ 			read: () => this._measureOutlineNotch(),
+@@ -946,6 +960,7 @@
+ 			return;
+ 		}
+ 		this.isOpen.set(true);
++		this._reflectOpenState(true);
+ 		this.itemsList.markSelectedOrDefault(this.markFirst());
+ 		this.openEvent.emit();
+ 		if (!this.searchTerm) {
+@@ -967,6 +982,7 @@
+ 			return;
+ 		}
+ 		this.isOpen.set(false);
++		this._reflectOpenState(false);
+ 		this._isComposing = false;
+ 		if (!this._editableSearchTermActive()) {
+ 			this._clearSearch();

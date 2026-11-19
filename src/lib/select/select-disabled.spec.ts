@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Component } from '@angular/core';
 import { provideHubForms } from '../services/forms-config';
-import { NgSelectComponent } from './vendor/lib/ng-select.component';
+import { NgSelectComponent } from './vendor/lib/ng-select/ng-select.component';
 import { HubSelectComponent } from './select.component';
 
 /**

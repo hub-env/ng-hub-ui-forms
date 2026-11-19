@@ -115,7 +115,8 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 |                | An asynchronous `addTag` closes the list before its promise resolves, so the panel never covers the dialog it opened (`forms-select-tagging`)            |       ✅        |
 |                | `clearSearchOnAdd`, apart from `closeOnSelect` (`forms-select-tagging`)                                                                                  |       ✅        |
 | **Panel**      | `appendTo`, `closeOnSelect`, `fixedPlaceholder`                                                                                                          |       ❌        |
-|                | Renders above a `HubModal` through `--hub-select-dropdown-zindex`                                                                                        |       ✅        |
+|                | The list renders in a CDK overlay (top layer), so it sits above a `HubModal` with no z-index token                                                       |       ❌        |
+|                | Glass: the list turns translucent, blurred and rimmed under `[data-hub-glass]` / `data-theme="glass"`                                                    |       ❌        |
 |                | As wide as its options (up to `--hub-select-dropdown-max-width`), and opens from the control's end when it would leave the screen (`forms-select-width`) |       ✅        |
 | **Templates**  | `hubSelectOption` / `hubSelectOptgroup` / `hubSelectLabel` / `hubSelectMultiLabel` / `hubSelectHeader` / `hubSelectFooter` / `hubSelectNotFound`         |       ✅        |
 |                | `hubSelectTypeToSearch` / `hubSelectLoadingText` / `hubSelectLoadingSpinner` / `hubSelectTag` / `hubSelectClearButton`                                   |       ❌        |
@@ -143,6 +144,7 @@ The library ships nine fields — `hub-input`, `hub-otp-input`, `hub-textarea`, 
 |                 | `opened` / `closed` / `cleared` / `viewChange` outputs                                                                                     |       ❌        |
 | **Keyboard**    | Arrow / Home / End / PageUp / PageDown navigation inside the panel                                                                         |       ❌        |
 | **Overlay**     | Renders above a `HubModal` through `--hub-datepicker-overlay-zindex`                                                                       |       ✅        |
+|                 | Glass: the calendar turns translucent, blurred and rimmed under `[data-hub-glass]` / `data-theme="glass"`                                  |       ❌        |
 
 ## Timepicker (`hub-timepicker`)
 

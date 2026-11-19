@@ -5,6 +5,33 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.47.0] - 2026-11-19
+
+### Added
+
+- **The select list and the datepicker calendar follow the glass layer of `ng-hub-ui-ds`.** Under an
+  ancestor with `[data-hub-glass]` or `data-theme="glass"` both panels turn translucent, blurred
+  and rimmed, reading the `--hub-sys-glass-*` variables with fallbacks that keep them opaque when
+  the layer is off. Inputs and the other fields stay opaque on purpose, for readability.
+
+### Changed
+
+- **BREAKING — the select is built on ng-select 24.2.1, which draws its list in a CDK overlay.**
+  `@angular/cdk` (22 or later) is now a required peer and the Angular floor rises from 21 to 22. See
+  `BREAKING_CHANGES.md`.
+- **What a `hub-select` user sees.** The list opens in the browser's top layer, so it sits above a
+  modal with no z-index to tune, and its position is computed against the viewport. The width
+  contract does not change: never narrower than the control, as wide as its options up to
+  `--hub-select-dropdown-max-width`, and end-aligned when it would leave the screen. `appendTo` only
+  chooses the element the overlay is placed in, and `popover` no longer does anything. A `typeahead`
+  emits only while the reader types, and Escape is kept from the page only when it closes an open
+  list. `--hub-select-dropdown-zindex` and `--hub-select-dropdown-z-index` no longer have an effect
+  on the select.
+- **The weekly ng-select sync runs from the ng-hub-ui monorepo**, which has the Angular toolchain,
+  and opens a pull request here saying what passed. `PATCHES.md` lists the seven patches kept over
+  upstream; the new one sizes the list from the control or group width.
+- The `angular21` keyword is gone from the package keywords.
+
 ## [22.46.0] - 2026-11-19
 
 ### Added

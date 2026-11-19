@@ -1,0 +1,22 @@
+--- a/src/lib/select/vendor/lib/services/console.service.ts
++++ b/src/lib/select/vendor/lib/services/console.service.ts
+@@ -1,5 +1,5 @@
+ // @ts-nocheck -- vendored ng-select source (type-checked upstream); see ../PATCHES.md
+-import { Injectable } from '@angular/core';
++import { Injectable, isDevMode } from '@angular/core';
+ 
+ /**
+  * Reports developer-facing warnings through the configured console.
+@@ -16,6 +16,11 @@
+ 	 * @since 3.0.0
+ 	 */
+ 	warn(message: string) {
+-		console.warn(message);
++		// Advice for whoever wrote the form: kept, but only where that person reads it, and attributed.
++		if (!isDevMode()) {
++			return;
++		}
++
++		console.warn(`[ng-hub-ui-forms] ${message}`);
+ 	}
+ }

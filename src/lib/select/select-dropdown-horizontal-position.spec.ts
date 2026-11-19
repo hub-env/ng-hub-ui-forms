@@ -6,9 +6,8 @@ import { provideHubForms } from '../services/forms-config';
 import { HubSelectComponent } from './select.component';
 
 /**
- * A panel appended to `body` may be wider than its control, to show its options whole. It
- * keeps the control's width as its minimum, opens from the control's start, and from its end
- * when it would otherwise run off the screen.
+ * The list is never narrower than its control, whose width is the overlay pane's minimum,
+ * and grows to its options.
  */
 @Component({
 	standalone: true,
@@ -64,33 +63,56 @@ async function openPanel(controlLeft: number): Promise<HTMLElement> {
 	return document.querySelector('ng-dropdown-panel') as HTMLElement;
 }
 
-describe('hub-select dropdown width and side (appendTo body)', () => {
-	beforeEach(() => {
-		Object.defineProperty(document.documentElement, 'clientWidth', { value: 1000, configurable: true });
-	});
-
+describe('hub-select dropdown width', () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
 		document.querySelectorAll('ng-dropdown-panel').forEach((panel) => panel.remove());
 	});
 
-	it('keeps the control width as a minimum and leaves the rest to the stylesheet', async () => {
-		const panel = await openPanel(100);
+	it('keeps the control width as a minimum on the overlay and pins no width', async () => {
+		const pane = (await openPanel(100)).closest('.cdk-overlay-pane') as HTMLElement;
 
-		expect(panel.style.minWidth).toBe('120px');
-		expect(panel.style.width, 'no inline width capping the options').toBe('');
+		expect(pane.style.minWidth).toBe('120px');
+		expect(pane.style.width, 'no width capping the options').toBe('');
 	});
 
-	it('opens from the control start when it fits', async () => {
+	it('lets the list grow to its options, up to the theme maximum', async () => {
 		const panel = await openPanel(100);
+		const rules = matchingRules(panel);
 
-		expect(panel.style.left).toBe('100px');
+		expect(rules.some((r) => r.style.getPropertyValue('width') === 'max-content')).toBe(true);
+		expect(rules.some((r) => r.cssText.includes('--hub-select-dropdown-max-width'))).toBe(true);
 	});
 
-	it('opens from the control end when it would run off the right edge', async () => {
-		// Control from 860 to 980: a 240px panel from its start would end at 1100.
-		const panel = await openPanel(860);
+	it('does not dress the list with the control rules it inherits through the mirrored host classes', async () => {
+		const panel = await openPanel(100);
+		const leaks = matchingRules(panel).filter(
+			(r) =>
+				/invalid/.test(r.cssText) ||
+				/(^|;|\s)(padding|min-height|height)\s*:/.test(r.style.cssText.replace(/-[a-z-]+:/g, ''))
+		);
 
-		expect(panel.style.left, 'panel right edge = control right edge').toBe('740px');
+		expect(panel.classList.contains('hub-select__control')).toBe(true);
+		expect(leaks.map((r) => r.selectorText)).toEqual([]);
 	});
 });
+
+/** Every style rule of the document that applies to `element`. */
+function matchingRules(element: Element): CSSStyleRule[] {
+	const rules: CSSStyleRule[] = [];
+	for (const sheet of Array.from(document.styleSheets)) {
+		for (const rule of Array.from(sheet.cssRules)) {
+			if (rule instanceof CSSStyleRule && matches(element, rule.selectorText)) rules.push(rule);
+		}
+	}
+	return rules;
+}
+
+/** `matches` that treats a selector jsdom cannot parse (vendor pseudo-elements) as not matching. */
+function matches(element: Element, selector: string): boolean {
+	try {
+		return element.matches(selector);
+	} catch {
+		return false;
+	}
+}

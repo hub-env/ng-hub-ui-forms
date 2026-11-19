@@ -53,6 +53,12 @@ Esta biblioteca forma parte del ecosistema **ng-hub-ui**:
 npm install ng-hub-ui-forms
 ```
 
+`@angular/cdk` (22 o superior) es una peer dependency obligatoria: la lista del select se dibuja en un overlay de CDK.
+
+```bash
+npm install @angular/cdk
+```
+
 `ng-hub-ui-utils` es una peer dependency (el datepicker abre su panel con su servicio de
 overlay y todos los campos pintan el texto de ayuda en tooltip con `hubTooltip`):
 
@@ -135,7 +141,7 @@ de toda la familia.
 ## 📦 Instalación
 
 ```bash
-npm install ng-hub-ui-forms ng-hub-ui-utils ng-hub-ui-ds
+npm install ng-hub-ui-forms @angular/cdk ng-hub-ui-utils ng-hub-ui-ds
 ```
 
 ### Peer dependencies
@@ -1036,7 +1042,9 @@ muestra).
 }
 ```
 
-**`hub-select` dentro de un modal** — el panel del desplegable se apila con `--hub-select-dropdown-zindex` (por defecto `calc(var(--hub-sys-zindex-modal, 1055) + 5)`; la grafía anterior `--hub-select-dropdown-z-index` queda deprecada pero se sigue respetando), así que un select abierto dentro de un `HubModal` se renderiza por encima del diálogo en vez de quedar recortado debajo.
+**`hub-select` dentro de un modal** — la lista se dibuja en un overlay de CDK, que usa la capa superior del navegador, así que un select abierto dentro de un `HubModal` queda por encima del diálogo sin ningún z-index que ajustar. `appendTo` solo elige el elemento donde se coloca el contenedor del overlay; la posición se calcula respecto al viewport. `popover` está deprecado y no hace nada.
+
+**Glass** — cuando `ng-hub-ui-ds` activa su capa glass (`[data-hub-glass]` o `data-theme="glass"` en un ancestro), la lista del select y el calendario del datepicker pasan a ser translúcidos, con desenfoque y borde de luz. Los inputs y el resto de campos siguen opacos a propósito, por legibilidad. Con la capa apagada no cambia nada.
 
 **Ancho de la lista** — el panel nunca es más estrecho que el control y crece hasta su opción más larga, con un tope en `--hub-select-dropdown-max-width` (por defecto `24rem`) y sin salirse de la pantalla. Si desde el inicio del control se saldría, se alinea con su final.
 

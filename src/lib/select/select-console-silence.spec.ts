@@ -94,7 +94,7 @@ describe('hub-select keeps its write-value diagnostics out of production console
 
 			expect(warn).toHaveBeenCalledTimes(1);
 			expect(warn.mock.calls[0][0]).toContain('[ng-hub-ui-forms]');
-			expect(warn.mock.calls[0][0]).toContain('should be array');
+			expect(warn.mock.calls[0][0]).toContain('should be an array');
 		});
 	});
 });

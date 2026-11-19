@@ -17,8 +17,8 @@ import {
 	HubSelectTypeToSearchDirective
 } from './select-templates.directive';
 import { HubSelectComponent } from './select.component';
-import { NgSelectComponent } from './vendor/lib/ng-select.component';
-import { NgOptionTemplateDirective } from './vendor/lib/ng-templates.directive';
+import { NgSelectComponent } from './vendor/lib/ng-select/ng-select.component';
+import { NgOptionTemplateDirective } from './vendor/lib/directives/ng-templates.directive';
 
 const ITEMS = [
 	{ code: 'a', name: 'Alpha', group: 'g' },

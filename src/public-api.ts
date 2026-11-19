@@ -52,7 +52,7 @@ export {
 	HubSelectTagDirective,
 	HubSelectClearButtonDirective
 } from './lib/select/select-templates.directive';
-export { NgSelectConfig } from './lib/select/vendor/lib/config.service';
+export { NgSelectConfig } from './lib/select/vendor/lib/services/config.service';
 
 /**
  * @deprecated Use `<hub-select>` with `[items]` (or the `hubSelect*` slots) instead. `<ng-option>`
@@ -93,7 +93,7 @@ export {
 	NgTagTemplateDirective,
 	/** @deprecated Use `HubSelectClearButtonDirective` (`[hubSelectClearButton]`). Removed in 23.0.0. */
 	NgClearButtonTemplateDirective
-} from './lib/select/vendor/lib/ng-templates.directive';
+} from './lib/select/vendor/lib/directives/ng-templates.directive';
 
 // Directives
 export { HubFormTextDirective } from './lib/directives/form-text.directive';

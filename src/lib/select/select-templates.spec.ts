@@ -3,8 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { HubSelectComponent } from './select.component';
-import { NgSelectComponent } from './vendor/lib/ng-select.component';
-import { NgLabelTemplateDirective, NgOptionTemplateDirective } from './vendor/lib/ng-templates.directive';
+import { NgSelectComponent } from './vendor/lib/ng-select/ng-select.component';
+import { NgLabelTemplateDirective, NgOptionTemplateDirective } from './vendor/lib/directives/ng-templates.directive';
 
 /**
  * Verifies that the ng-select template directives projected through `<hub-select>`

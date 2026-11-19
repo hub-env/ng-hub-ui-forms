@@ -1,0 +1,62 @@
+--- a/src/lib/select/vendor/lib/dropdown-panel/ng-dropdown-panel.component.ts
++++ b/src/lib/select/vendor/lib/dropdown-panel/ng-dropdown-panel.component.ts
+@@ -67,7 +67,7 @@
+ export class NgDropdownPanelComponent implements OnInit, OnChanges {
+ 	readonly items = input<NgOption[]>([]);
+ 	readonly showAddTag = input(false, { transform: booleanAttribute });
+-	readonly markedItem = input<NgOption>(undefined);
++	readonly markedItem = input<NgOption | undefined>(undefined);
+ 	readonly position = input<DropdownPosition>('auto');
+ 	readonly bufferAmount = input<number>(undefined);
+ 	readonly virtualScroll = input(false, { transform: booleanAttribute });
+--- a/src/lib/select/vendor/lib/items-list.ts
++++ b/src/lib/select/vendor/lib/items-list.ts
+@@ -86,7 +86,7 @@
+ 	 *
+ 	 * @since 3.0.0
+ 	 */
+-	get markedItem(): NgOption {
++	get markedItem(): NgOption | undefined {
+ 		return this._filteredItems[this._markedIndex];
+ 	}
+ 
+--- a/src/lib/select/vendor/lib/ng-select/ng-select.component.html
++++ b/src/lib/select/vendor/lib/ng-select/ng-select.component.html
+@@ -6,7 +6,7 @@
+ 	[class.ng-has-value]="hasValue"
+ 	class="ng-select-container">
+ 	<div class="ng-value-container">
+-		@if ((selectedItems.length === 0 && !searchTerm) || (fixedPlaceholder() ?? config.fixedPlaceholder)) {
++		@if ((selectedItems.length === 0 && !searchTerm) || fixedPlaceholder()) {
+ 			<ng-template #defaultPlaceholderTemplate>
+ 				<div class="ng-placeholder">{{ placeholder() ?? config.placeholder }}</div>
+ 			</ng-template>
+@@ -49,7 +49,7 @@
+ 				(compositionstart)="onCompositionStart()"
+ 				(focus)="onInputFocus($event)"
+ 				(input)="filter(searchInput.value)"
+-				[attr.aria-activedescendant]="isOpen() ? itemsList?.markedItem?.htmlId : null"
++				[attr.aria-activedescendant]="isOpen() ? itemsList.markedItem?.htmlId : null"
+ 				[attr.aria-controls]="isOpen() ? dropdownId : null"
+ 				[attr.aria-expanded]="isOpen()"
+ 				[attr.aria-label]="ariaLabel()"
+@@ -57,7 +57,7 @@
+ 				[attr.tabindex]="tabIndex()"
+ 				[disabled]="disabled()"
+ 				[readOnly]="!searchable() || itemsList.maxItemsSelected"
+-				[value]="searchTerm ?? ''"
++				[value]="searchTerm || ''"
+ 				aria-autocomplete="list"
+ 				role="combobox" />
+ 		</div>
+--- a/src/lib/select/vendor/lib/ng-select/ng-select.component.ts
++++ b/src/lib/select/vendor/lib/ng-select/ng-select.component.ts
+@@ -138,7 +138,7 @@
+ 	readonly _markFirst = input(true, { alias: 'markFirst', transform: booleanAttribute });
+ 	readonly markFirst = linkedSignal(() => this._markFirst());
+ 	/** Placeholder text. */
+-	readonly _placeholder = input<string>(this.config.placeholder, { alias: 'placeholder' });
++	readonly _placeholder = input<string | undefined>(this.config.placeholder, { alias: 'placeholder' });
+ 	readonly placeholder = linkedSignal(() => this._placeholder());
+ 	/** Set placeholder visible even when an item is selected */
+ 	readonly _fixedPlaceholder = input<boolean>(this.config.fixedPlaceholder, { alias: 'fixedPlaceholder' });
