@@ -2,6 +2,19 @@
 
 This document tracks all breaking changes in the `ng-hub-ui-forms` library.
 
+## v22.49.0
+
+### The select's inner element tags changed
+
+- **Change**: inside `<hub-select>`, the engine is now `<hub-select-engine>` (it was `<ng-select>`)
+  and its list is `<hub-select-panel>` (it was `<ng-dropdown-panel>`).
+- **Impact**: only an application that queried or styled those two tags by name notices it. The
+  classes on them (`.ng-select`, `.ng-select-container`, `.ng-dropdown-panel`, `.ng-option`,
+  `.ng-value`, `ng-select-opened`, ...) are unchanged, as is the markup inside them.
+- **Migration**: select by class instead of by tag (`.ng-select`, `.ng-dropdown-panel`), or replace
+  the tag name in the selector (`ng-select` becomes `hub-select-engine`, `ng-dropdown-panel`
+  becomes `hub-select-panel`).
+
 ## v22.48.0
 
 ### The select list no longer carries CDK class names

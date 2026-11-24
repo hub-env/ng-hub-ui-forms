@@ -1,7 +1,7 @@
 /**
  * Rendering formats for `<hub-select>`.
  *
- * - `dropdown` — the ng-select engine (search, virtual scroll, tags…).
+ * - `dropdown` — the select engine (search, virtual scroll, tags…).
  * - `buttons` — a toggle-button group (single or multiple, per `multiple`).
  * - `checkbox` — a list of checkboxes (always multiple).
  * - `radio` — a list of radios (always single).

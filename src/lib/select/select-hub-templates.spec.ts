@@ -17,8 +17,8 @@ import {
 	HubSelectTypeToSearchDirective
 } from './select-templates.directive';
 import { HubSelectComponent } from './select.component';
-import { NgSelectComponent } from './vendor/lib/ng-select/ng-select.component';
-import { NgOptionTemplateDirective } from './vendor/lib/directives/ng-templates.directive';
+import { HubSelectEngineComponent } from './engine/lib/select-engine/select-engine.component';
+import { NgOptionTemplateDirective } from './engine/lib/directives/engine-templates.directive';
 
 const ITEMS = [
 	{ code: 'a', name: 'Alpha', group: 'g' },
@@ -26,7 +26,7 @@ const ITEMS = [
 ];
 
 /**
- * The public way to re-draw a part of a `<hub-select>` is a `hubSelect*` slot. The vendored
+ * The public way to re-draw a part of a `<hub-select>` is a `hubSelect*` slot. The engine's
  * `ng-*-tmp` attributes still work — they are deprecated, not removed — but a consumer must never
  * need to know they exist.
  */
@@ -101,8 +101,8 @@ class BothSlotsHost {
 	readonly items = ITEMS;
 }
 
-function engineOf(fixture: ComponentFixture<unknown>): NgSelectComponent {
-	return fixture.debugElement.query(By.directive(NgSelectComponent)).componentInstance as NgSelectComponent;
+function engineOf(fixture: ComponentFixture<unknown>): HubSelectEngineComponent {
+	return fixture.debugElement.query(By.directive(HubSelectEngineComponent)).componentInstance as HubSelectEngineComponent;
 }
 
 describe('hub-select customization slots', () => {

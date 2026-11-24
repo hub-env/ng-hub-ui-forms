@@ -1,4 +1,4 @@
-# Fork point of the ng-select copy under vendor/.
+# Fork point of the ng-select copy under engine/ (called vendor/ until the rename).
 # Since 2026-11-24 the copy is maintained here as our own code; nothing syncs it any more.
 # Upstream fixes are brought in by hand when they are worth it, after reading their changelog.
 

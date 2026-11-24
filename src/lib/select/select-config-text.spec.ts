@@ -4,13 +4,13 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { provideHubForms } from '../services/forms-config';
 import { HubSelectComponent } from './select.component';
-import { NgSelectConfig } from './vendor/lib/services/config.service';
+import { HubSelectConfig } from './engine/lib/services/select-config.service';
 
 /**
  * Regression spec for the dropdown's own strings staying English in a translated app
  * (downstream report, 2026-08-13).
  *
- * `NgSelectConfig` is the one place an app translates these, and the engine reads it as a
+ * `HubSelectConfig` is the one place an app translates these, and the engine reads it as a
  * fallback (`notFoundText() ?? config.notFoundText`). A fallback only fires on a missing
  * value, so a default of `'No items found'` on this component's input made the config
  * unreachable — the literal travelled down and won, in every select, in every language.
@@ -65,14 +65,14 @@ class SelectedHostComponent {
 	readonly ctrl = new FormControl<unknown>('Rojo');
 }
 
-async function render<T>(host: Type<T>, configure: (config: NgSelectConfig) => void) {
+async function render<T>(host: Type<T>, configure: (config: HubSelectConfig) => void) {
 	TestBed.resetTestingModule();
 	await TestBed.configureTestingModule({
 		imports: [host],
 		providers: [provideZonelessChangeDetection(), provideHubForms()]
 	}).compileComponents();
 
-	configure(TestBed.inject(NgSelectConfig));
+	configure(TestBed.inject(HubSelectConfig));
 
 	const fixture = TestBed.createComponent(host);
 	fixture.detectChanges();
@@ -97,10 +97,10 @@ async function render<T>(host: Type<T>, configure: (config: NgSelectConfig) => v
 
 describe('HubSelectComponent dropdown text', () => {
 	afterEach(() => {
-		document.querySelectorAll('ng-dropdown-panel').forEach((el) => el.remove());
+		document.querySelectorAll('hub-select-panel').forEach((el) => el.remove());
 	});
 
-	it('takes the empty-state text from NgSelectConfig', async () => {
+	it('takes the empty-state text from HubSelectConfig', async () => {
 		const { emptyText } = await render(SilentHostComponent, (c) => (c.notFoundText = 'No hay resultados'));
 
 		expect(emptyText()).toBe('No hay resultados');
@@ -112,7 +112,7 @@ describe('HubSelectComponent dropdown text', () => {
 		expect(emptyText()).toBe('Sin coincidencias');
 	});
 
-	it('takes the placeholder from NgSelectConfig', async () => {
+	it('takes the placeholder from HubSelectConfig', async () => {
 		const { placeholder } = await render(SilentHostComponent, (c) => (c.placeholder = 'Elige…'));
 
 		expect(placeholder()).toBe('Elige…');
@@ -125,7 +125,7 @@ describe('HubSelectComponent dropdown text', () => {
 	});
 
 	/**
-	 * Deliberately NOT config-driven. NgSelectConfig defaults fixedPlaceholder to true, which keeps
+	 * Deliberately NOT config-driven. HubSelectConfig defaults fixedPlaceholder to true, which keeps
 	 * the placeholder visible next to a selected value; this library overrides it to the
 	 * conventional behaviour on purpose. Pinned so the next pass at "make the config reachable"
 	 * does not sweep it up with the genuine clobbers.
@@ -139,7 +139,7 @@ describe('HubSelectComponent dropdown text', () => {
 		expect(placeholder()).toBeNull();
 	});
 
-	it('takes the add-item text from NgSelectConfig', async () => {
+	it('takes the add-item text from HubSelectConfig', async () => {
 		const { fixture } = await render(SilentHostComponent, (c) => (c.addTagText = 'Añadir'));
 
 		const input = document.querySelector('.ng-select input[type="text"]') as HTMLInputElement;

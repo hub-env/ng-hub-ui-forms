@@ -47,7 +47,7 @@ describe('glass layer', () => {
 		await fixture.whenStable();
 		await new Promise((r) => setTimeout(r, 20));
 
-		const panel = document.querySelector('ng-dropdown-panel') as HTMLElement;
+		const panel = document.querySelector('hub-select-panel') as HTMLElement;
 		expect(panel.classList.contains('hub-glass-surface')).toBe(true);
 		expect(panel.classList.contains('hub-select__panel')).toBe(true);
 	});

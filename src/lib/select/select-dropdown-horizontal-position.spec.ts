@@ -38,7 +38,7 @@ function box(left: number, width: number, top = 100, height = 38): DOMRect {
 async function openPanel(controlLeft: number): Promise<HTMLElement> {
 	vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
 		if (this === document.body) return box(0, 1000, 0, 2000);
-		if (this.tagName.toLowerCase() === 'ng-dropdown-panel') return box(0, 240, 0, 120);
+		if (this.tagName.toLowerCase() === 'hub-select-panel') return box(0, 240, 0, 120);
 		if (this.classList.contains('ng-select-container') || this.classList.contains('ng-select')) {
 			return box(controlLeft, 120);
 		}
@@ -60,13 +60,13 @@ async function openPanel(controlLeft: number): Promise<HTMLElement> {
 	await new Promise((r) => setTimeout(r, 20));
 	await fixture.whenStable();
 
-	return document.querySelector('ng-dropdown-panel') as HTMLElement;
+	return document.querySelector('hub-select-panel') as HTMLElement;
 }
 
 describe('hub-select dropdown width', () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
-		document.querySelectorAll('ng-dropdown-panel').forEach((panel) => panel.remove());
+		document.querySelectorAll('hub-select-panel').forEach((panel) => panel.remove());
 	});
 
 	it('keeps the control width as a minimum on the overlay and pins no width', async () => {

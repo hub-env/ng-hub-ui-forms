@@ -52,18 +52,21 @@ export {
 	HubSelectTagDirective,
 	HubSelectClearButtonDirective
 } from './lib/select/select-templates.directive';
-export { NgSelectConfig } from './lib/select/vendor/lib/services/config.service';
+export {
+	HubSelectConfig,
+	/** @deprecated Renamed `HubSelectConfig`; this is the same class, so providing either configures every select. */
+	HubSelectConfig as NgSelectConfig
+} from './lib/select/engine/lib/services/select-config.service';
+
+export {
+	HubOptionComponent,
+	/** @deprecated Renamed `HubOptionComponent` (`<hub-option>`); `<ng-option>` keeps working through the same class. */
+	HubOptionComponent as NgOptionComponent
+} from './lib/select/engine/lib/option.component';
 
 /**
- * @deprecated Use `<hub-select>` with `[items]` (or the `hubSelect*` slots) instead. `<ng-option>`
- * belongs to the vendored ng-select engine, an internal detail this package re-syncs from upstream.
- * Removed in 23.0.0.
- */
-export { NgOptionComponent } from './lib/select/vendor/lib/ng-option.component';
-
-/**
- * @deprecated Use the `hubSelect*` slot directives above. These are the vendored ng-select
- * attributes (`ng-option-tmp` and friends) and name an internal dependency, not this library's API.
+ * @deprecated Use the `hubSelect*` slot directives above. These are the `ng-option-tmp` family of
+ * attributes, named after the engine this select was forked from rather than after this library.
  * Each has a one-to-one replacement — `ng-option-tmp` → `hubSelectOption`, `ng-label-tmp` →
  * `hubSelectLabel`, and so on, with the same template context. They keep working until they are
  * removed in 23.0.0.
@@ -93,7 +96,7 @@ export {
 	NgTagTemplateDirective,
 	/** @deprecated Use `HubSelectClearButtonDirective` (`[hubSelectClearButton]`). Removed in 23.0.0. */
 	NgClearButtonTemplateDirective
-} from './lib/select/vendor/lib/directives/ng-templates.directive';
+} from './lib/select/engine/lib/directives/engine-templates.directive';
 
 // Directives
 export { HubFormTextDirective } from './lib/directives/form-text.directive';

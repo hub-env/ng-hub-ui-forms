@@ -74,10 +74,10 @@ describe('HubSelectComponent', () => {
 	});
 
 	describe('format switching', () => {
-		it('renders an <ng-select> in the dropdown format', () => {
+		it('renders a <hub-select-engine> in the dropdown format', () => {
 			host.format.set('dropdown');
 			fixture.detectChanges();
-			expect(fixture.debugElement.query(By.css('ng-select'))).toBeTruthy();
+			expect(fixture.debugElement.query(By.css('hub-select-engine'))).toBeTruthy();
 			expect(fixture.debugElement.query(By.css('.hub-select__button'))).toBeNull();
 		});
 
@@ -85,7 +85,7 @@ describe('HubSelectComponent', () => {
 			host.format.set('buttons');
 			fixture.detectChanges();
 			expect(buttons().length).toBe(3);
-			expect(fixture.debugElement.query(By.css('ng-select'))).toBeNull();
+			expect(fixture.debugElement.query(By.css('hub-select-engine'))).toBeNull();
 		});
 
 		it('renders radio inputs in the radio format', () => {

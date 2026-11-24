@@ -7,14 +7,14 @@ import { provideHubForms } from '../services/forms-config';
 import { HubSelectComponent } from './select.component';
 
 /**
- * The two diagnostics the vendored engine emits when a model cannot be written are worth
+ * The two diagnostics the select engine emits when a model cannot be written are worth
  * keeping — the value is dropped in silence otherwise — but they are addressed to whoever
  * wrote the form, so they must not reach the console of the application's users, who did
  * not write it and cannot switch it off.
  *
  * The library already settled this for its own warnings (22.31.0 put one behind
  * `isDevMode()`, 22.33.0 removed the two that had nothing left to say); these specs pin the
- * same shape for the vendored pair: silent in a production build, prefixed in development.
+ * same shape for the engine pair: silent in a production build, prefixed in development.
  */
 @Component({
 	standalone: true,

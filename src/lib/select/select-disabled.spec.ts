@@ -3,14 +3,14 @@ import { TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Component } from '@angular/core';
 import { provideHubForms } from '../services/forms-config';
-import { NgSelectComponent } from './vendor/lib/ng-select/ng-select.component';
+import { HubSelectEngineComponent } from './engine/lib/select-engine/select-engine.component';
 import { HubSelectComponent } from './select.component';
 
 /**
  * Regression spec: a disabled control must disable the select, not just grey it.
  *
  * `setDisabledState` set the component's own `disabled` signal, which the
- * template spent on a `hub-field--disabled` class. The inner ng-select was
+ * template spent on a `hub-field--disabled` class. The inner select engine was
  * never told, so it stayed fully interactive: the panel opened and a choice
  * wrote through to a control the form had explicitly disabled. Greying a field
  * that still accepts input is worse than not greying it — it promises a
@@ -35,12 +35,12 @@ describe('hub-select disabled state', () => {
 		}).compileComponents();
 	});
 
-	it('disables the inner ng-select when the control is disabled', async () => {
+	it('disables the inner select engine when the control is disabled', async () => {
 		const fixture = TestBed.createComponent(DisabledHostComponent);
 		await fixture.whenStable();
 
-		const inner = fixture.debugElement.query((node) => node.componentInstance instanceof NgSelectComponent)
-			.componentInstance as NgSelectComponent;
+		const inner = fixture.debugElement.query((node) => node.componentInstance instanceof HubSelectEngineComponent)
+			.componentInstance as HubSelectEngineComponent;
 
 		expect(inner.disabled()).toBe(false);
 
@@ -55,8 +55,8 @@ describe('hub-select disabled state', () => {
 		fixture.componentInstance.ctrl.disable();
 		await fixture.whenStable();
 
-		const inner = fixture.debugElement.query((node) => node.componentInstance instanceof NgSelectComponent)
-			.componentInstance as NgSelectComponent;
+		const inner = fixture.debugElement.query((node) => node.componentInstance instanceof HubSelectEngineComponent)
+			.componentInstance as HubSelectEngineComponent;
 
 		expect(inner.disabled()).toBe(true);
 

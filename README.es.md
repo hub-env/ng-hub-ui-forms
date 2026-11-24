@@ -381,7 +381,7 @@ escribir y por tanto promete que se puede escribir.
 #### Ranuras de personalización
 
 Cualquier parte del panel se puede redibujar desde una plantilla. Las ranuras llevan el nombre de
-esta biblioteca; los atributos `ng-*-tmp` del motor vendorizado que hay debajo están obsoletos y
+esta biblioteca; los atributos `ng-*-tmp` del motor que hay debajo están obsoletos y
 desaparecen en la 23.0.0.
 
 ```html
@@ -1141,7 +1141,7 @@ Consulta [CHANGELOG.md](./CHANGELOG.md).
 
 ## 🙏 Créditos
 
-`hub-select` es un **fork mantenido de [ng-select](https://github.com/ng-select/ng-select)**, obra de los contribuidores de ng-select. Las fuentes `src/ng-select` upstream se incluyen (vendored) en el propio paquete y se re-tematizan con tokens `--hub-*` — tomadas de la versión upstream **`v24.2.1`** y, desde el 24-11-2026, mantenidas aquí como código propio, sin sincronización automática (punto de partida en [`src/lib/select/UPSTREAM`](./src/lib/select/UPSTREAM); desviaciones anteriores a la separación en [`src/lib/select/PATCHES.md`](./src/lib/select/PATCHES.md)). ng-select se distribuye bajo la [Licencia MIT](https://github.com/ng-select/ng-select/blob/master/LICENSE.md), y se conservan los avisos de copyright originales en los ficheros vendored.
+`hub-select` es un **fork mantenido de [ng-select](https://github.com/ng-select/ng-select)**, obra de los contribuidores de ng-select. Las fuentes `src/ng-select` upstream viven en el propio paquete (en `src/lib/select/engine`) y se re-tematizan con tokens `--hub-*` — tomadas de la versión upstream **`v24.2.1`** y, desde el 24-11-2026, mantenidas aquí como código propio, sin sincronización automática (punto de partida en [`src/lib/select/UPSTREAM`](./src/lib/select/UPSTREAM); desviaciones anteriores a la separación en [`src/lib/select/PATCHES.md`](./src/lib/select/PATCHES.md)). ng-select se distribuye bajo la [Licencia MIT](https://github.com/ng-select/ng-select/blob/master/LICENSE.md), y se conservan los avisos de copyright originales en los ficheros del motor.
 
 El datepicker, los inputs y la capa de validación son originales de `ng-hub-ui-forms`.
 

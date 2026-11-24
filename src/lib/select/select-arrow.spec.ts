@@ -7,7 +7,7 @@ import { HubSelectComponent } from './select.component';
 /**
  * Regression spec for the select caret (upstream report, 2026-07-29).
  *
- * The vendored ng-select engine ships `.ng-arrow` as a 0×0 span — the CSS
+ * The select engine ships `.ng-arrow` as a 0×0 span — the CSS
  * border-triangle technique — so the hub theme must publish the FULL caret
  * declaration: `border-style` + `border-width` + `border-color`, for the closed
  * AND the open state. Up to 22.10.0 the theme only published `border-color`:

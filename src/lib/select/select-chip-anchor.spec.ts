@@ -56,7 +56,7 @@ describe('hub-select list anchor', () => {
 	afterEach(() => {
 		style.remove();
 		vi.restoreAllMocks();
-		document.querySelectorAll('ng-dropdown-panel').forEach((panel) => panel.remove());
+		document.querySelectorAll('hub-select-panel').forEach((panel) => panel.remove());
 	});
 
 	const anchorOf = (fixture: any): HTMLElement | null => {
@@ -80,7 +80,7 @@ describe('hub-select list anchor', () => {
 	const openList = async (anchor: string) => {
 		vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
 			if (this === document.body) return box(0, 1000, 0, 2000);
-			if (this.tagName.toLowerCase() === 'ng-dropdown-panel') return box(0, 240, 0, 120);
+			if (this.tagName.toLowerCase() === 'hub-select-panel') return box(0, 240, 0, 120);
 			if (this.classList.contains('hub-select__group')) return box(40, 300);
 			if (this.classList.contains('ng-select-container') || this.classList.contains('ng-select')) return box(100, 120);
 			return box(0, 0, 0, 0);
@@ -95,7 +95,7 @@ describe('hub-select list anchor', () => {
 		await new Promise((r) => setTimeout(r, 20));
 		await fixture.whenStable();
 
-		return document.querySelector('ng-dropdown-panel') as HTMLElement;
+		return document.querySelector('hub-select-panel') as HTMLElement;
 	};
 
 	// fork: utils overlay — the minimum sits on the panel itself, there is no CDK pane.

@@ -9,7 +9,7 @@ import { HubSelectComponent } from './select.component';
 /**
  * The chip of a multiple `<hub-select>` and where its remove cross stands.
  *
- * The vendored engine emits the cross BEFORE the label (`vendor/lib/ng-select.component.html`),
+ * The engine emits the cross BEFORE the label (`engine/lib/select-engine/select-engine.component.html`),
  * which is not what a chip looks like in any other catalogue and was not reachable from outside:
  * the only escape was to redraw the whole chip through the label slot, cross included. The chip is
  * a flex row, so the running order belongs to the stylesheet — and the place of the cross in it to
@@ -76,7 +76,7 @@ describe('hub-select multiple — the chip draws its remove cross after the text
 
 		const parts = [...chip.children].map((child) => child.className);
 
-		// The premise of the fix. If a vendor sync ever reorders these, the CSS below is
+		// The premise of the fix. If the engine template ever reorders these, the CSS below is
 		// reversing an order that no longer needs reversing, and this test says so.
 		expect(parts[0]).toContain('ng-value-icon');
 		expect(parts[1]).toContain('ng-value-label');

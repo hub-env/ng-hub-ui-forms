@@ -4,7 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { provideHubForms } from '../services/forms-config';
 import { HubSelectComponent } from './select.component';
-import { NgSelectComponent } from './vendor/lib/ng-select/ng-select.component';
+import { HubSelectEngineComponent } from './engine/lib/select-engine/select-engine.component';
 
 /** Mounts a host and hands back the engine the wrapper is driving. */
 async function render<T>(host: Type<T>) {
@@ -18,8 +18,8 @@ async function render<T>(host: Type<T>) {
 	fixture.detectChanges();
 	await fixture.whenStable();
 
-	const engine = fixture.debugElement.query((d) => d.componentInstance instanceof NgSelectComponent)
-		?.componentInstance as NgSelectComponent;
+	const engine = fixture.debugElement.query((d) => d.componentInstance instanceof HubSelectEngineComponent)
+		?.componentInstance as HubSelectEngineComponent;
 
 	return { fixture, engine };
 }
@@ -147,7 +147,7 @@ describe('hub-select — searching and tagging', () => {
 
 		// The dialog is still open — nothing has resolved — and the list is already gone.
 		expect(engine.isOpen()).toBe(false);
-		expect(document.querySelector('ng-dropdown-panel')).toBeNull();
+		expect(document.querySelector('hub-select-panel')).toBeNull();
 
 		host.resolve(null);
 		await fixture.whenStable();

@@ -57,7 +57,7 @@ async function toggleAndInspect(zoneless: boolean): Promise<{ open: OpenedSnapsh
 		const input = fixture.nativeElement.querySelector('[role="combobox"]') as HTMLElement | null;
 		return {
 			opened: select.classList.contains('ng-select-opened'),
-			panel: !!document.querySelector('ng-dropdown-panel'),
+			panel: !!document.querySelector('hub-select-panel'),
 			ariaExpanded: input?.getAttribute('aria-expanded') ?? null
 		};
 	};

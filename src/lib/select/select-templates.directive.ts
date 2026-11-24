@@ -3,13 +3,11 @@ import { Directive, inject, TemplateRef } from '@angular/core';
 /**
  * Hub-named slots for the parts of a `<hub-select>` a consumer can re-draw.
  *
- * `hub-select` is built on a vendored copy of ng-select (see `PATCHES.md`), whose own slot
- * directives are attribute selectors in the `ng-*` namespace: `ng-option-tmp`, `ng-label-tmp` and
+ * The select engine this component is built on (see `PATCHES.md`) declares its own slot
+ * directives as attribute selectors in the `ng-*` namespace: `ng-option-tmp`, `ng-label-tmp` and
  * ten more. Those were re-exported, so the public surface of `ng-hub-ui-forms` invited consumers to
- * write markup named after an internal dependency that is re-synced from upstream on a schedule and
- * that no promise here covers. The directives in this file are the surface the library actually
- * owns: same slots, same template contexts, hub names, and nothing in `vendor/` changed — so the
- * automated sync stays as low-conflict as it was.
+ * write markup named after the engine's origin rather than after this library. The directives in
+ * this file are the surface the library owns: same slots, same template contexts, hub names.
  *
  * Each is a plain marker over an `<ng-template>`; `hub-select` queries it and forwards the template
  * into the engine with the context documented on each directive.

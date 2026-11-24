@@ -58,7 +58,7 @@ describe('HubSelectComponent attached suffix', () => {
 		fixture.detectChanges();
 
 		const action = fixture.debugElement.query(By.css('.projected-action'));
-		expect(action.nativeElement.closest('ng-select')).toBeNull();
+		expect(action.nativeElement.closest('hub-select-engine')).toBeNull();
 	});
 
 	/** The field comes first, then the button acting on it. */

@@ -5,6 +5,27 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.49.0] - 2026-11-24
+
+### Changed
+
+- **The select engine has its own names.** The copy of ng-select moved from `select/vendor` to
+  `select/engine`, its files and classes dropped the `ng-*` prefix (`HubSelectEngineComponent`,
+  `HubSelectPanelComponent`, `SelectPanelService`, `HubOptionComponent`, `HubSelectConfig`) and the
+  inner element tags are now `<hub-select-engine>` and `<hub-select-panel>`. Every `.ng-*` class the
+  engine puts on the DOM is unchanged, so existing theme overrides keep working. The unused
+  `NgSelectModule` is gone; `provideSelectEngine()` replaces `provideNgSelect()` in specs.
+- **The engine is type-checked.** The `@ts-nocheck` banner is removed from every engine source
+  file and the code compiles under the library's strict settings. No behaviour changes: the few
+  spots that dereferenced something that could be missing now skip it instead of throwing.
+
+### Deprecated
+
+- `NgSelectConfig` is now `HubSelectConfig`. The old name stays exported as the same class, so
+  providing either one configures every select.
+- `<ng-option>` and `NgOptionComponent` are now `<hub-option>` and `HubOptionComponent`. The old tag
+  and export keep working through the same component.
+
 ## [22.48.0] - 2026-11-24
 
 ### Changed

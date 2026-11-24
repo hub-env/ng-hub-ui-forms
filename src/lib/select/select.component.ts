@@ -25,8 +25,8 @@ import { HubAppendDirective } from '../directives/append.directive';
 import { HubPrependDirective } from '../directives/prepend.directive';
 import { HubFieldControl } from '../shared/hub-field-control';
 import { areEqual, get } from '../utils/utils';
-import { NgSelectComponent } from './vendor/lib/ng-select/ng-select.component';
-import { NgSelectConfig } from './vendor/lib/services/config.service';
+import { HubSelectEngineComponent } from './engine/lib/select-engine/select-engine.component';
+import { HubSelectConfig } from './engine/lib/services/select-config.service';
 import {
 	NgClearButtonTemplateDirective,
 	NgFooterTemplateDirective,
@@ -40,7 +40,7 @@ import {
 	NgOptionTemplateDirective,
 	NgTagTemplateDirective,
 	NgTypeToSearchTemplateDirective
-} from './vendor/lib/directives/ng-templates.directive';
+} from './engine/lib/directives/engine-templates.directive';
 import {
 	HubSelectClearButtonDirective,
 	HubSelectFooterDirective,
@@ -58,13 +58,12 @@ import {
 import { HubTooltipDirective } from 'ng-hub-ui-utils';
 
 /**
- * Accessible select / multiselect / autocomplete built on the vendored ng-select engine, with the
+ * Accessible select / multiselect / autocomplete built on the select engine, with the
  * `ng-hub-ui-forms` conventions on top: CVA binding, automatic error display (via
  * {@link HubFieldControl}), label, helper text and `--hub-select-*` token theming.
  *
- * The underlying ng-select DOM is themed in place from this component's stylesheet
- * (`ViewEncapsulation.None`) using hub tokens — no external `::ng-deep` overrides, and the vendored
- * source stays untouched so the upstream sync remains automatic.
+ * The engine's DOM is themed in place from this component's stylesheet
+ * (`ViewEncapsulation.None`) using hub tokens, with no external `::ng-deep` overrides.
  *
  * @example
  * ```html
@@ -77,7 +76,7 @@ import { HubTooltipDirective } from 'ng-hub-ui-utils';
 		NgTemplateOutlet,
 		KeyValuePipe,
 		FormsModule,
-		NgSelectComponent,
+		HubSelectEngineComponent,
 		NgOptionTemplateDirective,
 		NgOptgroupTemplateDirective,
 		NgLabelTemplateDirective,
@@ -103,11 +102,10 @@ import { HubTooltipDirective } from 'ng-hub-ui-utils';
 })
 export class HubSelectComponent extends HubFieldControl {
 	/**
-	 * The app's global select configuration, read here rather than left to the engine: the
-	 * vendored source is re-synced from upstream, so a fallback that lives in its template is
-	 * one sync away from disappearing. See {@link placeholder}.
+	 * The app's global select configuration, read here rather than left to the engine, so a
+	 * fallback does not depend on the engine's template. See {@link placeholder}.
 	 */
-	protected readonly _ngSelectConfig = inject(NgSelectConfig);
+	protected readonly _selectConfig = inject(HubSelectConfig);
 
 	/**
 	 * The engine behind the field, kept only so the list can be worked from outside.
@@ -117,7 +115,7 @@ export class HubSelectComponent extends HubFieldControl {
 	 * gesture left for it to answer. Without a way in, reaching the field takes one click and
 	 * seeing the list takes another.
 	 */
-	private readonly _engine = viewChild(NgSelectComponent);
+	private readonly _engine = viewChild(HubSelectEngineComponent);
 	private readonly _group = viewChild<ElementRef<HTMLElement>>('selectGroup');
 
 	/**
@@ -158,15 +156,15 @@ export class HubSelectComponent extends HubFieldControl {
 	protected readonly _value = signal<any>(null);
 
 	// ── Customization templates ──────────────────────────────────────────────
-	// ng-select resolves its templates with `contentChild` (no `descendants`),
+	// The engine resolves its templates with `contentChild` (no `descendants`),
 	// which does NOT see through this wrapper's `<ng-content>`. We grab the
 	// consumer-projected templates here and re-declare them as direct content of
-	// the inner ng-select (see the template), forwarding each with its context —
+	// the inner engine (see the template), forwarding each with its context —
 	// so `<ng-template hubSelectOption>` etc. work through `<hub-select>`.
 	//
 	// Each slot is queried twice: once for the hub-named directive that is the supported way to
-	// write it, and once for the vendored `ng-*-tmp` attribute that used to be the only way. The
-	// hub one wins; the vendored one is deprecated and disappears in 23.0.0 along with its export.
+	// write it, and once for the legacy `ng-*-tmp` attribute that used to be the only way. The
+	// hub one wins; the legacy one is deprecated and disappears in 23.0.0 along with its export.
 	private readonly _hubOptionTpl = contentChild(HubSelectOptionDirective, { read: TemplateRef });
 	private readonly _ngOptionTpl = contentChild(NgOptionTemplateDirective, { read: TemplateRef });
 	protected readonly _optionTpl = computed(() => this._hubOptionTpl() ?? this._ngOptionTpl());
@@ -318,7 +316,7 @@ export class HubSelectComponent extends HubFieldControl {
 	readonly labelType = input<HubLabelType>(this._labelTypes.Stacked);
 
 	/**
-	 * Placeholder text. Left undefined so the engine falls back to the app's `NgSelectConfig`,
+	 * Placeholder text. Left undefined so the engine falls back to the app's `HubSelectConfig`,
 	 * which carries no placeholder of its own unless the app sets one. See {@link notFoundText}.
 	 */
 	readonly placeholder = input<string | undefined>(undefined);
@@ -344,7 +342,7 @@ export class HubSelectComponent extends HubFieldControl {
 
 	/**
 	 * Keep the placeholder visible even when a value is selected. Defaults to `false` (the
-	 * placeholder hides on selection) — ng-select v23 defaults this to `true`, which is not the
+	 * placeholder hides on selection) — the engine defaults this to `true`, which is not the
 	 * conventional behavior.
 	 */
 	readonly fixedPlaceholder = input(false, { transform: booleanAttribute });
@@ -377,7 +375,7 @@ export class HubSelectComponent extends HubFieldControl {
 
 	/**
 	 * Text shown when no items match. Left undefined so the engine falls back to the app's
-	 * `NgSelectConfig`, which is where a translated build sets it once for every select.
+	 * `HubSelectConfig`, which is where a translated build sets it once for every select.
 	 */
 	readonly notFoundText = input<string | undefined>(undefined);
 
@@ -398,7 +396,7 @@ export class HubSelectComponent extends HubFieldControl {
 
 	/**
 	 * Label of the "add item" row shown while typing when `addTag` is enabled. Left undefined
-	 * so the engine falls back to the app's `NgSelectConfig`. See {@link notFoundText}.
+	 * so the engine falls back to the app's `HubSelectConfig`. See {@link notFoundText}.
 	 */
 	readonly addTagText = input<string | undefined>(undefined);
 
@@ -410,7 +408,7 @@ export class HubSelectComponent extends HubFieldControl {
 	 * (dropdown format). When provided, the control stops filtering client-side
 	 * and pushes each term here; feed the results back through `items`.
 	 *
-	 * Note: the vendor also pushes `null` through the Subject when it clears the
+	 * Note: the engine also pushes `null` through the Subject when it clears the
 	 * search box (e.g. right after a selection) — filter it out if you only
 	 * expect strings.
 	 */
@@ -418,14 +416,14 @@ export class HubSelectComponent extends HubFieldControl {
 
 	/**
 	 * Custom equality between an item and the bound value (e.g. objects compared
-	 * by id). When omitted, the vendor's built-in comparison applies.
+	 * by id). When omitted, the engine's built-in comparison applies.
 	 */
 	readonly compareWith = input<((a: any, b: any) => boolean) | undefined>(undefined);
 
 	/** Extra CSS classes applied to the host element. */
 	readonly classlist = input<string>('');
 
-	/** ARIA attributes forwarded to the vendor's combobox search input. */
+	/** ARIA attributes forwarded to the engine's combobox search input. */
 	protected readonly a11yInputAttrs = computed<Record<string, string>>(() => {
 		const attrs: Record<string, string> = {};
 		if (this.required()) {

@@ -1,4 +1,4 @@
-// `<hub-select>` — in-place hub theme for the vendored ng-select DOM + the
+// `<hub-select>` — in-place hub theme for the select engine DOM + the
 // alternative formats (buttons / checkbox / radio). Shared chrome + tokens come
 // from the global `styles/_field.scss` + `_tokens.scss`. No `::ng-deep`.
 
@@ -123,7 +123,7 @@ hub-select.hidden-control {
 		}
 	}
 
-	// Arrow + clear. The vendored engine ships the caret as a 0×0 span (the
+	// Arrow + clear. The engine ships the caret as a 0×0 span (the
 	// border-triangle technique) and carries NO geometry — the full declaration
 	// (border-style + widths + colour) must live here or nothing renders.
 	.ng-arrow-wrapper {
@@ -184,12 +184,11 @@ hub-select.hidden-control {
 	// later in the DOM — so at the same layer it paints last, and the label went under an
 	// opaque background and vanished. A `z-index: 1` fixed the closed field and not the open
 	// one: while the panel is up the engine lifts that same container to `z-index: 1001`
-	// (`vendor/lib/ng-select/ng-select.component.scss`, `&.ng-select-opened`), so the label went out
+	// (`engine/lib/select-engine/select-engine.component.scss`, `&.ng-select-opened`), so the label went out
 	// for exactly as long as you were choosing — the one moment you are looking at the field.
 	//
 	// A literal above that constant rather than a token: this is not a taste anybody should
-	// be tuning, it is the number the vendored engine uses, and the vendored source is
-	// re-synced from upstream so it cannot be edited on this side.
+	// be tuning, it is the number the engine uses, and this sheet cannot change it.
 	//
 	// The label carries no pointer events, so the control underneath stays fully operable.
 	.hub-select__label-anchor {

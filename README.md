@@ -375,7 +375,7 @@ much room is left to type and so promises typing.
 #### Customization slots
 
 Every part of the panel can be re-drawn from a template. The slots carry this library's own name;
-the `ng-*-tmp` attributes of the vendored engine underneath are deprecated and disappear in 23.0.0.
+the `ng-*-tmp` attributes of the engine underneath are deprecated and disappear in 23.0.0.
 
 ```html
 <hub-select formControlName="assignee" label="Assignee" [items]="people" bindLabel="name">
@@ -1120,7 +1120,7 @@ See [CHANGELOG.md](./CHANGELOG.md).
 
 ## 🙏 Credits
 
-`hub-select` is a maintained **fork of [ng-select](https://github.com/ng-select/ng-select)** by the ng-select contributors. The upstream `src/ng-select` sources are vendored in place and re-themed with `--hub-*` tokens — taken from upstream **`v24.2.1`** and, since 2026-11-24, maintained here as its own code with no automatic sync (fork point in [`src/lib/select/UPSTREAM`](./src/lib/select/UPSTREAM); deviations made before the fork in [`src/lib/select/PATCHES.md`](./src/lib/select/PATCHES.md)). ng-select is distributed under the [MIT License](https://github.com/ng-select/ng-select/blob/master/LICENSE.md), and the original copyright notices are retained in the vendored files.
+`hub-select` is a maintained **fork of [ng-select](https://github.com/ng-select/ng-select)** by the ng-select contributors. The upstream `src/ng-select` sources live in the package (under `src/lib/select/engine`) and are re-themed with `--hub-*` tokens — taken from upstream **`v24.2.1`** and, since 2026-11-24, maintained here as its own code with no automatic sync (fork point in [`src/lib/select/UPSTREAM`](./src/lib/select/UPSTREAM); deviations made before the fork in [`src/lib/select/PATCHES.md`](./src/lib/select/PATCHES.md)). ng-select is distributed under the [MIT License](https://github.com/ng-select/ng-select/blob/master/LICENSE.md), and the original copyright notices are retained in the engine files.
 
 The datepicker, inputs and validation layer are original to `ng-hub-ui-forms`.
 

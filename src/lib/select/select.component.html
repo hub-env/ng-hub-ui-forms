@@ -48,7 +48,7 @@
 		@switch (format()) {
 			@case (_selectFormats.Dropdown) {
 				<!-- [disabled] is claimed by the NgModel below (alias of its isDisabled input), not by
-				     ng-select — the engine's own `disabled` is a computed fed by setDisabledState.
+				     hub-select-engine — the engine's own `disabled` is a computed fed by setDisabledState.
 				     Dropping [ngModel] here would silently un-wire the disabled state.
 
 				     It is declared standalone because it is: the value this field holds travels
@@ -93,7 +93,7 @@
 							</label>
 						</span>
 					}
-					<ng-select
+					<hub-select-engine
 						class="hub-select__control"
 						[class.hub-select__control--invalid]="isInvalid"
 						[labelForId]="$any(id)"
@@ -111,7 +111,7 @@
 						[loading]="loading()"
 						[readonly]="readonly()"
 						[disabled]="disabled()"
-						[placeholder]="placeholder() ?? _ngSelectConfig.placeholder"
+						[placeholder]="placeholder() ?? _selectConfig.placeholder"
 						[notFoundText]="notFoundText()"
 						[appendTo]="appendTo()"
 						panelClass="hub-glass-surface hub-select__panel"
@@ -216,7 +216,7 @@
 							</ng-template>
 						}
 						<ng-content></ng-content>
-					</ng-select>
+					</hub-select-engine>
 					@for (addon of _append(); track $index) {
 						<span class="hub-select__addon hub-select__addon--append">{{ addon }}</span>
 					}

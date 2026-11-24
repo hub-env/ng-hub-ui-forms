@@ -4,7 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { provideHubForms } from '../services/forms-config';
 import { HubSelectComponent } from './select.component';
-import { NgSelectComponent } from './vendor/lib/ng-select/ng-select.component';
+import { HubSelectEngineComponent } from './engine/lib/select-engine/select-engine.component';
 
 /**
  * `(change)` on `<hub-select>`.
@@ -28,8 +28,8 @@ async function render<T>(host: Type<T>) {
 	fixture.detectChanges();
 	await fixture.whenStable();
 
-	const engine = fixture.debugElement.query((d) => d.componentInstance instanceof NgSelectComponent)
-		?.componentInstance as NgSelectComponent;
+	const engine = fixture.debugElement.query((d) => d.componentInstance instanceof HubSelectEngineComponent)
+		?.componentInstance as HubSelectEngineComponent;
 
 	return { fixture, engine };
 }
