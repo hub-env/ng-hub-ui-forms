@@ -5,6 +5,17 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.47.2] - 2026-11-24
+
+### Fixed
+
+- **A field with something attached shows one focus ring around the whole group.** Before, the ring
+  belonged to each box, so a number with a currency select beside it showed its halo around the
+  number alone and cut off at the seam, as if they were two fields. It now goes around the group
+  (input, select, datepicker, timepicker and textarea with `prepend`, `append`, `hubPrepend` or
+  `hubAppend`), and turns red there when the field is invalid (green when it shows as valid). Groups without attached content
+  (inner affixes, the counter) keep the ring on the control.
+
 ## [22.47.1] - 2026-11-19
 
 ### Fixed

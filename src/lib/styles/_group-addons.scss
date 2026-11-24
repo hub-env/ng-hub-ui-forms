@@ -83,6 +83,42 @@
 		}
 	}
 
+	// ── One focus ring for the whole group ────────────────────────────────
+	//
+	// The ring used to be each box's own, so focusing the number beside a currency select
+	// drew a halo around the number and cut it off at the seam, as though the select were a
+	// separate field. A group with something attached is one field to the reader, so the ring
+	// moves to the group and the boxes inside give theirs up. Only groups that actually carry
+	// attached content: the same wrapper also holds inner affixes and the counter, where the
+	// control already is the whole field.
+	//
+	// `:is()` keeps the group at two classes, so each rule below outranks the box's own focus
+	// rule by one: `.hub-field__control:focus` and its invalid variant are two classes, the
+	// select's focused container is four.
+	.hub-#{$field}__group:is(.hub-#{$field}__group--has-prepend, .hub-#{$field}__group--has-append) {
+		border-radius: #{$radius};
+		transition: var(--hub-input-transition);
+
+		.hub-field__control:focus,
+		.hub-#{$field}__control:focus,
+		.ng-select.ng-select-focused .ng-select-container,
+		.ng-select.ng-select-opened .ng-select-container {
+			box-shadow: none;
+		}
+
+		&:focus-within {
+			box-shadow: var(--hub-#{$field}-focus-box-shadow, var(--hub-input-focus-box-shadow));
+		}
+
+		&:has(.hub-field__control--invalid, .hub-#{$field}__control--invalid):focus-within {
+			box-shadow: 0 0 0 var(--hub-form-focus-ring-width) var(--hub-form-invalid-focus-ring-color);
+		}
+
+		&:has(.hub-field__control--valid, .hub-#{$field}__control--valid):focus-within {
+			box-shadow: 0 0 0 var(--hub-form-focus-ring-width) var(--hub-form-valid-focus-ring-color);
+		}
+	}
+
 	// ── Static addons (`prepend` / `append` strings) ──────────────────────
 	.hub-#{$field}__addon {
 		display: flex;

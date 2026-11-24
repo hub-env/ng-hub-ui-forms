@@ -89,7 +89,7 @@ function cornerRulesFor(el: Element): { selector: string; spec: [number, number,
 				style.style.getPropertyValue(p)
 			);
 			if (!paintsCorner) continue;
-			for (const selector of style.selectorText.split(',').map((s) => s.trim())) {
+			for (const selector of style.selectorText.split(/,(?![^(]*\))/).map((s) => s.trim())) {
 				try {
 					if (el.matches(selector)) hits.push({ selector, spec: specificity(selector), order });
 				} catch {
@@ -126,7 +126,7 @@ function winningCorner(el: Element, corner: string): string | null {
 			if (!style.selectorText || !style.style) continue;
 			const value = style.style.getPropertyValue(corner) || style.style.getPropertyValue('border-radius');
 			if (!value) continue;
-			for (const selector of style.selectorText.split(',').map((s) => s.trim())) {
+			for (const selector of style.selectorText.split(/,(?![^(]*\))/).map((s) => s.trim())) {
 				try {
 					if (!el.matches(selector)) continue;
 				} catch {
@@ -193,7 +193,7 @@ function flatteningSelectors(side: 'prepend' | 'append'): string[] {
 		}
 		for (const rule of rules) {
 			const selector = (rule as CSSStyleRule).selectorText;
-			if (selector?.includes(`--has-${side}`)) out.push(...selector.split(',').map((s) => s.trim()));
+			if (selector?.includes(`--has-${side}`)) out.push(...selector.split(/,(?![^(]*\))/).map((s) => s.trim()));
 		}
 	}
 	return out.filter((s) => s.includes(`--has-${side}`));
@@ -315,7 +315,7 @@ describe('group corner flattening', () => {
 					const style = rule as CSSStyleRule;
 					if (!style.selectorText?.includes('__attached')) continue;
 					if (!style.style?.getPropertyValue('background')) continue;
-					for (const selector of style.selectorText.split(',').map((s) => s.trim())) {
+					for (const selector of style.selectorText.split(/,(?![^(]*\))/).map((s) => s.trim())) {
 						try {
 							if (action.matches(selector)) reaching.push(selector);
 						} catch {
@@ -398,7 +398,7 @@ describe('group corner flattening', () => {
 					const style = rule as CSSStyleRule;
 					if (!style.selectorText?.includes('__attached')) continue;
 					if (!style.style?.getPropertyValue('background')) continue;
-					painting.push(...style.selectorText.split(',').map((s) => s.trim()));
+					painting.push(...style.selectorText.split(/,(?![^(]*\))/).map((s) => s.trim()));
 				}
 			} catch {
 				continue;
@@ -838,7 +838,7 @@ function winningBorderColorRule(el: Element): string | null {
 			if (!style.selectorText || !style.style) continue;
 			const sets = style.style.getPropertyValue('border-color') || style.style.getPropertyValue('border');
 			if (!sets) continue;
-			for (const selector of style.selectorText.split(',').map((s) => s.trim())) {
+			for (const selector of style.selectorText.split(/,(?![^(]*\))/).map((s) => s.trim())) {
 				try {
 					if (!el.matches(selector)) continue;
 				} catch {
@@ -890,7 +890,7 @@ describe('an attached button at rest takes the field border colour', () => {
 					// Only the rule for whatever is projected; a projected FIELD has rules of its own.
 					strong.push(
 						...style.selectorText
-							.split(',')
+							.split(/,(?![^(]*\))/)
 							.map((s) => s.trim())
 							.filter((s) => s.includes('> *'))
 					);
