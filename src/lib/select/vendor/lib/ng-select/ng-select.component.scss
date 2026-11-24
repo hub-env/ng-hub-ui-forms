@@ -250,10 +250,13 @@
 
 .ng-dropdown-panel {
 	box-sizing: border-box;
-	// The panel renders in-flow inside the CDK overlay pane: the pane (or the native
-	// popover top layer) carries positioning and stacking, while theme margins on the
-	// panel still create the gap/overlap against the select they were designed for
+	// The panel renders in-flow inside the overlay container: the container carries
+	// positioning and stacking, while theme margins on the panel still create the
+	// gap/overlap against the select they were designed for
 	position: relative;
+	// A custom element is inline by default, which ignores the `min-width` the overlay manager
+	// sets from the control; inside a CDK pane it was blockified as a flex item, here it is not.
+	display: block;
 	opacity: 0;
 	width: 100%;
 	-webkit-overflow-scrolling: touch;
@@ -314,11 +317,11 @@
 }
 
 // Themes written for the pre-overlay rendering positioned the panel against the select
-// with absolute offsets (top: 100%, bottom: 100%, left: 0, ...). Inside the overlay pane
+// with absolute offsets (top: 100%, bottom: 100%, left: 0, ...). Inside the overlay container
 // those offsets would displace the panel, so they are neutralized here. This rule is
 // injected after application stylesheets, letting it also cover consumer themes that
 // were copied from the old shipped ones.
-.cdk-overlay-pane .ng-dropdown-panel {
+.hub-overlay-container .ng-dropdown-panel {
 	position: relative;
 	top: auto;
 	right: auto;

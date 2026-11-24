@@ -70,10 +70,12 @@ describe('hub-select dropdown width', () => {
 	});
 
 	it('keeps the control width as a minimum on the overlay and pins no width', async () => {
-		const pane = (await openPanel(100)).closest('.cdk-overlay-pane') as HTMLElement;
+		// fork: utils overlay — the minimum sits on the panel (the container is shrink-to-fit), no CDK pane.
+		const panel = await openPanel(100);
+		const container = panel.closest('.hub-overlay-container') as HTMLElement;
 
-		expect(pane.style.minWidth).toBe('120px');
-		expect(pane.style.width, 'no width capping the options').toBe('');
+		expect(panel.style.minWidth).toBe('120px');
+		expect(container.style.width, 'no width capping the options').toBe('');
 	});
 
 	it('lets the list grow to its options, up to the theme maximum', async () => {

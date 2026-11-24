@@ -52,13 +52,7 @@ This library is part of the **ng-hub-ui** ecosystem:
 npm install ng-hub-ui-forms
 ```
 
-`@angular/cdk` (22 or later) is a required peer: the select's list renders in a CDK overlay.
-
-```bash
-npm install @angular/cdk
-```
-
-`ng-hub-ui-utils` is a peer dependency (the datepicker opens its panel through its overlay
+`ng-hub-ui-utils` is a peer dependency (the select list and the datepicker open their panels through its overlay
 service, and every field renders its tooltip helper text with `hubTooltip`). `ng-hub-ui-ds`
 carries the design tokens the fields read; it is optional, because every token is read with a
 fallback, but without it the fields fall back to their own defaults instead of your palette:
@@ -142,20 +136,19 @@ section.
 ## 📦 Installation
 
 ```bash
-npm install ng-hub-ui-forms @angular/cdk ng-hub-ui-utils ng-hub-ui-ds
+npm install ng-hub-ui-forms ng-hub-ui-utils ng-hub-ui-ds
 ```
 
 ### Peer Dependencies
 
 ```json
 {
-	"@angular/cdk": ">=22.0.0",
 	"@angular/common": ">=22.0.0",
 	"@angular/core": ">=22.0.0",
 	"@angular/forms": ">=22.0.0",
 	"@angular/platform-browser": ">=22.0.0",
 	"ng-hub-ui-ds": ">=22.14.1",
-	"ng-hub-ui-utils": ">=22.21.0"
+	"ng-hub-ui-utils": ">=22.23.0"
 }
 ```
 
@@ -1022,7 +1015,7 @@ check mark (unset, each mark is black or white, whichever reads on its swatch).
 }
 ```
 
-**`hub-select` inside a modal** — the list renders in a CDK overlay, which uses the browser's top layer, so a select opened inside a `HubModal` is drawn above the dialog with no z-index to tune. `appendTo` only chooses the element the overlay container is placed in; the position is computed against the viewport. `popover` is deprecated and has no effect.
+**`hub-select` inside a modal** — the list renders in the `ng-hub-ui-utils` overlay, which uses the browser's top layer, so a select opened inside a `HubModal` is drawn above the dialog with no z-index to tune. `appendTo` only chooses the element the overlay container is placed in; the position is computed against the viewport. `popover` is deprecated and has no effect.
 
 **Glass** — when `ng-hub-ui-ds` turns its glass layer on (`[data-hub-glass]` or `data-theme="glass"` on an ancestor), the select list and the datepicker calendar become translucent, blurred and rimmed. Inputs and the other fields stay opaque on purpose, for readability. With the layer off, nothing changes.
 
@@ -1127,7 +1120,7 @@ See [CHANGELOG.md](./CHANGELOG.md).
 
 ## 🙏 Credits
 
-`hub-select` is a maintained **fork of [ng-select](https://github.com/ng-select/ng-select)** by the ng-select contributors. The upstream `src/ng-select` sources are vendored in place and re-themed with `--hub-*` tokens — pinned to upstream **`v23.0.1`** (tracked in [`src/lib/select/UPSTREAM`](./src/lib/select/UPSTREAM); deviations documented in [`src/lib/select/PATCHES.md`](./src/lib/select/PATCHES.md)). ng-select is distributed under the [MIT License](https://github.com/ng-select/ng-select/blob/master/LICENSE.md), and the original copyright notices are retained in the vendored files.
+`hub-select` is a maintained **fork of [ng-select](https://github.com/ng-select/ng-select)** by the ng-select contributors. The upstream `src/ng-select` sources are vendored in place and re-themed with `--hub-*` tokens — taken from upstream **`v24.2.1`** and, since 2026-11-24, maintained here as its own code with no automatic sync (fork point in [`src/lib/select/UPSTREAM`](./src/lib/select/UPSTREAM); deviations made before the fork in [`src/lib/select/PATCHES.md`](./src/lib/select/PATCHES.md)). ng-select is distributed under the [MIT License](https://github.com/ng-select/ng-select/blob/master/LICENSE.md), and the original copyright notices are retained in the vendored files.
 
 The datepicker, inputs and validation layer are original to `ng-hub-ui-forms`.
 

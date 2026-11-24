@@ -317,7 +317,7 @@ hub-select.hidden-control {
 	}
 }
 
-// The list is never narrower than its control (the overlay pane carries that minimum) and grows
+// The list is never narrower than its control (an inline minimum on the panel carries that) and grows
 // to its options up to `--hub-select-dropdown-max-width`. `.hub-select__panel` is ours, unlike
 // the mirrored host classes, and its specificity beats the engine's `width: 100%`.
 .ng-dropdown-panel.hub-select__panel {

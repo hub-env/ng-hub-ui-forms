@@ -101,7 +101,7 @@
 	}
 </div>
 
-<!-- Rendered through a TemplatePortal into the CDK overlay while the select is open;
+<!-- Rendered into the overlay while the select is open;
      the embedded view stays part of this component's view tree, only the DOM moves. -->
 <ng-template #dropdownTemplate>
 	<ng-dropdown-panel
@@ -127,6 +127,7 @@
 		[listboxId]="dropdownId"
 		[ariaLabelDropdown]="ariaLabelDropdown() ?? config.ariaLabelDropdown"
 		[overlayRef]="dropdownOverlayRef"
+		[originElement]="dropdownOrigin"
 		[selectElement]="element">
 		<ng-container>
 			@for (item of viewPortItems; track trackByOption($index, item)) {

@@ -26,9 +26,7 @@ class GlassHostComponent {
 
 describe('glass layer', () => {
 	afterEach(() => {
-		document
-			.querySelectorAll('.cdk-overlay-container, .hub-overlay-container, .hub-overlay-backdrop')
-			.forEach((el) => el.remove());
+		document.querySelectorAll('.hub-overlay-container, .hub-overlay-backdrop').forEach((el) => el.remove());
 	});
 
 	async function render() {

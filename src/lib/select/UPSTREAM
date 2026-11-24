@@ -1,8 +1,10 @@
-# Upstream tracking for the vendored ng-select fork.
-# Read/updated by .github/workflows/sync-ng-select.yml.
+# Fork point of the ng-select copy under vendor/.
+# Since 2026-11-24 the copy is maintained here as our own code; nothing syncs it any more.
+# Upstream fixes are brought in by hand when they are worth it, after reading their changelog.
 
 repo=https://github.com/ng-select/ng-select.git
 subdir=src/ng-select
 tag=v24.2.1
 commit=21a6fd70864b6b7830959fda05c14319fd1ce5e2
 vendored_at=2026-11-19
+forked_at=2026-11-24

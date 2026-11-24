@@ -2,6 +2,20 @@
 
 This document tracks all breaking changes in the `ng-hub-ui-forms` library.
 
+## v22.48.0
+
+### The select list no longer carries CDK class names
+
+- **Change**: the select list is drawn by the `ng-hub-ui-utils` overlay instead of the Angular CDK
+  one. `@angular/cdk` is no longer a peer of this package.
+- **Impact**: only an application that styled or queried the CDK nodes around the list notices it:
+  `.cdk-overlay-container`, `.cdk-overlay-pane` and `.cdk-overlay-backdrop` are no longer part of
+  the select. The list sits in a `.hub-overlay-container` (a direct child of `<body>`, or of the
+  `appendTo` element) that is promoted to the top layer.
+- **Migration**: target `.hub-overlay-container .ng-dropdown-panel` (or the panel's own
+  `.hub-select__panel`) instead of the CDK classes. An application that imports `@angular/cdk` itself keeps
+  its own dependency; one that installed it only for this package can `npm uninstall @angular/cdk`.
+
 ## v22.47.0
 
 ### The select needs `@angular/cdk` 22 and Angular 22

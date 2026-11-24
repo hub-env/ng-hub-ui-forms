@@ -1,17 +1,8 @@
 // @ts-nocheck -- vendored ng-select source (type-checked upstream); see ../PATCHES.md
-import {
-	createFlexibleConnectedPositionStrategy,
-	createNoopScrollStrategy,
-	createOverlayRef,
-	FlexibleConnectedPositionStrategy,
-	OverlayContainer,
-	OverlayRef,
-} from '@angular/cdk/overlay';
-import { TemplatePortal } from '@angular/cdk/portal';
-import { Injector, runInInjectionContext, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Injector, TemplateRef, ViewContainerRef } from '@angular/core';
+import { OverlayRef, OverlayService } from 'ng-hub-ui-utils';
 
 import { DropdownPosition } from '../types/ng-select.types';
-import { NgSelectAppendToOverlayContainer } from './dropdown-overlay-container';
 import { DROPDOWN_POSITIONS } from './dropdown-position';
 
 /**
@@ -29,18 +20,18 @@ export interface DropdownOverlayOpenRequest {
 }
 
 /**
- * Owns the CDK overlay resources used by one ng-select instance.
+ * Owns the overlay used by one ng-select instance.
+ *
+ * The overlay is created on open and disposed on close, which destroys the panel with it: the
+ * panel's subscriptions (outside click, scroll, resize) and its first-render work must not outlive
+ * the open list.
  *
  * @since 24.0.5
  */
 export class DropdownOverlayManager {
 	overlayRef: OverlayRef | null = null;
 
-	private positionStrategy: FlexibleConnectedPositionStrategy | null = null;
-	private portal: TemplatePortal | null = null;
-	private overlayAppendTo: string | null = null;
-	private overlayAppendToHost: HTMLElement | null = null;
-	private appendToContainer: NgSelectAppendToOverlayContainer | null = null;
+	private panel: HTMLElement | null = null;
 
 	/**
 	 * Creates an instance of DropdownOverlayManager.
@@ -66,32 +57,44 @@ export class DropdownOverlayManager {
 	 * @since 24.0.5
 	 */
 	open(request: DropdownOverlayOpenRequest): OverlayRef {
-		const overlayRef = this.ensureOverlay(request.origin, request.appendTo);
-		this.positionStrategy.withPositions([...(DROPDOWN_POSITIONS[request.position] ?? DROPDOWN_POSITIONS.auto)]);
-		// Direction is snapshotted per open, matching the previous appendTo behavior.
-		overlayRef.setDirection(this.document.documentElement?.dir === 'rtl' ? 'rtl' : 'ltr');
-		// Minimum, not width: the list may grow to its options (capped by the theme's max-width).
-		overlayRef.updateSize({ minWidth: request.origin.getBoundingClientRect().width });
-		// The parent binds this reference into the portal content, so publish it before attachment.
-		request.beforeAttach?.(overlayRef);
-
-		if (overlayRef.hasAttached()) {
-			overlayRef.updatePosition();
-			return overlayRef;
+		if (this.overlayRef?.hasAttached()) {
+			this.sizeToOrigin(request.origin);
+			this.overlayRef.updatePosition();
+			return this.overlayRef;
 		}
 
-		this.portal ??= new TemplatePortal(request.template, request.viewContainer);
-		overlayRef.attach(this.portal);
+		// Resolved on each open so a selector keeps working when its matching element is replaced.
+		const host = request.appendTo ? this.resolveAppendToHost(request.appendTo) : undefined;
+		const overlays = this.injector.get(OverlayService);
+		const positionStrategy = overlays
+			.position()
+			.flexibleConnectedTo(request.origin)
+			.withPositions([...(DROPDOWN_POSITIONS[request.position] ?? DROPDOWN_POSITIONS.auto)]);
+		const overlayRef = overlays.create({
+			positionStrategy,
+			host,
+			// Painted above any z-index, so the list shows over a modal with no stacking tuning.
+			topLayer: true,
+		});
+		this.overlayRef = overlayRef;
+
+		// The parent binds this reference into the panel, so publish it before attachment.
+		request.beforeAttach?.(overlayRef);
+		this.panel = overlayRef.attach(request.template, request.viewContainer);
+		this.sizeToOrigin(request.origin);
+		overlayRef.updatePosition();
 		return overlayRef;
 	}
 
 	/**
-	 * Closes the dropdown panel.
+	 * Closes the dropdown panel and releases its overlay.
 	 *
 	 * @since 24.0.5
 	 */
 	close(): void {
-		this.overlayRef?.detach();
+		this.overlayRef?.dispose();
+		this.overlayRef = null;
+		this.panel = null;
 	}
 
 	/**
@@ -100,59 +103,21 @@ export class DropdownOverlayManager {
 	 * @since 24.0.5
 	 */
 	destroy(): void {
-		this.overlayRef?.dispose();
-		this.overlayRef = null;
-		this.positionStrategy = null;
-		this.overlayAppendToHost = null;
-		this.appendToContainer?.ngOnDestroy();
-		this.appendToContainer = null;
+		this.close();
 	}
 
 	/**
-	 * Returns the existing overlay or creates one for the requested host.
+	 * Makes the list at least as wide as the element it lines up with. A minimum, not a width: the
+	 * list may grow to its options (capped by the theme's max-width).
 	 *
-	 * @param origin - The origin.
-	 * @param appendTo - The append to.
-	 * @returns The reusable overlay reference.
+	 * @param origin - The element the list lines up with.
 	 *
 	 * @since 24.0.5
 	 */
-	private ensureOverlay(origin: HTMLElement, appendTo: string | null): OverlayRef {
-		// Resolve on each open so a selector keeps working when its matching element is replaced.
-		const appendToHost = appendTo ? this.resolveAppendToHost(appendTo) : null;
-		if (this.overlayRef && (appendTo !== this.overlayAppendTo || appendToHost !== this.overlayAppendToHost)) {
-			this.destroy();
+	private sizeToOrigin(origin: HTMLElement): void {
+		if (this.panel) {
+			this.panel.style.minWidth = `${origin.getBoundingClientRect().width}px`;
 		}
-
-		if (!this.overlayRef) {
-			let injector = this.injector;
-			if (appendToHost) {
-				this.appendToContainer = runInInjectionContext(this.injector, () => new NgSelectAppendToOverlayContainer(appendToHost));
-				injector = Injector.create({
-					parent: this.injector,
-					providers: [{ provide: OverlayContainer, useValue: this.appendToContainer }],
-				});
-			}
-
-			this.positionStrategy = createFlexibleConnectedPositionStrategy(injector, origin).withFlexibleDimensions(false).withPush(false);
-			if (appendToHost) {
-				// Supporting browsers paint in the Popover API top layer. The host still controls
-				// DOM containment for ancestor-scoped styles and focus enclosure.
-				this.positionStrategy.withPopoverLocation({ type: 'parent', element: appendToHost });
-			}
-
-			this.overlayAppendTo = appendTo;
-			this.overlayAppendToHost = appendToHost;
-			this.overlayRef = createOverlayRef(injector, {
-				positionStrategy: this.positionStrategy,
-				// The panel handles ancestor scrolling, including containers without cdkScrollable.
-				scrollStrategy: createNoopScrollStrategy(),
-				// No panel animation needs to delay synchronous DOM removal.
-				disableAnimations: true,
-			});
-		}
-
-		return this.overlayRef;
 	}
 
 	/**

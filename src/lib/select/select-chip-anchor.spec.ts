@@ -98,7 +98,8 @@ describe('hub-select list anchor', () => {
 		return document.querySelector('ng-dropdown-panel') as HTMLElement;
 	};
 
-	const paneMinWidth = (panel: HTMLElement) => (panel.closest('.cdk-overlay-pane') as HTMLElement).style.minWidth;
+	// fork: utils overlay — the minimum sits on the panel itself, there is no CDK pane.
+	const paneMinWidth = (panel: HTMLElement) => panel.style.minWidth;
 
 	it('gives the list the group width as its minimum when the host asks for group', async () => {
 		expect(paneMinWidth(await openList('group'))).toBe('300px');

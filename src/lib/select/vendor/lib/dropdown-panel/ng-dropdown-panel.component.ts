@@ -1,5 +1,4 @@
 // @ts-nocheck -- vendored ng-select source (type-checked upstream); see ../PATCHES.md
-import { FlexibleConnectedPositionStrategy, OverlayRef } from '@angular/cdk/overlay';
 import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
 	booleanAttribute,
@@ -27,6 +26,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { animationFrameScheduler, asapScheduler, fromEvent } from 'rxjs';
 import { auditTime } from 'rxjs/operators';
 import { DropdownPanelDomEvents } from './dropdown-panel-dom-events';
+import { OverlayRef } from 'ng-hub-ui-utils';
 import { connectionPairToDropdownPosition, DROPDOWN_CSS_POSITIONS } from './dropdown-position';
 import { NgDropdownPanelService, PanelDimensions } from './ng-dropdown-panel.service';
 
@@ -82,10 +82,12 @@ export class NgDropdownPanelComponent implements OnInit, OnChanges {
 	readonly outsideClickEvent = input<'click' | 'mousedown'>('click');
 	/** Close the dropdown when the page or an ancestor container scrolls. */
 	readonly closeOnScroll = input(false, { transform: booleanAttribute });
-	/** @deprecated Has no effect: the CDK overlay renders in the native Popover API top layer automatically in supporting browsers. Will be removed in a future major version. */
+	/** @deprecated Has no effect: the overlay renders in the native Popover API top layer automatically in supporting browsers. Will be removed in a future major version. */
 	readonly popover = input(false, { transform: booleanAttribute });
 	/** Overlay hosting this panel. Used to request repositioning when the rendered content changes. */
 	readonly overlayRef = input<OverlayRef | null>(null);
+	/** Element the list lines up with (the control, or what `dropdownAnchor` returns). Its width is the list's minimum. */
+	readonly originElement = input<HTMLElement | null>(null);
 	/** Host `ng-select` element. The panel's DOM lives in the overlay, so the host cannot be derived from the DOM tree. */
 	readonly selectElement = input<HTMLElement>(undefined);
 	readonly update = output<any[]>();
@@ -190,6 +192,7 @@ export class NgDropdownPanelComponent implements OnInit, OnChanges {
 			onOutsideClick: () => this.outsideClick.emit(),
 			onOutsideScroll: () => this.outsideScroll.emit(),
 			outsideClickEvent: this.outsideClickEvent() ?? 'click',
+			origin: this.originElement(),
 			overlayRef: this.overlayRef(),
 			select: this._select,
 			zone: this._zone,
@@ -318,19 +321,15 @@ export class NgDropdownPanelComponent implements OnInit, OnChanges {
 	}
 
 	/**
-	 * Subscribes to CDK overlay position changes.
+	 * Subscribes to overlay position changes.
 	 *
 	 * @since 23.7.0
 	 */
 	private _subscribeOverlayPosition() {
-		const strategy = this.overlayRef()?.getConfig().positionStrategy;
-		if (!(strategy instanceof FlexibleConnectedPositionStrategy)) {
-			return;
-		}
-
-		strategy.positionChanges.pipe(takeUntilDestroyed(this._destroyRef)).subscribe((change) => {
-			this._setCurrentPosition(connectionPairToDropdownPosition(change.connectionPair));
-		});
+		// The overlay is disposed together with this panel, so the callback never outlives it.
+		this.overlayRef()
+			?.getConfig()
+			.positionStrategy?.onPositionChange((position) => this._setCurrentPosition(connectionPairToDropdownPosition(position)));
 	}
 
 	/**

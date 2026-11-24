@@ -1,9 +1,9 @@
 // @ts-nocheck -- vendored ng-select source (type-checked upstream); see ../PATCHES.md
-import { OverlayRef } from '@angular/cdk/overlay';
 import { DestroyRef, NgZone } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { animationFrameScheduler, asapScheduler, fromEvent } from 'rxjs';
 import { auditTime } from 'rxjs/operators';
+import { OverlayRef } from 'ng-hub-ui-utils';
 
 const EVENT_SCHEDULER = typeof requestAnimationFrame !== 'undefined' ? animationFrameScheduler : asapScheduler;
 
@@ -20,6 +20,8 @@ export interface DropdownPanelDomEventOptions {
 	onOutsideClick: () => void;
 	onOutsideScroll: () => void;
 	outsideClickEvent: 'click' | 'mousedown';
+	/** Element the list lines up with; its width is the list's minimum. Falls back to `select`. */
+	origin?: HTMLElement | null;
 	overlayRef: OverlayRef | null;
 	select: HTMLElement;
 	zone: NgZone;
@@ -145,7 +147,7 @@ export class DropdownPanelDomEvents {
 
 		zone.runOutsideAngular(() => {
 			const subscribe = () =>
-				// Capture sees window and arbitrary ancestor scroll containers, even without cdkScrollable.
+				// Capture sees window and arbitrary ancestor scroll containers, whatever marker they carry.
 				fromEvent(document, 'scroll', { capture: true, passive: true })
 					// takeUntilDestroyed last: audit flushes its pending value on completion (#2869)
 					.pipe(auditTime(0, EVENT_SCHEDULER), takeUntilDestroyed(destroyRef))
@@ -177,14 +179,15 @@ export class DropdownPanelDomEvents {
 	 * @since 24.0.5
 	 */
 	private handleSelectResize(): void {
-		const { destroyRef, overlayRef, select, zone } = this.options;
+		const { destroyRef, origin, overlayRef, select, dropdown, zone } = this.options;
 		if (!overlayRef || typeof ResizeObserver === 'undefined') {
 			return;
 		}
 
 		zone.runOutsideAngular(() => {
 			const observer = new ResizeObserver(() => {
-				overlayRef.updateSize({ width: select.getBoundingClientRect().width });
+				// Minimum, not width: the list may grow to its options (see `DropdownOverlayManager.open`).
+				dropdown.style.minWidth = `${(origin ?? select).getBoundingClientRect().width}px`;
 				overlayRef.updatePosition();
 			});
 			observer.observe(select);

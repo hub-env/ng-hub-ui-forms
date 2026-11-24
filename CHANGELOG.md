@@ -5,6 +5,25 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.48.0] - 2026-11-24
+
+### Changed
+
+- **The select list moved to the `ng-hub-ui-utils` overlay, and `@angular/cdk` is no longer a peer.**
+  The select was the last piece of the package using the CDK. Its list now opens through the same
+  overlay as the datepicker, so the install shrinks by a package. What the reader sees does not
+  change: the list is painted in the browser's top layer (above a modal with no z-index to tune),
+  placed against the viewport, flips above when there is no room below, opens from the control's
+  end when it would leave the screen, and is never narrower than the control (or the element
+  `dropdownAnchor` returns) nor wider than `--hub-select-dropdown-max-width`. `appendTo` still
+  chooses the element the overlay is placed in. The overlay is now created on open and disposed on
+  close. The container class is `.hub-overlay-container` (it was `.cdk-overlay-pane` /
+  `.cdk-overlay-container`); see `BREAKING_CHANGES.md`. The `ng-hub-ui-utils` peer rises to
+  `>=22.23.0`, the release that adds `host`, `topLayer` and `onPositionChange` to its overlay.
+- **The copy of ng-select 24.2.1 is now maintained here.** The weekly sync is switched off and
+  upstream fixes come in by hand when one is worth having. Upstream's own 516 specs now live next
+  to the code, so a change to the fork is checked against what ng-select itself guarantees.
+
 ## [22.47.2] - 2026-11-24
 
 ### Fixed

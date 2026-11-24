@@ -1,5 +1,4 @@
 // @ts-nocheck -- vendored ng-select source (type-checked upstream); see ../PATCHES.md
-import { OverlayRef } from '@angular/cdk/overlay';
 import { DOCUMENT } from '@angular/common';
 import {
 	afterEveryRender,
@@ -60,6 +59,7 @@ import {
 
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { OverlayRef } from 'ng-hub-ui-utils';
 import { DropdownOverlayManager } from '../dropdown-panel/dropdown-overlay-manager';
 import { ClassValue, mergeClassValues, readConsumerHostClasses } from '../dropdown-panel/dropdown-panel-classes';
 import { NgDropdownPanelComponent } from '../dropdown-panel/ng-dropdown-panel.component';
@@ -300,9 +300,9 @@ export class NgSelectComponent implements OnChanges, OnInit, AfterViewInit, Cont
 	/** Provide custom keyDown function. Executed before default handler. Return false to suppress execution of default key down handlers */
 	readonly _keyDownFn = input<(_: KeyboardEvent) => boolean>((_: KeyboardEvent) => true, { alias: 'keyDownFn' });
 	readonly keyDownFn = linkedSignal(() => this._keyDownFn());
-	/** @deprecated Has no effect: the CDK overlay renders in the native Popover API top layer automatically in supporting browsers. Will be removed in a future major version. */
+	/** @deprecated Has no effect: the overlay renders in the native Popover API top layer automatically in supporting browsers. Will be removed in a future major version. */
 	readonly _popover = input(false, { alias: 'popover', transform: booleanAttribute });
-	/** @deprecated Has no effect: the CDK overlay renders in the native Popover API top layer automatically in supporting browsers. Will be removed in a future major version. */
+	/** @deprecated Has no effect: the overlay renders in the native Popover API top layer automatically in supporting browsers. Will be removed in a future major version. */
 	readonly popover = linkedSignal(() => this._popover());
 	/** Finds the element the open list lines up with instead of this control; asked each time the list opens. */
 	readonly dropdownAnchor = input<(() => HTMLElement | null) | null>(null);
@@ -388,7 +388,7 @@ export class NgSelectComponent implements OnChanges, OnInit, AfterViewInit, Cont
 	private readonly _dropdownTemplate = viewChild<TemplateRef<any>>('dropdownTemplate');
 	// The portal's embedded view is anchored at the template's own container so it stays
 	// part of this component's logical view tree (DI, view queries, detectChanges) while
-	// its DOM nodes live in the CDK overlay
+	// its DOM nodes live in the overlay
 	private readonly _dropdownOutlet = viewChild('dropdownTemplate', { read: ViewContainerRef });
 	private readonly _selectContainer = viewChild<ElementRef<HTMLDivElement>>('selectContainer');
 	// public variables
@@ -406,6 +406,8 @@ export class NgSelectComponent implements OnChanges, OnInit, AfterViewInit, Cont
 	private readonly autoFocus = inject(new HostAttributeToken('autofocus'), { optional: true });
 	/** Overlay hosting the dropdown panel while open. Bound into the panel so it can request repositioning. */
 	protected dropdownOverlayRef: OverlayRef | null = null;
+	/** Element the open list lines up with. Bound into the panel, which keeps its minimum width in step with it. */
+	protected dropdownOrigin: HTMLElement | null = null;
 	// private variables
 	private readonly _defaultLabel = 'label';
 	private readonly _editableSearchTermActive = computed(() => this.editableSearchTerm() && !this.multiple());
@@ -1714,10 +1716,14 @@ export class NgSelectComponent implements OnChanges, OnInit, AfterViewInit, Cont
 			return;
 		}
 		if (this.isOpen()) {
+			const origin = this._dropdownOrigin();
 			this._dropdownOverlay.open({
 				appendTo: this.appendTo() ?? this.config.appendTo ?? null,
-				beforeAttach: (overlayRef) => (this.dropdownOverlayRef = overlayRef),
-				origin: this._dropdownOrigin(),
+				beforeAttach: (overlayRef) => {
+					this.dropdownOverlayRef = overlayRef;
+					this.dropdownOrigin = origin;
+				},
+				origin,
 				position: this.dropdownPosition(),
 				template,
 				viewContainer,
@@ -1750,7 +1756,7 @@ export class NgSelectComponent implements OnChanges, OnInit, AfterViewInit, Cont
 		}
 		if (this.popover()) {
 			this._console.warn(
-				'[ng-select] `popover` is deprecated and has no effect: the dropdown panel now renders in an Angular CDK overlay, which uses the native Popover API top layer automatically in supporting browsers.',
+				'[ng-select] `popover` is deprecated and has no effect: the dropdown panel renders in the ng-hub-ui-utils overlay, which uses the native Popover API top layer automatically in supporting browsers.',
 			);
 		}
 	}
