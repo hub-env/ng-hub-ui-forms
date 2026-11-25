@@ -19,7 +19,6 @@ import {
 	InjectionToken,
 	Injector,
 	input,
-	isDevMode,
 	linkedSignal,
 	model,
 	numberAttribute,
@@ -78,6 +77,22 @@ export const SELECTION_MODEL_FACTORY = new InjectionToken<SelectionModelFactory>
 export type AddTagFn = (term: string) => any | Promise<any>;
 export type CompareWithFn = (a: any, b: any) => boolean;
 export type GroupValueFn = (key: string | any, children: any[]) => string | any;
+/** Custom templates the engine can render, each receiving the same context as its `ng-*-tmp` directive. */
+export interface HubSelectEngineTemplates {
+	option?: TemplateRef<any> | null;
+	optgroup?: TemplateRef<any> | null;
+	label?: TemplateRef<any> | null;
+	multiLabel?: TemplateRef<any> | null;
+	header?: TemplateRef<any> | null;
+	footer?: TemplateRef<any> | null;
+	notFound?: TemplateRef<any> | null;
+	typeToSearch?: TemplateRef<any> | null;
+	loadingText?: TemplateRef<any> | null;
+	tag?: TemplateRef<any> | null;
+	loadingSpinner?: TemplateRef<any> | null;
+	clearButton?: TemplateRef<any> | null;
+}
+
 /**
  * Transforms an optional attribute value while preserving `undefined`.
  *
@@ -113,6 +128,7 @@ function optionalBooleanAttribute(value: unknown): boolean | undefined {
 	imports: [NgClass, NgTemplateOutlet, HubSelectPanelComponent],
 	host: {
 		'[class.ng-select]': 'true',
+		'[class.hub-select__control]': 'true',
 		'[class.ng-select-single]': '!multiple()',
 		'[class.ng-select-typeahead]': 'typeahead()',
 		'[class.ng-select-multiple]': 'multiple()',
@@ -120,7 +136,17 @@ function optionalBooleanAttribute(value: unknown): boolean | undefined {
 		'[class.ng-select-searchable]': 'searchable()',
 		'[class.ng-select-clearable]': 'clearable()',
 		'[class.ng-select-filtered]': 'filtered',
-		'[class.ng-select-disabled]': 'disabled()'
+		'[class.ng-select-disabled]': 'disabled()',
+		// The `.ng-*` names above are kept for one release so consumer stylesheets keep matching;
+		// the library itself only styles the `hub-select__*` names.
+		'[class.hub-select__control--single]': '!multiple()',
+		'[class.hub-select__control--typeahead]': 'typeahead()',
+		'[class.hub-select__control--multiple]': 'multiple()',
+		'[class.hub-select__control--taggable]': 'addTag()',
+		'[class.hub-select__control--searchable]': 'searchable()',
+		'[class.hub-select__control--clearable]': 'clearable()',
+		'[class.hub-select__control--filtered]': 'filtered',
+		'[class.hub-select__control--disabled]': 'disabled()'
 	}
 })
 export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewInit, ControlValueAccessor {
@@ -129,13 +155,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	// signals
 	public readonly _disabled = signal<boolean>(false);
 	// inputs: underscored input() + alias + linkedSignal() for stable public names (back compat)
-	readonly _ariaLabelDropdown = input<string | undefined>(undefined, { alias: 'ariaLabelDropdown' });
-	readonly ariaLabelDropdown = linkedSignal(() => this._ariaLabelDropdown());
-	readonly _ariaLabel = input<string | undefined>(undefined, { alias: 'ariaLabel' });
-	readonly ariaLabel = linkedSignal(() => this._ariaLabel());
-	/** Marks first item as focused when opening/filtering. */
-	readonly _markFirst = input(true, { alias: 'markFirst', transform: booleanAttribute });
-	readonly markFirst = linkedSignal(() => this._markFirst());
 	/** Placeholder text. */
 	readonly _placeholder = input<string | undefined>(this.config.placeholder, { alias: 'placeholder' });
 	readonly placeholder = linkedSignal(() => this._placeholder());
@@ -145,27 +164,9 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	/** Set custom text when filter returns empty result */
 	readonly _notFoundText = input<string | undefined>(undefined, { alias: 'notFoundText' });
 	readonly notFoundText = linkedSignal(() => this._notFoundText());
-	/** Set custom text when using Typeahead */
-	readonly _typeToSearchText = input<string | undefined>(undefined, { alias: 'typeToSearchText' });
-	readonly typeToSearchText = linkedSignal(() => this._typeToSearchText());
-	/** Prevent opening of ng-select on right mouse click */
-	readonly _preventToggleOnRightClick = input<boolean>(false, { alias: 'preventToggleOnRightClick' });
-	readonly preventToggleOnRightClick = linkedSignal(() => this._preventToggleOnRightClick());
 	/** Set custom text when using tagging */
 	readonly _addTagText = input<string | undefined>(undefined, { alias: 'addTagText' });
 	readonly addTagText = linkedSignal(() => this._addTagText());
-	/** Set custom text when for loading items */
-	readonly _loadingText = input<string | undefined>(undefined, { alias: 'loadingText' });
-	readonly loadingText = linkedSignal(() => this._loadingText());
-	/** Set custom text for clear all icon title */
-	readonly _clearAllText = input<string | undefined>(undefined, { alias: 'clearAllText' });
-	readonly clearAllText = linkedSignal(() => this._clearAllText());
-	/** Set custom text prefixed to the option label in the aria-label of the remove icon on selected values (multiple mode) */
-	readonly _removeText = input<string | undefined>(undefined, { alias: 'removeText' });
-	readonly removeText = linkedSignal(() => this._removeText());
-	/** Set the dropdown position on open */
-	readonly _dropdownPosition = input<DropdownPosition>('auto', { alias: 'dropdownPosition' });
-	readonly dropdownPosition = linkedSignal(() => this._dropdownPosition());
 	/**
 	 * Append the dropdown overlay to any element using a css selector, resolved against the
 	 * select's own root (document or shadow root). The panel keeps its viewport-based
@@ -175,32 +176,15 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	 */
 	readonly _appendTo = input<string | undefined>(undefined, { alias: 'appendTo' });
 	readonly appendTo = linkedSignal(() => this._appendTo());
-	/** Configure which DOM event type is used for outside click detection. Use `'mousedown'` to fix issues with backdrop/loading overlays that appear on dropdown open */
-	readonly _outsideClickEvent = input<'click' | 'mousedown'>(this.config.outsideClickEvent ?? 'click', {
-		alias: 'outsideClickEvent'
-	});
-	readonly outsideClickEvent = linkedSignal(() => this._outsideClickEvent());
 	/** You can set the loading state from the outside (e.g. async items loading) */
 	readonly _loading = input(false, { alias: 'loading', transform: booleanAttribute });
 	readonly loading = linkedSignal(() => this._loading());
 	/** Whether to close the menu when a value is selected */
 	readonly _closeOnSelect = input(true, { alias: 'closeOnSelect', transform: booleanAttribute });
 	readonly closeOnSelect = linkedSignal(() => this._closeOnSelect());
-	/** Close the dropdown when the page or an ancestor container scrolls. Default `false` */
-	readonly _closeOnScroll = input(this.config.closeOnScroll ?? false, {
-		alias: 'closeOnScroll',
-		transform: booleanAttribute
-	});
-	readonly closeOnScroll = linkedSignal(() => this._closeOnScroll());
 	/** Allows to hide selected items. */
 	readonly _hideSelected = input(false, { alias: 'hideSelected', transform: booleanAttribute });
 	readonly hideSelected = linkedSignal(() => this._hideSelected());
-	/** Select marked dropdown item using tab. Default `false` */
-	readonly _selectOnTab = input(false, { alias: 'selectOnTab', transform: booleanAttribute });
-	readonly selectOnTab = linkedSignal(() => this._selectOnTab());
-	/** Open dropdown using enter. Default `true` */
-	readonly _openOnEnter = input(undefined, { alias: 'openOnEnter', transform: booleanAttribute });
-	readonly openOnEnter = linkedSignal(() => this._openOnEnter());
 	/** When multiple = true, allows to set a limit number of selection. */
 	readonly _maxSelectedItems = input<number, unknown>(undefined, { alias: 'maxSelectedItems', transform: numberAttribute });
 	readonly maxSelectedItems = linkedSignal(() => this._maxSelectedItems());
@@ -226,45 +210,25 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	/** Allow to select group when groupBy is used */
 	readonly _selectableGroup = input(false, { alias: 'selectableGroup', transform: booleanAttribute });
 	readonly selectableGroup = linkedSignal(() => this._selectableGroup());
-	/** Control tab navigation behavior for the clear button. Default `true` */
-	readonly _tabFocusOnClearButton = input<boolean | undefined>(undefined, { alias: 'tabFocusOnClearButton' });
-	readonly tabFocusOnClearButton = linkedSignal(() => this._tabFocusOnClearButton());
 	/** Indicates whether to select all children or group itself */
 	readonly _selectableGroupAsModel = input(true, { alias: 'selectableGroupAsModel', transform: booleanAttribute });
 	readonly selectableGroupAsModel = linkedSignal(() => this._selectableGroupAsModel());
 	/** Allow to filter by custom search function */
 	readonly _searchFn = input<((term: string, item: any) => boolean) | null>(null, { alias: 'searchFn' });
 	readonly searchFn = linkedSignal(() => this._searchFn());
-	/** Provide custom trackBy function */
-	readonly _trackByFn = input<((value: any) => any) | null>(null, { alias: 'trackByFn' });
-	readonly trackByFn = linkedSignal(() => this._trackByFn());
-	/** Clear selected values one by one when clicking backspace. Default `true` */
-	readonly _clearOnBackspace = input(true, { alias: 'clearOnBackspace', transform: booleanAttribute });
-	readonly clearOnBackspace = linkedSignal(() => this._clearOnBackspace());
 	/** Id to associate control with label. */
 	readonly _labelForId = input<string | null>(null, { alias: 'labelForId' });
 	readonly labelForId = linkedSignal(() => this._labelForId());
 	/** Pass custom attributes to underlying `input` element */
 	readonly _inputAttrs = input<Record<string, string>>({}, { alias: 'inputAttrs' });
 	readonly inputAttrs = linkedSignal(() => this._inputAttrs());
-	/** Set tabindex on ng-select */
-	readonly _tabIndex = input<number, unknown>(undefined, { alias: 'tabIndex', transform: numberAttribute });
-	readonly tabIndex = linkedSignal(() => this._tabIndex());
 	/** Prevent user changes while preserving the current selection. */
 	readonly _readonly = input(false, { alias: 'readonly', transform: booleanAttribute });
 	readonly readonly = linkedSignal(() => this._readonly());
-	/** Whether items should be filtered while composition started */
-	readonly _searchWhileComposing = input(true, { alias: 'searchWhileComposing', transform: booleanAttribute });
-	readonly searchWhileComposing = linkedSignal(() => this._searchWhileComposing());
 	/** Minimum term length to start a search. Should be used with `typeahead` */
 	readonly _minTermLength = input(0, { alias: 'minTermLength', transform: numberAttribute });
 	readonly minTermLength = linkedSignal(() => this._minTermLength());
-	/** Allow to edit search query if option selected. Default `false`. Works only if multiple is `false`. */
-	readonly _editableSearchTerm = input(false, { alias: 'editableSearchTerm', transform: booleanAttribute });
-	readonly editableSearchTerm = linkedSignal(() => this._editableSearchTerm());
-	readonly _ngClass = input<ClassValue | null>(null, { alias: 'ngClass' });
-	readonly ngClass = linkedSignal(() => this._ngClass());
-	/** Additional CSS classes applied to the dropdown panel. Merged with mirrored host `class`, `[class]`, and `[ngClass]` values. */
+	/** Additional CSS classes applied to the dropdown panel. Merged with mirrored host `class` and `[class]` values. */
 	readonly _panelClass = input<ClassValue | null>(null, { alias: 'panelClass' });
 	readonly panelClass = linkedSignal(() => this._panelClass());
 	/** Custom autocomplete or advanced filter. */
@@ -282,11 +246,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	/** Allow to clear selected value. Default `true` */
 	readonly _clearable = input(true, { alias: 'clearable', transform: booleanAttribute });
 	readonly clearable = linkedSignal(() => this._clearable());
-	readonly _clearKeepsDisabledOptions = input(true, { alias: 'clearKeepsDisabledOptions', transform: booleanAttribute });
-	readonly clearKeepsDisabledOptions = linkedSignal(() => this._clearKeepsDisabledOptions());
-	/** Deselects a selected item when it is clicked in the dropdown. Default `false`. Default `true` when **multiple** is `true` */
-	readonly _deselectOnClick = input<boolean | undefined>(undefined, { alias: 'deselectOnClick' });
-	readonly deselectOnClick = linkedSignal(() => this._deselectOnClick());
 	/** Clears search input when item is selected. Default `true`. Default `false` when **closeOnSelect** is `false` */
 	readonly _clearSearchOnAdd = input<boolean | undefined>(undefined, { alias: 'clearSearchOnAdd' });
 	readonly clearSearchOnAdd = linkedSignal(() => this._clearSearchOnAdd());
@@ -301,13 +260,12 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 		}
 	});
 	readonly compareWith = linkedSignal(() => this._compareWith());
-	/** Provide custom keyDown function. Executed before default handler. Return false to suppress execution of default key down handlers */
-	readonly _keyDownFn = input<(_: KeyboardEvent) => boolean>((_: KeyboardEvent) => true, { alias: 'keyDownFn' });
-	readonly keyDownFn = linkedSignal(() => this._keyDownFn());
-	/** @deprecated Has no effect: the overlay renders in the native Popover API top layer automatically in supporting browsers. Will be removed in a future major version. */
-	readonly _popover = input(false, { alias: 'popover', transform: booleanAttribute });
-	/** @deprecated Has no effect: the overlay renders in the native Popover API top layer automatically in supporting browsers. Will be removed in a future major version. */
-	readonly popover = linkedSignal(() => this._popover());
+	/**
+	 * Custom templates handed over by the owning field. A content query cannot see through that
+	 * field's own `<ng-content>`, so it passes them in directly; templates written inside the
+	 * engine's own tags (`ng-*-tmp`) are the fallback.
+	 */
+	readonly templates = input<HubSelectEngineTemplates>({});
 	/** Finds the element the open list lines up with instead of this control; asked each time the list opens. */
 	readonly dropdownAnchor = input<(() => HTMLElement | null) | null>(null);
 	// models
@@ -315,8 +273,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	readonly bindLabel = model<string | undefined>(undefined);
 	/** Object property to use for selected model. By default binds to whole object. */
 	readonly bindValue = model<string | undefined>(undefined);
-	/** Allows to select dropdown appearance. Set to `outline` or `fill` for Material form-field styles (applies only to Material theme) */
-	readonly appearance = model<string | undefined>(undefined);
 	/** Allows manual control of dropdown opening and closing. `true` - won't close. `false` - won't open. */
 	readonly isOpen = model<boolean | undefined>(false);
 	/** Items array */
@@ -350,6 +306,9 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	}>({ alias: 'scroll' });
 	/** Fired when scrolled to the end of items. Can be used for loading more items in chunks. */
 	readonly scrollToEnd = output<any>({ alias: 'scrollToEnd' });
+	// Read once: a partial config object supplied by a consumer may lack these two.
+	readonly outsideClickEvent = this.config.outsideClickEvent ?? 'click';
+	readonly closeOnScroll = this.config.closeOnScroll ?? false;
 	// computed
 	readonly disabled = computed(() => this.readonly() || this._disabled());
 	readonly clearSearchOnAddValue = computed(() => {
@@ -361,29 +320,33 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 		}
 		return this.closeOnSelect();
 	});
-	readonly deselectOnClickValue = computed(() => {
-		if (isDefined(this.deselectOnClick())) {
-			return this.deselectOnClick();
-		}
-		if (isDefined(this.config.deselectOnClick)) {
-			return this.config.deselectOnClick;
-		}
-		return this.multiple();
-	});
+	readonly deselectOnClickValue = computed(() => this.config.deselectOnClick ?? this.multiple());
 	// content child queries
-	readonly optionTemplate = contentChild(NgOptionTemplateDirective, { read: TemplateRef });
-	readonly optgroupTemplate = contentChild(NgOptgroupTemplateDirective, { read: TemplateRef });
-	readonly labelTemplate = contentChild(NgLabelTemplateDirective, { read: TemplateRef });
-	readonly multiLabelTemplate = contentChild(NgMultiLabelTemplateDirective, { read: TemplateRef });
-	readonly headerTemplate = contentChild(NgHeaderTemplateDirective, { read: TemplateRef });
-	readonly footerTemplate = contentChild(NgFooterTemplateDirective, { read: TemplateRef });
-	readonly notFoundTemplate = contentChild(NgNotFoundTemplateDirective, { read: TemplateRef });
+	private readonly _contentOptionTemplate = contentChild(NgOptionTemplateDirective, { read: TemplateRef });
+	readonly optionTemplate = computed(() => this.templates().option ?? this._contentOptionTemplate());
+	private readonly _contentOptgroupTemplate = contentChild(NgOptgroupTemplateDirective, { read: TemplateRef });
+	readonly optgroupTemplate = computed(() => this.templates().optgroup ?? this._contentOptgroupTemplate());
+	private readonly _contentLabelTemplate = contentChild(NgLabelTemplateDirective, { read: TemplateRef });
+	readonly labelTemplate = computed(() => this.templates().label ?? this._contentLabelTemplate());
+	private readonly _contentMultiLabelTemplate = contentChild(NgMultiLabelTemplateDirective, { read: TemplateRef });
+	readonly multiLabelTemplate = computed(() => this.templates().multiLabel ?? this._contentMultiLabelTemplate());
+	private readonly _contentHeaderTemplate = contentChild(NgHeaderTemplateDirective, { read: TemplateRef });
+	readonly headerTemplate = computed(() => this.templates().header ?? this._contentHeaderTemplate());
+	private readonly _contentFooterTemplate = contentChild(NgFooterTemplateDirective, { read: TemplateRef });
+	readonly footerTemplate = computed(() => this.templates().footer ?? this._contentFooterTemplate());
+	private readonly _contentNotFoundTemplate = contentChild(NgNotFoundTemplateDirective, { read: TemplateRef });
+	readonly notFoundTemplate = computed(() => this.templates().notFound ?? this._contentNotFoundTemplate());
+	private readonly _contentTypeToSearchTemplate = contentChild(NgTypeToSearchTemplateDirective, { read: TemplateRef });
+	readonly typeToSearchTemplate = computed(() => this.templates().typeToSearch ?? this._contentTypeToSearchTemplate());
+	private readonly _contentLoadingTextTemplate = contentChild(NgLoadingTextTemplateDirective, { read: TemplateRef });
+	readonly loadingTextTemplate = computed(() => this.templates().loadingText ?? this._contentLoadingTextTemplate());
+	private readonly _contentTagTemplate = contentChild(NgTagTemplateDirective, { read: TemplateRef });
+	readonly tagTemplate = computed(() => this.templates().tag ?? this._contentTagTemplate());
+	private readonly _contentLoadingSpinnerTemplate = contentChild(NgLoadingSpinnerTemplateDirective, { read: TemplateRef });
+	readonly loadingSpinnerTemplate = computed(() => this.templates().loadingSpinner ?? this._contentLoadingSpinnerTemplate());
+	private readonly _contentClearButtonTemplate = contentChild(NgClearButtonTemplateDirective, { read: TemplateRef });
+	readonly clearButtonTemplate = computed(() => this.templates().clearButton ?? this._contentClearButtonTemplate());
 	readonly placeholderTemplate = contentChild(NgPlaceholderTemplateDirective, { read: TemplateRef });
-	readonly typeToSearchTemplate = contentChild(NgTypeToSearchTemplateDirective, { read: TemplateRef });
-	readonly loadingTextTemplate = contentChild(NgLoadingTextTemplateDirective, { read: TemplateRef });
-	readonly tagTemplate = contentChild(NgTagTemplateDirective, { read: TemplateRef });
-	readonly loadingSpinnerTemplate = contentChild(NgLoadingSpinnerTemplateDirective, { read: TemplateRef });
-	readonly clearButtonTemplate = contentChild(NgClearButtonTemplateDirective, { read: TemplateRef });
 	readonly ngOptions = contentChildren(HubOptionComponent, { descendants: true });
 	// view children queries
 	readonly dropdownPanel = viewChild(forwardRef(() => HubSelectPanelComponent));
@@ -398,12 +361,9 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	// public variables
 	readonly dropdownId = newId();
 	readonly element: HTMLElement;
-	/** Width of the notched-outline gap for the floated label in the material outline appearance */
-	readonly outlineNotchWidth = signal(0);
 	// variables
 	itemsList: ItemsList;
 	viewPortItems: SelectEngineOption[] = [];
-	tabFocusOnClear = signal<boolean>(true);
 	private readonly _cd = inject(ChangeDetectorRef);
 	private readonly _console = inject(ConsoleService);
 	private readonly _destroyRef = inject(DestroyRef);
@@ -414,7 +374,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	protected dropdownOrigin: HTMLElement | null = null;
 	// private variables
 	private readonly _defaultLabel = 'label';
-	private readonly _editableSearchTermActive = computed(() => this.editableSearchTerm() && !this.multiple());
 	private readonly _document = inject(DOCUMENT);
 	private _injector = inject(Injector);
 	private readonly _dropdownOverlay: SelectPanelOverlayManager;
@@ -440,14 +399,11 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 			// a framework-managed class that is otherwise filtered from the observed host.
 			this.classes,
 			this._consumerHostClasses(),
-			// Keep supporting `[ngClass]` when it binds only to this component input and
-			// no NgClass directive is present in the consumer's template scope.
-			this.ngClass(),
 			this.panelClass()
 		);
 	});
 
-	/** Adds/removes `ng-select-opened` on the host — assigned in the constructor. */
+	/** Adds/removes `ng-select-opened` / `hub-select__control--opened` on the host — assigned in the constructor. */
 	private _reflectOpenState!: (open: boolean) => void;
 
 	/**
@@ -470,15 +426,14 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 		this._reflectOpenState = (open: boolean) => {
 			if (open) {
 				_renderer.addClass(this.element, 'ng-select-opened');
+				_renderer.addClass(this.element, 'hub-select__control--opened');
 			} else {
 				_renderer.removeClass(this.element, 'ng-select-opened');
+				_renderer.removeClass(this.element, 'hub-select__control--opened');
 			}
 		};
 		effect(() => this._reflectOpenState(this.isOpen() ?? false));
 		this._handleSignalChanges();
-		afterEveryRender({
-			read: () => this._measureOutlineNotch()
-		});
 		afterEveryRender({
 			read: () => {
 				const consumerClasses = readConsumerHostClasses(this.element);
@@ -492,24 +447,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 			this._dropdownOverlay.destroy();
 			this.dropdownOverlayRef = null;
 		});
-	}
-
-	/**
-	 * Measures the placeholder label so the notched outline can leave a real gap in the border
-	 * for the floated label instead of masking it with an opaque background (material theme).
-	 * The 0.75 factor matches the `scale(0.75)` the material theme applies to the floated label.
-	 *
-	 * @since 23.2.3
-	 */
-	private _measureOutlineNotch() {
-		if (this.appearance() !== 'outline') {
-			return;
-		}
-		const label = this.element.querySelector<HTMLElement>('.ng-select-container > .ng-value-container .ng-placeholder');
-		const width = label ? label.offsetWidth * 0.75 : 0;
-		if (width !== this.outlineNotchWidth()) {
-			this.outlineNotchWidth.set(width);
-		}
 	}
 
 	private _focused = false;
@@ -630,7 +567,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	ngOnInit() {
 		this._handleKeyPresses();
 		this._setInputAttributes();
-		this._warnDeprecatedInputs();
 	}
 
 	/**
@@ -657,8 +593,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 		if (groupByChange?.firstChange && !itemsChange) {
 			this._setItems([...this.items()]);
 		}
-
-		this._setTabFocusOnClear();
 	}
 
 	/**
@@ -687,9 +621,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	handleKeyDown($event: KeyboardEvent) {
 		const keyName = $event.key;
 		if (Object.values(KeyCode).includes(keyName as KeyCode)) {
-			if (this.keyDownFn()($event) === false) {
-				return;
-			}
 			this.handleKeyCode($event);
 		} else if (keyName && keyName.length === 1) {
 			this._keyPress$.next(keyName.toLocaleLowerCase());
@@ -795,22 +726,19 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	 *
 	 * @since 3.0.0
 	 */
-	// Returning `false` from a host listener cancels the event, so the right-click branch keeps its value.
-	handleMousedown($event: MouseEvent): boolean | void {
+	handleMousedown($event: MouseEvent): void {
 		if (this.disabled()) {
 			return;
 		}
 
-		if (this.preventToggleOnRightClick() && $event.button === 2) {
-			return false;
-		}
 		const target = $event.target as HTMLElement;
 
 		// Allow highlighting/copying the selected label when search is disabled.
 		// Skipping preventDefault + toggle lets the browser start a text selection.
 		// See https://github.com/ng-select/ng-select/issues/2669
-		const onSelectedValue = !!target.closest?.('.ng-value');
-		const onValueIcon = target.classList.contains('ng-value-icon') || !!target.closest?.('.ng-value-icon');
+		const onSelectedValue = !!target.closest?.('.hub-select__value');
+		const onValueIcon =
+			target.classList.contains('hub-select__value-remove') || !!target.closest?.('.hub-select__value-remove');
 		if (!this.searchable() && onSelectedValue && !onValueIcon) {
 			if (!this._focused) {
 				this.focus();
@@ -824,17 +752,17 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 			$event.preventDefault();
 		}
 
-		if (target.classList.contains('ng-clear-wrapper')) {
+		if (target.classList.contains('hub-select__clear')) {
 			// Don't handle clear on mousedown - let click event handle it
 			return;
 		}
 
-		if (target.classList.contains('ng-arrow-wrapper')) {
+		if (target.classList.contains('hub-select__arrow-wrapper')) {
 			this.handleArrowClick();
 			return;
 		}
 
-		if (target.classList.contains('ng-value-icon')) {
+		if (target.classList.contains('hub-select__value-remove')) {
 			return;
 		}
 
@@ -871,7 +799,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	 */
 	handleClearClick(_event?: MouseEvent) {
 		if (this.hasValue) {
-			this.itemsList.clearSelected(this.clearKeepsDisabledOptions());
+			this.itemsList.clearSelected(true);
 			this._updateNgModel();
 		}
 		this._clearSearch();
@@ -905,9 +833,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 		this._lastWrittenValue = value;
 		this.itemsList.clearSelected(false);
 		this._handleWriteValue(value);
-		if (this._editableSearchTermActive()) {
-			this._setSearchTermFromItems();
-		}
 		this._cd.markForCheck();
 	}
 
@@ -973,7 +898,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 		}
 		this.isOpen.set(true);
 		this._reflectOpenState(true);
-		this.itemsList.markSelectedOrDefault(this.markFirst());
+		this.itemsList.markSelectedOrDefault(true);
 		this.openEvent.emit();
 		if (!this.searchTerm) {
 			this.focus();
@@ -996,11 +921,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 		this.isOpen.set(false);
 		this._reflectOpenState(false);
 		this._isComposing = false;
-		if (!this._editableSearchTermActive()) {
-			this._clearSearch();
-		} else {
-			this.itemsList.resetFilteredItems();
-		}
+		this._clearSearch();
 		this.itemsList.unmarkItem();
 		this._onTouched();
 		this.closeEvent.emit();
@@ -1027,10 +948,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 		} else {
 			this.select(item);
 		}
-
-		if (this._editableSearchTermActive()) {
-			this._setSearchTermFromItems();
-		}
 	}
 
 	/**
@@ -1043,7 +960,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	select(item: SelectEngineOption) {
 		if (!item.selected) {
 			this.itemsList.select(item);
-			if (this.clearSearchOnAddValue() && !this._editableSearchTermActive()) {
+			if (this.clearSearchOnAddValue()) {
 				this._clearSearch();
 			}
 
@@ -1154,12 +1071,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 		}
 	}
 
-	trackByOption = (index: number, item: SelectEngineOption) => {
-		const trackBy = this.trackByFn();
-		if (trackBy) {
-			return trackBy(item.value);
-		}
-
+	trackByOption = (index: number, _item: SelectEngineOption) => {
 		// Track by position: options are re-created on every items change, so identity tracking
 		// would replace the option DOM between mousedown and click (#2551).
 		return index;
@@ -1201,17 +1113,10 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	/**
 	 * Finishes input method editor composition and applies the search term.
 	 *
-	 * @param term - The term.
-	 *
 	 * @since 3.0.5
 	 */
-	onCompositionEnd(term: string) {
+	onCompositionEnd() {
 		this._isComposing = false;
-		if (this.searchWhileComposing()) {
-			return;
-		}
-
-		this.filter(term);
 	}
 
 	/**
@@ -1222,10 +1127,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	 * @since 3.0.0
 	 */
 	filter(term: string) {
-		if (this._isComposing && !this.searchWhileComposing()) {
-			return;
-		}
-
 		this._searchTerm.set(term);
 		if (this.typeahead()?.observed && (this._validTerm() || this.minTermLength() === 0)) {
 			this.typeahead()?.next(term);
@@ -1234,7 +1135,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 		if (!this.typeahead()?.observed) {
 			this.itemsList.filter(term);
 			if (this.isOpen()) {
-				this.itemsList.markSelectedOrDefault(this.markFirst());
+				this.itemsList.markSelectedOrDefault(true);
 			}
 		}
 
@@ -1254,11 +1155,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 			return;
 		}
 
-		if (this._editableSearchTermActive()) {
-			this._setSearchTermFromItems();
-		}
-
-		this.element.classList.add('ng-select-focused');
+		this.element.classList.add('ng-select-focused', 'hub-select__control--focused');
 		this.focusEvent.emit($event);
 		this._focused = true;
 	}
@@ -1271,13 +1168,10 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	 * @since 3.0.0
 	 */
 	onInputBlur($event: FocusEvent) {
-		this.element.classList.remove('ng-select-focused');
+		this.element.classList.remove('ng-select-focused', 'hub-select__control--focused');
 		this.blurEvent.emit($event);
 		if (!this.isOpen() && !this.disabled()) {
 			this._onTouched();
-		}
-		if (this._editableSearchTermActive()) {
-			this._setSearchTermFromItems();
 		}
 		this._focused = false;
 	}
@@ -1408,11 +1302,9 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 
 		// open()/close() sync the overlay imperatively; this effect covers the paths that
 		// bypass them — an [isOpen] binding (manual mode), programmatic isOpen.set(), and
-		// dropdownPosition changes while open
 		effect(
 			() => {
 				this.isOpen();
-				this.dropdownPosition();
 				// Track the template query too: with [isOpen] pre-set, the first run can happen
 				// before view children resolve, and this re-runs the effect once they do
 				this._dropdownTemplate();
@@ -1424,16 +1316,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	}
 
 	/**
-	 * Restores the editable search term from the selected option.
-	 *
-	 * @since 3.7.3
-	 */
-	private _setSearchTermFromItems() {
-		const selected = this.selectedItems?.[0];
-		this._searchTerm.set(selected?.label ?? null);
-	}
-
-	/**
 	 * Re-applies the last written form value against the current mode and bindings.
 	 *
 	 * @since 24.0.5
@@ -1441,9 +1323,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	private _resyncSelectionFromWrittenValue() {
 		this.itemsList.clearSelected(false);
 		this._handleWriteValue(this._lastWrittenValue);
-		if (this._editableSearchTermActive()) {
-			this._setSearchTermFromItems();
-		}
 		this._cd.markForCheck();
 	}
 
@@ -1468,7 +1347,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 			this.itemsList.filter(this.searchTerm);
 		}
 		if (this.typeahead()?.observed || this.isOpen()) {
-			this.itemsList.markSelectedOrDefault(this.markFirst());
+			this.itemsList.markSelectedOrDefault(true);
 		}
 	}
 
@@ -1617,17 +1496,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	}
 
 	/**
-	 * Updates whether Tab should move focus to the clear control.
-	 *
-	 * @since 15.1.0
-	 */
-	private _setTabFocusOnClear() {
-		this.tabFocusOnClear.set(
-			isDefined(this.tabFocusOnClearButton()) ? !!this.tabFocusOnClearButton() : this.config.tabFocusOnClear
-		);
-	}
-
-	/**
 	 * Builds and emits the current ControlValueAccessor model value.
 	 *
 	 * @since 3.0.0
@@ -1742,7 +1610,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 					this.dropdownOrigin = origin;
 				},
 				origin,
-				position: this.dropdownPosition(),
+				position: 'auto',
 				template,
 				viewContainer
 			});
@@ -1752,7 +1620,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	}
 
 	/**
-	 * The dropdown anchors to the `.ng-select-container` box, not the host: themes may pad
+	 * The dropdown anchors to the `.hub-select__box` box, not the host: themes may pad
 	 * the host below the container (material reserves 1.25em of subscript space under the
 	 * underline), and the panel must sit flush against the visible field — the same anchor
 	 * the pre-overlay `appendTo` positioning used.
@@ -1764,22 +1632,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	}
 
 	/**
-	 * Reports development-mode warnings for deprecated inputs.
-	 *
-	 * @since 23.7.0
-	 */
-	private _warnDeprecatedInputs() {
-		if (!isDevMode()) {
-			return;
-		}
-		if (this.popover()) {
-			this._console.warn(
-				'[ng-select] `popover` is deprecated and has no effect: the dropdown panel renders in the ng-hub-ui-utils overlay, which uses the native Popover API top layer automatically in supporting browsers.'
-			);
-		}
-	}
-
-	/**
 	 * Handles Tab selection, clear-control focus, and close behavior.
 	 *
 	 * @param $event - The DOM event to process.
@@ -1788,7 +1640,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	 */
 	private _handleTab($event: KeyboardEvent) {
 		if (this.isOpen() === false) {
-			if (this.showClear() && !$event.shiftKey && this.tabFocusOnClear()) {
+			if (this.showClear() && !$event.shiftKey && this.config.tabFocusOnClear) {
 				this.focusOnClear();
 				$event.preventDefault();
 			} else if (!this.addTag()) {
@@ -1796,19 +1648,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 			}
 		}
 
-		if (this.selectOnTab()) {
-			if (this.itemsList.markedItem) {
-				this.toggleItem(this.itemsList.markedItem);
-				$event.preventDefault();
-			} else if (this.showAddTag) {
-				this.selectTag();
-				$event.preventDefault();
-			} else {
-				this.close();
-			}
-		} else {
-			this.close();
-		}
+		this.close();
 	}
 
 	/**
@@ -1819,14 +1659,13 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	 * @since 3.0.0
 	 */
 	private _handleEnter($event: KeyboardEvent) {
-		const openOnEnter = this.openOnEnter() ?? this.config.openOnEnter;
 		if (this.isOpen() || this._manualOpen) {
 			if (this.itemsList.markedItem) {
 				this.toggleItem(this.itemsList.markedItem);
 			} else if (this.showAddTag) {
 				this.selectTag();
 			}
-		} else if (openOnEnter) {
+		} else if (this.config.openOnEnter) {
 			this.open();
 		} else {
 			return;
@@ -1915,7 +1754,7 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	 * @since 3.0.0
 	 */
 	private _handleBackspace() {
-		if (this.searchTerm || !this.clearable() || !this.clearOnBackspace() || !this.hasValue) {
+		if (this.searchTerm || !this.clearable() || !this.hasValue) {
 			return;
 		}
 
@@ -1939,21 +1778,6 @@ export class HubSelectEngineComponent implements OnChanges, OnInit, AfterViewIni
 	private _mergeGlobalConfig(config: HubSelectConfig) {
 		this.bindValue.set(this.bindValue() || config.bindValue);
 		this.bindLabel.set(this.bindLabel() || config.bindLabel || this._defaultLabel);
-		this.appearance.set(this.appearance() || config.appearance);
-		this._setTabFocusOnClear();
-	}
-
-	/**
-	 * Gets virtual scroll value from input or from config
-	 *
-	 *  @param config HubSelectConfig object
-	 *
-	 *  @returns `true` if virtual scroll is enabled, `false` otherwise
-	 *
-	 * @since 14.7.0
-	 */
-	private getVirtualScroll(config: HubSelectConfig): boolean {
-		return isDefined(this._virtualScroll()) ? this._virtualScroll()! : this.isVirtualScrollDisabled(config);
 	}
 
 	/**

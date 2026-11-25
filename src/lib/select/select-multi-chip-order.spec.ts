@@ -57,7 +57,7 @@ function orderRuleFor(selector: string): string {
 				return [];
 			}
 		})
-		.filter((text) => text.includes('.ng-select-multiple') && text.includes(selector) && text.includes('order'));
+		.filter((text) => text.includes('.hub-select__control--multiple') && text.includes(selector) && text.includes('order'));
 
 	// Empty means the rule was renamed or removed, and every assertion below is vacuous.
 	expect(matching.length).toBeGreaterThan(0);
@@ -70,7 +70,7 @@ describe('hub-select multiple — the chip draws its remove cross after the text
 
 	it('is built on an engine that emits the cross first, which is why the order is CSS', async () => {
 		const fixture = await render();
-		const chip = fixture.nativeElement.querySelector('.ng-value') as HTMLElement;
+		const chip = fixture.nativeElement.querySelector('.hub-select__value') as HTMLElement;
 
 		expect(chip).not.toBeNull();
 
@@ -78,8 +78,8 @@ describe('hub-select multiple — the chip draws its remove cross after the text
 
 		// The premise of the fix. If the engine template ever reorders these, the CSS below is
 		// reversing an order that no longer needs reversing, and this test says so.
-		expect(parts[0]).toContain('ng-value-icon');
-		expect(parts[1]).toContain('ng-value-label');
+		expect(parts[0]).toContain('hub-select__value-remove');
+		expect(parts[1]).toContain('hub-select__value-label');
 
 		fixture.destroy();
 	});
@@ -87,13 +87,13 @@ describe('hub-select multiple — the chip draws its remove cross after the text
 	it('lays the label out before the cross', async () => {
 		await render();
 
-		expect(orderRuleFor('.ng-value-label')).toMatch(/order:\s*0/);
+		expect(orderRuleFor('.hub-select__value-label')).toMatch(/order:\s*0/);
 	});
 
 	it('leaves the place of the cross to --hub-select-value-remove-order', async () => {
 		await render();
 
-		expect(orderRuleFor('.ng-value-icon')).toMatch(/order:\s*var\(--hub-select-value-remove-order,\s*1\)/);
+		expect(orderRuleFor('.hub-select__value-remove')).toMatch(/order:\s*var\(--hub-select-value-remove-order,\s*1\)/);
 	});
 
 	it('declares the token, so its default is written where the other select tokens are', () => {

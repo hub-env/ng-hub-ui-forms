@@ -44,11 +44,11 @@ describe('hub-select-chip', () => {
 
 describe('hub-select multiple chips', () => {
 	it('puts no margin on a chip, so the rows are centred by the container padding', () => {
-		expect(body(select(), '.hub-select__control.ng-select.ng-select-multiple .ng-value')).toMatch(/margin:\s*0;/);
+		expect(body(select(), '.hub-select__control.hub-select__control--multiple .hub-select__value')).toMatch(/margin:\s*0;/);
 	});
 
 	it('pads the container equally above and below and parts the chips with a gap', () => {
-		const container = body(select(), '.hub-select__control.ng-select.ng-select-multiple .ng-value-container');
+		const container = body(select(), '.hub-select__control.hub-select__control--multiple .hub-select__values');
 
 		expect(container).toMatch(/padding-block:\s*0\.25rem;/);
 		expect(container).toMatch(/gap:\s*0\.25rem;/);

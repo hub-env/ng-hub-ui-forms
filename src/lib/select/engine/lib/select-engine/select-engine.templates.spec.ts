@@ -8,67 +8,6 @@ import { KeyCode } from '../types/select-engine.types';
 import { createEvent, createTestingModule, NgSelectTestComponent } from '../../testing/select-engine-test-fixtures';
 
 describe('HubSelectEngineComponent', () => {
-	describe('Appearance', () => {
-		it('should add fill appearance class on select container', () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine appearance="fill"></hub-select-engine>`
-			);
-
-			const ngSelectContainer: HTMLElement = fixture.nativeElement.querySelector('.ng-select-container');
-			expect(ngSelectContainer.classList.contains('ng-appearance-fill')).toBe(true);
-			expect(ngSelectContainer.classList.contains('ng-appearance-outline')).toBe(false);
-		});
-
-		it('should add outline appearance class on select container', () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine appearance="outline"></hub-select-engine>`
-			);
-
-			const ngSelectContainer: HTMLElement = fixture.nativeElement.querySelector('.ng-select-container');
-			expect(ngSelectContainer.classList.contains('ng-appearance-outline')).toBe(true);
-			expect(ngSelectContainer.classList.contains('ng-appearance-fill')).toBe(false);
-		});
-
-		it('should render notched outline elements when appearance is outline', () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine appearance="outline" placeholder="Select city"></hub-select-engine>`
-			);
-
-			const outline: HTMLElement = fixture.nativeElement.querySelector('.ng-select-container > .ng-notched-outline');
-			expect(outline).toBeTruthy();
-			expect(outline.querySelector('.ng-notched-outline-leading')).toBeTruthy();
-			expect(outline.querySelector('.ng-notched-outline-notch')).toBeTruthy();
-			expect(outline.querySelector('.ng-notched-outline-trailing')).toBeTruthy();
-		});
-
-		it('should not render notched outline elements for other appearances', () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine placeholder="Select city"></hub-select-engine>`
-			);
-
-			expect(fixture.nativeElement.querySelector('.ng-notched-outline')).toBeNull();
-		});
-
-		it('should size the outline notch to the scaled placeholder width', async () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine appearance="outline" placeholder="Select city"></hub-select-engine>`
-			);
-			await tickAndDetectChanges(fixture);
-
-			const placeholder: HTMLElement = fixture.nativeElement.querySelector('.ng-placeholder');
-			Object.defineProperty(placeholder, 'offsetWidth', { value: 100 });
-			await tickAndDetectChanges(fixture);
-
-			const notch: HTMLElement = fixture.nativeElement.querySelector('.ng-notched-outline-notch');
-			expect(notch.style.width).toBe('75px');
-		});
-	});
-
 	describe('Input attributes', () => {
 		it('should update search input attributes when inputAttrs binding changes', async () => {
 			const fixture = createTestingModule(
@@ -403,7 +342,7 @@ describe('HubSelectEngineComponent', () => {
 			expect(fixture.componentInstance.selectedCity).toBe(fixture.componentInstance.cities[0].name);
 
 			// Verify custom template is rendered inside the wrapper
-			const clearWrapper = fixture.debugElement.query(By.css('.ng-clear-wrapper'));
+			const clearWrapper = fixture.debugElement.query(By.css('.hub-select__clear'));
 			const customButton = clearWrapper.query(By.css('.custom-clearbutton'));
 			expect(customButton).toBeTruthy();
 			expect(customButton.nativeElement.textContent.trim()).toBe('Clear');
@@ -430,7 +369,7 @@ describe('HubSelectEngineComponent', () => {
 			expect(fixture.debugElement.query(By.css('.placeholder-template')).nativeElement.innerHTML).toBe(
 				'Select your city'
 			);
-			expect(fixture.debugElement.query(By.css('.ng-placeholder'))).toBeFalsy();
+			expect(fixture.debugElement.query(By.css('.hub-select__placeholder'))).toBeFalsy();
 		});
 
 		it('should display ng-placeholder if an item is selected', async () => {
@@ -447,7 +386,7 @@ describe('HubSelectEngineComponent', () => {
 			await tickAndDetectChanges(fixture);
 			await tickAndDetectChanges(fixture);
 
-			expect(fixture.debugElement.query(By.css('.ng-placeholder'))).toBeTruthy();
+			expect(fixture.debugElement.query(By.css('.hub-select__placeholder'))).toBeTruthy();
 		});
 
 		it('should not display ng-placeholder if an item is selected', async () => {
@@ -464,7 +403,7 @@ describe('HubSelectEngineComponent', () => {
 			await tickAndDetectChanges(fixture);
 			await tickAndDetectChanges(fixture);
 
-			expect(fixture.debugElement.query(By.css('.ng-placeholder'))).toBeFalsy();
+			expect(fixture.debugElement.query(By.css('.hub-select__placeholder'))).toBeFalsy();
 		});
 
 		it('should update ng-option label', async () => {
@@ -553,7 +492,7 @@ describe('HubSelectEngineComponent', () => {
 		it('should be visible when no value selected', async () => {
 			await tickAndDetectChanges(fixture);
 			const element = fixture.componentInstance.select().element;
-			const placeholder: any = element.querySelector('.ng-placeholder');
+			const placeholder: any = element.querySelector('.hub-select__placeholder');
 			expect(placeholder.innerText).toBe('select value');
 			expect(getComputedStyle(placeholder).display).toBe('block');
 		});
@@ -564,26 +503,26 @@ describe('HubSelectEngineComponent', () => {
 			await tickAndDetectChanges(fixture);
 			await tickAndDetectChanges(fixture);
 			const element = fixture.componentInstance.select().element;
-			const ngControl = element.querySelector('.ng-select-container');
+			const ngControl = element.querySelector('.hub-select__box');
 
-			expect(ngControl.classList.contains('ng-has-value')).toBeTruthy();
+			expect(ngControl.classList.contains('hub-select__box--has-value')).toBeTruthy();
 
 			select.handleClearClick();
 			await tickAndDetectChanges(fixture);
 			await tickAndDetectChanges(fixture);
 
-			const placeholder = element.querySelector('.ng-placeholder');
-			expect(ngControl.classList.contains('ng-has-value')).toBeFalsy();
+			const placeholder = element.querySelector('.hub-select__placeholder');
+			expect(ngControl.classList.contains('hub-select__box--has-value')).toBeFalsy();
 			expect(getComputedStyle(placeholder).display).toBe('block');
 		});
 
-		it('should contain .ng-has-value when value was selected', async () => {
+		it('should contain .hub-select__box--has-value when value was selected', async () => {
 			await tickAndDetectChanges(fixture);
 			const element = fixture.componentInstance.select().element;
-			const ngControl = element.querySelector('.ng-select-container');
+			const ngControl = element.querySelector('.hub-select__box');
 			await selectOption(fixture, KeyCode.ArrowDown, 2);
 			await tickAndDetectChanges(fixture);
-			expect(ngControl.classList.contains('ng-has-value')).toBeTruthy();
+			expect(ngControl.classList.contains('hub-select__box--has-value')).toBeTruthy();
 		});
 	});
 });

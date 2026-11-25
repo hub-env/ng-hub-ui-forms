@@ -143,7 +143,7 @@ describe('HubSelectEngineComponent', () => {
 			select.open();
 			await tickAndDetectChanges(fixture);
 
-			const option = document.querySelector<HTMLElement>('.ng-dropdown-panel .ng-option');
+			const option = document.querySelector<HTMLElement>('.hub-select__panel .hub-select__panel-option');
 			option.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
 			// Simulate the change detection a zone.js app runs after mousedown
 			await tickAndDetectChanges(fixture);
@@ -177,8 +177,8 @@ describe('HubSelectEngineComponent', () => {
 
 		it('should have relevant classes', () => {
 			const selectElement = getNgSelectNativeElement(fixture);
-			expect(selectElement.classList.contains('ng-select')).toBe(true);
-			expect(selectElement.classList.contains('ng-select-multiple')).toBe(true);
+			expect(selectElement.classList.contains('hub-select__control')).toBe(true);
+			expect(selectElement.classList.contains('hub-select__control--multiple')).toBe(true);
 		});
 
 		it('should select several items', async () => {
@@ -217,7 +217,7 @@ describe('HubSelectEngineComponent', () => {
 			let arrowIcon: DebugElement = null;
 			beforeEach(() => {
 				fixture.componentInstance.maxSelectedItems = 2;
-				arrowIcon = fixture.debugElement.query(By.css('.ng-arrow-wrapper'));
+				arrowIcon = fixture.debugElement.query(By.css('.hub-select__arrow-wrapper'));
 			});
 
 			it('should be able to select only two elements', async () => {
@@ -349,57 +349,6 @@ describe('HubSelectEngineComponent', () => {
 
 	describe('Deselecting items', () => {
 		describe('Multiple', () => {
-			it('should not toggle selected item when deselectOnClick is false', async () => {
-				const fixture = createTestingModule(
-					NgSelectTestComponent,
-					`<hub-select-engine [items]="cities"
-                        bindLabel="name"
-                        [multiple]="true"
-                        [deselectOnClick]="false">
-                    </hub-select-engine>`
-				);
-
-				await selectOption(fixture, KeyCode.ArrowDown, 0);
-				await selectOption(fixture, KeyCode.ArrowDown, 2);
-				await tickAndDetectChanges(fixture);
-				expect((<SelectEngineOption[]>fixture.componentInstance.select().selectedItems).length).toBe(2);
-
-				await selectOption(fixture, KeyCode.ArrowDown, 0);
-				await tickAndDetectChanges(fixture);
-				expect((<SelectEngineOption[]>fixture.componentInstance.select().selectedItems).length).toBe(2);
-				expect(fixture.componentInstance.select().selectedItems[0]).toEqual(
-					expect.objectContaining({
-						value: { id: 1, name: 'New York' }
-					})
-				);
-			});
-
-			it('should toggle selected item when deselectOnClick is true', async () => {
-				const fixture = createTestingModule(
-					NgSelectTestComponent,
-					`<hub-select-engine [items]="cities"
-                        bindLabel="name"
-                        [multiple]="true"
-                        [deselectOnClick]="true">
-                    </hub-select-engine>`
-				);
-
-				await selectOption(fixture, KeyCode.ArrowDown, 0);
-				await selectOption(fixture, KeyCode.ArrowDown, 2);
-				await tickAndDetectChanges(fixture);
-				expect((<SelectEngineOption[]>fixture.componentInstance.select().selectedItems).length).toBe(2);
-
-				// reopening marks the first selected option, so enter toggles it off directly
-				await selectOption(fixture, KeyCode.ArrowUp, 0);
-				await tickAndDetectChanges(fixture);
-				expect((<SelectEngineOption[]>fixture.componentInstance.select().selectedItems).length).toBe(1);
-				expect(fixture.componentInstance.select().selectedItems[0]).toEqual(
-					expect.objectContaining({
-						value: { id: 3, name: 'Beijing' }
-					})
-				);
-			});
-
 			it('should toggle selected item when deselectOnClick is undefined', async () => {
 				const fixture = createTestingModule(
 					NgSelectTestComponent,
@@ -427,47 +376,6 @@ describe('HubSelectEngineComponent', () => {
 		});
 
 		describe('Single', () => {
-			it('should not toggle selected item when deselectOnClick is false', async () => {
-				const fixture = createTestingModule(
-					NgSelectTestComponent,
-					`<hub-select-engine [items]="cities"
-                        bindLabel="name"
-                        [deselectOnClick]="false">
-                    </hub-select-engine>`
-				);
-
-				await selectOption(fixture, KeyCode.ArrowDown, 0);
-				await tickAndDetectChanges(fixture);
-				expect((<SelectEngineOption[]>fixture.componentInstance.select().selectedItems).length).toBe(1);
-
-				await selectOption(fixture, KeyCode.ArrowDown, 0);
-				await tickAndDetectChanges(fixture);
-				expect((<SelectEngineOption[]>fixture.componentInstance.select().selectedItems).length).toBe(1);
-				expect(fixture.componentInstance.select().selectedItems[0]).toEqual(
-					expect.objectContaining({
-						value: { id: 1, name: 'New York' }
-					})
-				);
-			});
-
-			it('should toggle selected item when deselectOnClick is true', async () => {
-				const fixture = createTestingModule(
-					NgSelectTestComponent,
-					`<hub-select-engine [items]="cities"
-                        bindLabel="name"
-                        [deselectOnClick]="true">
-                    </hub-select-engine>`
-				);
-
-				await selectOption(fixture, KeyCode.ArrowDown, 0);
-				await tickAndDetectChanges(fixture);
-				expect((<SelectEngineOption[]>fixture.componentInstance.select().selectedItems).length).toBe(1);
-
-				await selectOption(fixture, KeyCode.ArrowDown, 0);
-				await tickAndDetectChanges(fixture);
-				expect((<SelectEngineOption[]>fixture.componentInstance.select().selectedItems).length).toBe(0);
-			});
-
 			it('should not toggle selected item when deselectOnClick is undefined', async () => {
 				const fixture = createTestingModule(
 					NgSelectTestComponent,
@@ -560,24 +468,6 @@ describe('HubSelectEngineComponent', () => {
 			await tickAndDetectChanges(fixture);
 			triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Enter);
 			expect(fixture.componentInstance.select().itemsList.filteredItems.length).toBe(0);
-		});
-
-		it('should add tag as string when tab pressed', async () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="citiesNames"
-                    [addTag]="true"
-                    [selectOnTab]="true"
-                    placeholder="select value"
-                    [(ngModel)]="selectedCity">
-                </hub-select-engine>`
-			);
-
-			await tickAndDetectChanges(fixture);
-			fixture.componentInstance.select().filter('Copenhagen');
-			await tickAndDetectChanges(fixture);
-			triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Tab);
-			expect(fixture.componentInstance.selectedCity).toBe(<any>'Copenhagen');
 		});
 
 		it('should select tag even if there are filtered items that matches search term', async () => {
@@ -784,7 +674,7 @@ describe('HubSelectEngineComponent', () => {
                 </hub-select-engine>`
 			);
 
-			const selectInput = fixture.debugElement.query(By.css('.ng-select-container'));
+			const selectInput = fixture.debugElement.query(By.css('.hub-select__box'));
 			// open
 			selectInput.triggerEventHandler('mousedown', createEvent());
 			await tickAndDetectChanges(fixture);
@@ -875,22 +765,6 @@ describe('HubSelectEngineComponent', () => {
 			expect(fixture.componentInstance.select().itemsList.markedItem).toEqual(result);
 			triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Enter);
 			expect(fixture.componentInstance.select().selectedItems).toEqual([result]);
-		});
-
-		it('should not mark first item on filter when markFirst disabled', async () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities"
-                    bindLabel="name"
-                    [markFirst]="false"
-                    [(ngModel)]="selectedCity">
-                </hub-select-engine>`
-			);
-
-			await advanceDebounce(fixture, 200);
-			fixture.componentInstance.select().filter('bei');
-			await tickAndDetectChanges(fixture);
-			expect(fixture.componentInstance.select().itemsList.markedItem).toEqual(undefined);
 		});
 
 		it('should clear filterValue on selected item', async () => {
@@ -1008,7 +882,6 @@ describe('HubSelectEngineComponent', () => {
                         [typeahead]="filter"
                         [minTermLength]="minTermLength"
                         bindLabel="name"
-						[markFirst]="markFirst"
                         [hideSelected]="hideSelected"
                         [(ngModel)]="selectedCity">
                     </hub-select-engine>`
@@ -1068,17 +941,6 @@ describe('HubSelectEngineComponent', () => {
 						value: { id: 4, name: 'Bukiskes' }
 					})
 				]);
-			});
-
-			it('should not mark first item when typeahead results are loaded', async () => {
-				fixture.componentInstance.markFirst = false;
-				fixture.detectChanges();
-				fixture.componentInstance.filter.subscribe();
-				fixture.componentInstance.select().filter('buk');
-				fixture.componentInstance.cities = [{ id: 4, name: 'Bukiskes' }];
-				await tickAndDetectChanges(fixture);
-				triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Enter);
-				expect(fixture.componentInstance.select().selectedItems).toEqual([]);
 			});
 
 			it('should open dropdown when hideSelected=true and no items to select', async () => {
@@ -1325,91 +1187,6 @@ describe('HubSelectEngineComponent', () => {
 				select.select(select.viewPortItems[0]);
 				expect(select.itemsList.filteredItems.length).toBe(1);
 				expect(select.searchTerm).toBe('new');
-			});
-		});
-
-		describe('edit search query', () => {
-			it('should allow edit search if option selected & input focused', async () => {
-				const fixture = createTestingModule(
-					NgSelectTestComponent,
-					`<hub-select-engine [items]="cities"
-                        [typeahead]="filter"
-                        [editableSearchTerm]="true"
-                        bindValue="id"
-                        bindLabel="name"
-                        [(ngModel)]="selectedCity">
-                    </hub-select-engine>`
-				);
-				expect(fixture.componentInstance.select().editableSearchTerm()).toBeTruthy();
-				const select = fixture.componentInstance.select();
-				const input = select.searchInput().nativeElement;
-				const selectedCity = fixture.componentInstance.cities[0];
-				fixture.componentInstance.selectedCity = selectedCity.id;
-				await tickAndDetectChanges(fixture);
-				input.focus();
-				await advanceDebounce(fixture, 2000);
-				await tickAndDetectChanges(fixture);
-				await tickAndDetectChanges(fixture);
-				expect(select.searchTerm).toEqual(selectedCity.name);
-				expect(input.value).toEqual(selectedCity.name);
-			});
-
-			it('should display all items if wrong query passed & dropdown reopened', async () => {
-				const fixture = createTestingModule(
-					NgSelectTestComponent,
-					`<hub-select-engine [items]="cities"
-                        [typeahead]="filter"
-                        [editableSearchTerm]="true"
-                        bindValue="id"
-                        bindLabel="name"
-                        [(ngModel)]="selectedCity">
-                    </hub-select-engine>`
-				);
-				const select = fixture.componentInstance.select();
-				const input = select.searchInput().nativeElement;
-				const selectedCity = fixture.componentInstance.cities[0];
-				const wrongSearchTerm = 'some wrong search';
-				const selectConfig = new HubSelectConfig();
-				fixture.componentInstance.selectedCity = selectedCity.id;
-				await tickAndDetectChanges(fixture);
-				input.focus();
-				input.value = wrongSearchTerm;
-				input.dispatchEvent(new Event('input'));
-				await tickAndDetectChanges(fixture);
-				expect(select.searchTerm).toEqual(wrongSearchTerm);
-				const firstOption = document.querySelector('.ng-dropdown-panel .ng-option');
-				expect(firstOption.innerHTML).toEqual(selectConfig.notFoundText);
-				input.blur();
-				select.close();
-				await tickAndDetectChanges(fixture);
-				expect(select.isOpen()).toBeFalsy();
-				input.value = '';
-				input.focus();
-				input.dispatchEvent(new Event('input'));
-				await tickAndDetectChanges(fixture);
-				const allOptions = document.querySelectorAll('.ng-dropdown-panel .ng-option');
-				expect(allOptions.length).toEqual(fixture.componentInstance.cities.length);
-			});
-
-			it('should update search term when ngModel is updated programmatically', async () => {
-				const fixture = createTestingModule(
-					NgSelectTestComponent,
-					`<hub-select-engine [items]="cities"
-                        [editableSearchTerm]="true"
-                        bindValue="id"
-                        bindLabel="name"
-                        [(ngModel)]="selectedCity">
-                    </hub-select-engine>`
-				);
-				const select = fixture.componentInstance.select();
-				const selectedCity = fixture.componentInstance.cities[0];
-
-				// Update ngModel programmatically (simulating writeValue)
-				fixture.componentInstance.selectedCity = selectedCity.id;
-				await tickAndDetectChanges(fixture);
-
-				// The search term should be updated to match the selected item's label
-				expect(select.searchTerm).toEqual(selectedCity.name);
 			});
 		});
 	});

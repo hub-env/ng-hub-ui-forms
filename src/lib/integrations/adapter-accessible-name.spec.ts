@@ -49,7 +49,7 @@ const build = async (config: Partial<HubFormControlConfig>) => {
 
 /** The name a screen reader would read off the control the adapter built. */
 const accessibleName = (root: HTMLElement): string | null => {
-	const control = root.querySelector('input, .ng-select input') as HTMLElement | null;
+	const control = root.querySelector('input, .hub-select__control input') as HTMLElement | null;
 	const id = control?.getAttribute('id');
 	const label = id ? root.querySelector(`label[for="${id}"]`) : null;
 

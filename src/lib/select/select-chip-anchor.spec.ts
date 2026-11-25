@@ -82,15 +82,14 @@ describe('hub-select list anchor', () => {
 			if (this === document.body) return box(0, 1000, 0, 2000);
 			if (this.tagName.toLowerCase() === 'hub-select-panel') return box(0, 240, 0, 120);
 			if (this.classList.contains('hub-select__group')) return box(40, 300);
-			if (this.classList.contains('ng-select-container') || this.classList.contains('ng-select')) return box(100, 120);
+			if (this.classList.contains('hub-select__box') || this.classList.contains('hub-select__control'))
+				return box(100, 120);
 			return box(0, 0, 0, 0);
 		});
 		Object.defineProperty(document.documentElement, 'clientWidth', { value: 1000, configurable: true });
 
 		const fixture = await render(anchor);
-		fixture.nativeElement
-			.querySelector('.ng-select-container')
-			.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+		fixture.nativeElement.querySelector('.hub-select__box').dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
 		await fixture.whenStable();
 		await new Promise((r) => setTimeout(r, 20));
 		await fixture.whenStable();

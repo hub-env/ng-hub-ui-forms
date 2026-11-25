@@ -45,7 +45,7 @@ describe('HubSelectEngineComponent', () => {
 			await openSelect(select, fixture);
 
 			expect(select.dropdownPanel().items().length).toBe(5);
-			let options = document.querySelectorAll<HTMLElement>('.ng-option');
+			let options = document.querySelectorAll<HTMLElement>('.hub-select__panel-option');
 			expect(options.length).toBe(5);
 			expect(options[0].innerText).toBe('New York');
 			expect(options[1].innerText).toBe('London');
@@ -56,7 +56,7 @@ describe('HubSelectEngineComponent', () => {
 				name: String.fromCharCode(97 + i)
 			}));
 			await tickAndDetectChanges(fixture);
-			options = document.querySelectorAll<HTMLElement>('.ng-option');
+			options = document.querySelectorAll<HTMLElement>('.hub-select__panel-option');
 			expect(options.length).toBe(30);
 			expect(options[0].innerText).toBe('a');
 		});
@@ -73,7 +73,7 @@ describe('HubSelectEngineComponent', () => {
 			const select = fixture.componentInstance.select();
 			await openSelect(select, fixture);
 
-			const panelItems = document.querySelector('.ng-dropdown-panel-items');
+			const panelItems = document.querySelector('.hub-select__panel-items');
 			const firstChild = <HTMLScriptElement>panelItems.firstChild;
 
 			expect(firstChild.offsetHeight).toBe(0);
@@ -94,7 +94,7 @@ describe('HubSelectEngineComponent', () => {
 			await openSelect(select, fixture);
 
 			expect(fixture.componentInstance.select().dropdownPanel().items().length).toBe(5);
-			const options = document.querySelectorAll<HTMLElement>('.ng-option');
+			const options = document.querySelectorAll<HTMLElement>('.hub-select__panel-option');
 			expect(options.length).toBe(5);
 			expect(options[0].innerText).toBe('New York');
 			expect(options[1].innerText).toBe('London');
@@ -106,7 +106,7 @@ describe('HubSelectEngineComponent', () => {
 			}));
 			await tickAndDetectChanges(fixture);
 
-			const panelItems = document.querySelector('.ng-dropdown-panel-items');
+			const panelItems = document.querySelector('.hub-select__panel-items');
 			const firstChild = <HTMLScriptElement>panelItems.firstChild;
 
 			expect(firstChild.offsetHeight).not.toBe(0);
@@ -128,7 +128,7 @@ describe('HubSelectEngineComponent', () => {
 			await openSelect(select, fixture);
 
 			expect(fixture.componentInstance.select().dropdownPanel().items().length).toBe(5);
-			let options = document.querySelectorAll<HTMLElement>('.ng-option');
+			let options = document.querySelectorAll<HTMLElement>('.hub-select__panel-option');
 			expect(options.length).toBe(5);
 			expect(options[0].innerText).toBe('New York');
 			expect(options[1].innerText).toBe('London');
@@ -139,12 +139,9 @@ describe('HubSelectEngineComponent', () => {
 				name: String.fromCharCode(97 + i)
 			}));
 			await tickAndDetectChanges(fixture);
-			options = document.querySelectorAll<HTMLElement>('.ng-option');
+			options = document.querySelectorAll<HTMLElement>('.hub-select__panel-option');
 			const { itemsPerViewport } = (select.dropdownPanel() as any)._panelService.dimensions;
-			const expectedItemsLength = Math.min(
-				fixture.componentInstance.cities.length,
-				itemsPerViewport + 1 + select.bufferAmount()
-			);
+			const expectedItemsLength = Math.min(fixture.componentInstance.cities.length, itemsPerViewport + 1 + 4);
 			expect(options.length).toBe(expectedItemsLength);
 			expect(options[0].innerText).toBe('a');
 		});
@@ -163,7 +160,7 @@ describe('HubSelectEngineComponent', () => {
 			const select = fixture.componentInstance.select();
 			await openSelect(select, fixture);
 
-			const options = document.querySelectorAll<HTMLElement>('.ng-option');
+			const options = document.querySelectorAll<HTMLElement>('.hub-select__panel-option');
 			expect(options.length).toBe(1);
 			expect((<HTMLElement>options[0]).innerText).toBe('No items found');
 		});
@@ -189,8 +186,8 @@ describe('HubSelectEngineComponent', () => {
 
 			await openSelect(select, fixture);
 
-			const options = document.querySelectorAll<HTMLElement>('.ng-option');
-			const marked = document.querySelector<HTMLElement>('.ng-option-marked');
+			const options = document.querySelectorAll<HTMLElement>('.hub-select__panel-option');
+			const marked = document.querySelector<HTMLElement>('.hub-select__panel-option--marked');
 
 			// Accept both 17 and 18 options as valid (environment-dependent panel height causes this variation)
 			// With 240px panel height: itemsPerViewport=12, buffer=4, renders 18 options
@@ -220,7 +217,7 @@ describe('HubSelectEngineComponent', () => {
 			cmp.select().dropdownPanel().scrollTo(cmp.select().itemsList.items[1]);
 			await tickAndDetectChanges(fixture);
 
-			const panelItems = document.querySelector('.ng-dropdown-panel-items');
+			const panelItems = document.querySelector('.hub-select__panel-items');
 			expect(panelItems.scrollTop).toBe(0);
 		});
 
@@ -242,7 +239,7 @@ describe('HubSelectEngineComponent', () => {
 			cmp.select().dropdownPanel().scrollTo(cmp.select().itemsList.items[15]);
 			await tickAndDetectChanges(fixture);
 
-			const panelItems = document.querySelector('.ng-dropdown-panel-items');
+			const panelItems = document.querySelector('.hub-select__panel-items');
 			expect(panelItems.scrollTop).toBeGreaterThanOrEqual(48);
 		});
 
@@ -283,7 +280,7 @@ describe('HubSelectEngineComponent', () => {
 			const outsideClick = vi.spyOn(cmp.select().dropdownPanel().outsideClick, 'emit').mockReturnValue(undefined);
 			expect(outsideClick).not.toHaveBeenCalled();
 
-			const listItem = fixture.debugElement.query(By.css('.ng-option'));
+			const listItem = fixture.debugElement.query(By.css('.hub-select__panel-option'));
 			let event = new MouseEvent('mousedown', { bubbles: true });
 			listItem.nativeElement.dispatchEvent(event);
 			event = new MouseEvent('click', { bubbles: true });
@@ -362,27 +359,8 @@ describe('HubSelectEngineComponent', () => {
 			fixture.componentInstance.select().close();
 
 			await tickAndDetectChanges(fixture);
-			const dropdown = <HTMLElement>document.querySelector('.ng-dropdown-panel');
+			const dropdown = <HTMLElement>document.querySelector('.hub-select__panel');
 			expect(dropdown).toBeNull();
-		});
-
-		it('should set aria-label on the inner listbox element when ariaLabelDropdown input is provided', async () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities" ariaLabelDropdown="Custom Aria Label" />`
-			);
-
-			const select = fixture.componentInstance.select();
-			select.open();
-			await tickAndDetectChanges(fixture);
-
-			// The dropdown panel itself should NOT have aria-label directly
-			const dropdownPanel = document.querySelector('.ng-dropdown-panel');
-			expect(dropdownPanel.getAttribute('aria-label')).toBeNull();
-
-			// The inner element with role="listbox" should have the aria-label
-			const listboxElement = document.querySelector('.ng-dropdown-panel-items[role="listbox"]');
-			expect(listboxElement.getAttribute('aria-label')).toBe('Custom Aria Label');
 		});
 
 		it('should use ariaLabelDropdown from HubSelectConfig when not provided in template', async () => {
@@ -394,176 +372,8 @@ describe('HubSelectEngineComponent', () => {
 			select.open();
 			await tickAndDetectChanges(fixture);
 
-			const listboxElement = document.querySelector('.ng-dropdown-panel-items[role="listbox"]');
+			const listboxElement = document.querySelector('.hub-select__panel-items[role="listbox"]');
 			expect(listboxElement.getAttribute('aria-label')).toBe('Global Aria Label');
-		});
-
-		it('should override ariaLabelDropdown from HubSelectConfig when provided in template', async () => {
-			const config = new HubSelectConfig();
-			config.ariaLabelDropdown = 'Global Aria Label';
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities" ariaLabelDropdown="Template Aria Label" />`,
-				config
-			);
-
-			const select = fixture.componentInstance.select();
-			select.open();
-			await tickAndDetectChanges(fixture);
-
-			const listboxElement = document.querySelector('.ng-dropdown-panel-items[role="listbox"]');
-			expect(listboxElement.getAttribute('aria-label')).toBe('Template Aria Label');
-		});
-
-		describe('Popover (deprecated)', () => {
-			it('should have popover input with default value false', async () => {
-				const fixture = createTestingModule(
-					NgSelectTestComponent,
-					`<hub-select-engine [items]="cities" bindLabel="name"></hub-select-engine>`
-				);
-
-				const select = fixture.componentInstance.select();
-				expect(select.popover()).toBe(false);
-			});
-
-			it('should warn that popover is deprecated and has no effect', async () => {
-				const warnSpy = vi.spyOn(MockConsole.prototype, 'warn');
-				try {
-					createTestingModule(
-						NgSelectTestComponent,
-						`<hub-select-engine [items]="cities" bindLabel="name" [popover]="true"></hub-select-engine>`
-					);
-					expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('`popover` is deprecated'));
-				} finally {
-					warnSpy.mockRestore();
-				}
-			});
-
-			it('should not warn when popover is not set', async () => {
-				const warnSpy = vi.spyOn(MockConsole.prototype, 'warn');
-				try {
-					createTestingModule(
-						NgSelectTestComponent,
-						`<hub-select-engine [items]="cities" bindLabel="name"></hub-select-engine>`
-					);
-					expect(warnSpy).not.toHaveBeenCalled();
-				} finally {
-					warnSpy.mockRestore();
-				}
-			});
-
-			it('should render the dropdown panel in the overlay regardless of popover value', async () => {
-				const fixture = createTestingModule(
-					NgSelectTestComponent,
-					`<hub-select-engine [items]="cities" bindLabel="name" [popover]="false"></hub-select-engine>`
-				);
-
-				const select = fixture.componentInstance.select();
-				await openSelect(select, fixture);
-
-				const panelElement = document.querySelector('.ng-dropdown-panel');
-				expect(panelElement).not.toBeNull();
-				// fork: utils overlay — the container replaces the CDK pane.
-				expect(panelElement.closest('.hub-overlay-container')).not.toBeNull();
-			});
-
-			it('should render the dropdown panel in the native popover top layer when the browser supports it', async () => {
-				const fixture = createTestingModule(
-					NgSelectTestComponent,
-					`<hub-select-engine [items]="cities" bindLabel="name"></hub-select-engine>`
-				);
-
-				const select = fixture.componentInstance.select();
-				await openSelect(select, fixture);
-
-				const panelElement = document.querySelector('.ng-dropdown-panel');
-				// fork: utils overlay — the list opts into the top layer (Popover API) itself,
-				// which puts it above all z-index stacking contexts
-				if ('showPopover' in document.body) {
-					expect(panelElement.closest(':popover-open')).not.toBeNull();
-				} else {
-					expect(panelElement.closest('.hub-overlay-container')).not.toBeNull();
-				}
-			});
-
-			describe('ResizeObserver repositioning', () => {
-				let originalResizeObserver: any;
-				let observerCallback: () => void;
-				let disconnectSpy: Mock;
-
-				beforeEach(() => {
-					originalResizeObserver = (globalThis as any).ResizeObserver;
-					disconnectSpy = vi.fn().mockName('disconnect');
-
-					(globalThis as any).ResizeObserver = class {
-						constructor(cb: () => void) {
-							observerCallback = cb;
-						}
-						observe() {}
-						disconnect = disconnectSpy;
-					};
-				});
-
-				afterEach(() => {
-					(globalThis as any).ResizeObserver = originalResizeObserver;
-				});
-
-				it('should sync overlay width and position when the select element resizes', async () => {
-					const fixture = createTestingModule(
-						NgSelectTestComponent,
-						`<hub-select-engine [items]="cities" bindLabel="name" [multiple]="true" [closeOnSelect]="false" [(ngModel)]="selectedCities"></hub-select-engine>`
-					);
-					await tickAndDetectChanges(fixture);
-
-					const select = fixture.componentInstance.select();
-					await openSelect(select, fixture);
-
-					// fork: utils overlay — the resize keeps the panel's minimum width in step, there is no updateSize.
-					const overlayRef = select.dropdownPanel().overlayRef();
-					const panel = <HTMLElement>document.querySelector('.ng-dropdown-panel');
-					panel.style.minWidth = '1px';
-					const updatePositionSpy = vi.spyOn(overlayRef, 'updatePosition');
-
-					observerCallback();
-					await tickAndDetectChanges(fixture);
-
-					expect(panel.style.minWidth).not.toBe('1px');
-					expect(updatePositionSpy).toHaveBeenCalled();
-				});
-
-				it('should disconnect ResizeObserver when the dropdown closes', async () => {
-					const fixture = createTestingModule(
-						NgSelectTestComponent,
-						`<hub-select-engine [items]="cities" bindLabel="name" [multiple]="true" [closeOnSelect]="false" [(ngModel)]="selectedCities"></hub-select-engine>`
-					);
-					await tickAndDetectChanges(fixture);
-
-					const select = fixture.componentInstance.select();
-					select.open();
-					await tickAndDetectChanges(fixture);
-
-					select.close();
-					await tickAndDetectChanges(fixture);
-
-					expect(disconnectSpy).toHaveBeenCalled();
-				});
-
-				it('should disconnect ResizeObserver when component is destroyed', async () => {
-					const fixture = createTestingModule(
-						NgSelectTestComponent,
-						`<hub-select-engine [items]="cities" bindLabel="name" [multiple]="true" [closeOnSelect]="false" [(ngModel)]="selectedCities"></hub-select-engine>`
-					);
-					await tickAndDetectChanges(fixture);
-
-					const select = fixture.componentInstance.select();
-					select.open();
-					await tickAndDetectChanges(fixture);
-
-					fixture.destroy();
-
-					expect(disconnectSpy).toHaveBeenCalled();
-				});
-			});
 		});
 	});
 
@@ -647,7 +457,7 @@ describe('HubSelectEngineComponent', () => {
 			shadowRoot.appendChild(document.querySelector('hub-select-panel'));
 
 			try {
-				const option = shadowRoot.querySelector('.ng-option') as HTMLElement;
+				const option = shadowRoot.querySelector('.hub-select__panel-option') as HTMLElement;
 				option.click();
 
 				await tickAndDetectChanges(fixture);
@@ -755,19 +565,6 @@ describe('HubSelectEngineComponent', () => {
 
 			await scrollDocument(fixture);
 			expect(select.isOpen()).toBeTruthy();
-		});
-
-		it('should close on document scroll when closeOnScroll is set', async () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities" bindLabel="name" [closeOnScroll]="true" [(ngModel)]="selectedCity"></hub-select-engine>`
-			);
-			const select = fixture.componentInstance.select();
-			await openSelect(select, fixture);
-
-			await scrollDocument(fixture);
-			expect(select.isOpen()).toBeFalsy();
-			expect(fixture.debugElement.query(By.css('hub-select-panel'))).toBeNull();
 		});
 
 		it('should use closeOnScroll from HubSelectConfig when not provided in template', async () => {
@@ -984,11 +781,11 @@ describe('HubSelectEngineComponent', () => {
 				expect(fixture.debugElement.query(By.css('hub-select-panel'))).not.toBeNull();
 
 				// Simulate arrow click via mousedown on ng-select-container
-				const control = fixture.debugElement.query(By.css('.ng-select-container'));
+				const control = fixture.debugElement.query(By.css('.hub-select__box'));
 				control.triggerEventHandler(
 					'mousedown',
 					createEvent({
-						classList: { contains: (term) => term === 'ng-arrow-wrapper' }
+						classList: { contains: (term) => term === 'hub-select__arrow-wrapper' }
 					})
 				);
 
@@ -1011,11 +808,11 @@ describe('HubSelectEngineComponent', () => {
 				expect(fixture.componentInstance.select().isOpen()).toBeTruthy();
 				expect(document.querySelector('hub-select-panel')).not.toBeNull();
 
-				const control = fixture.debugElement.query(By.css('.ng-select-container'));
+				const control = fixture.debugElement.query(By.css('.hub-select__box'));
 				control.triggerEventHandler(
 					'mousedown',
 					createEvent({
-						classList: { contains: (term) => term === 'ng-arrow-wrapper' }
+						classList: { contains: (term) => term === 'hub-select__arrow-wrapper' }
 					})
 				);
 
@@ -1038,29 +835,7 @@ describe('HubSelectEngineComponent', () => {
 			select.open();
 			await tickAndDetectChanges(fixture);
 
-			expect(select.dropdownPosition()).toBe('auto');
 			expect(['top', 'bottom']).toContain(select.currentPanelPosition);
-		});
-
-		it('should auto position dropdown to top if position input is set', async () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine dropdownPosition="top" [items]="cities"></hub-select-engine>`
-			);
-			fixture.componentInstance.cities = [{ id: 1, name: 'New York' }];
-			fixture.detectChanges();
-
-			const select = fixture.componentInstance.select();
-			select.open();
-			await tickAndDetectChanges(fixture);
-
-			const selectClasses = (<HTMLElement>fixture.nativeElement).querySelector('.ng-select').classList;
-			const panelClasses = document.querySelector('.ng-dropdown-panel').classList;
-			expect(select.dropdownPosition()).toBe('top');
-			expect(selectClasses.contains('ng-select-bottom')).toBeFalsy();
-			expect(panelClasses.contains('ng-select-bottom')).toBeFalsy();
-			expect(selectClasses.contains('ng-select-top')).toBeTruthy();
-			expect(panelClasses.contains('ng-select-top')).toBeTruthy();
 		});
 
 		it('should auto position appended to body dropdown to bottom', async () => {
@@ -1075,7 +850,6 @@ describe('HubSelectEngineComponent', () => {
 			select.open();
 			await tickAndDetectChanges(fixture);
 
-			expect(select.dropdownPosition()).toBe('auto');
 			expect(['top', 'bottom']).toContain(select.currentPanelPosition);
 		});
 
@@ -1156,7 +930,7 @@ describe('HubSelectEngineComponent', () => {
 			);
 
 			await openSelect(fixture.componentInstance.select(), fixture);
-			const dropdown = <HTMLElement>document.querySelector('.container .ng-dropdown-panel');
+			const dropdown = <HTMLElement>document.querySelector('.container .hub-select__panel');
 			expect(dropdown).not.toBeNull();
 		});
 
@@ -1170,7 +944,7 @@ describe('HubSelectEngineComponent', () => {
 			);
 
 			await openSelect(fixture.componentInstance.select(), fixture);
-			const dropdown = <HTMLElement>document.querySelector('.ng-dropdown-panel');
+			const dropdown = <HTMLElement>document.querySelector('.hub-select__panel');
 			expect(dropdown).not.toBeNull();
 			expect(dropdown.closest('hub-select-engine')).toBeNull();
 			// fork: utils overlay — body-level container, not inside the select.
@@ -1191,7 +965,7 @@ describe('HubSelectEngineComponent', () => {
 			);
 
 			await openSelect(fixture.componentInstance.select(), fixture);
-			expect(document.querySelector('.config-container .ng-dropdown-panel')).not.toBeNull();
+			expect(document.querySelector('.config-container .hub-select__panel')).not.toBeNull();
 		});
 
 		it('should move the dropdown when appendTo changes between opens', async () => {
@@ -1208,7 +982,7 @@ describe('HubSelectEngineComponent', () => {
 			const select = fixture.componentInstance.select();
 
 			await openSelect(select, fixture);
-			expect(document.querySelector('.container-a .ng-dropdown-panel')).not.toBeNull();
+			expect(document.querySelector('.container-a .hub-select__panel')).not.toBeNull();
 
 			select.close();
 			await tickAndDetectChanges(fixture);
@@ -1216,8 +990,8 @@ describe('HubSelectEngineComponent', () => {
 			await tickAndDetectChanges(fixture);
 
 			await openSelect(select, fixture);
-			expect(document.querySelector('.container-b .ng-dropdown-panel')).not.toBeNull();
-			expect(document.querySelector('.container-a .ng-dropdown-panel')).toBeNull();
+			expect(document.querySelector('.container-b .hub-select__panel')).not.toBeNull();
+			expect(document.querySelector('.container-a .hub-select__panel')).toBeNull();
 		});
 
 		it('should rebuild the overlay when the appendTo host element is replaced between opens', async () => {
@@ -1235,7 +1009,7 @@ describe('HubSelectEngineComponent', () => {
 			const select = fixture.componentInstance.select();
 
 			await openSelect(select, fixture);
-			expect(document.querySelector('.container-a .ng-dropdown-panel')).not.toBeNull();
+			expect(document.querySelector('.container-a .hub-select__panel')).not.toBeNull();
 			select.close();
 			await tickAndDetectChanges(fixture);
 
@@ -1247,7 +1021,7 @@ describe('HubSelectEngineComponent', () => {
 			await tickAndDetectChanges(fixture);
 
 			await openSelect(select, fixture);
-			expect(document.querySelector('.container-a .ng-dropdown-panel')).not.toBeNull();
+			expect(document.querySelector('.container-a .hub-select__panel')).not.toBeNull();
 		});
 
 		it('should throw for an appendTo selector that matches no element', async () => {
@@ -1279,7 +1053,7 @@ describe('HubSelectEngineComponent', () => {
 			);
 
 			await openSelect(fixture.componentInstance.select(), fixture);
-			const panel = <HTMLElement>document.querySelector('.ng-dropdown-panel');
+			const panel = <HTMLElement>document.querySelector('.hub-select__panel');
 			expect(panel.style.minWidth).toBe('200px');
 		});
 
@@ -1295,30 +1069,8 @@ describe('HubSelectEngineComponent', () => {
 			fixture.componentInstance.select().open();
 
 			await tickAndDetectChanges(fixture);
-			const dropdown = <HTMLElement>document.querySelector('.ng-dropdown-panel');
+			const dropdown = <HTMLElement>document.querySelector('.hub-select__panel');
 			expect(dropdown.classList.contains('someClass')).toBe(true);
-		});
-
-		it('should pass ngClass classes into dropdown panel', async () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities"
-                        [ngClass]="{ someClass: visible }"
-                        [(ngModel)]="selectedCity">
-                </hub-select-engine>`
-			);
-
-			fixture.componentInstance.visible = true;
-			fixture.componentInstance.select().open();
-
-			await tickAndDetectChanges(fixture);
-			const dropdown = <HTMLElement>document.querySelector('.ng-dropdown-panel');
-			expect(dropdown.classList.contains('someClass')).toBe(true);
-
-			fixture.componentInstance.visible = false;
-			await tickAndDetectChanges(fixture);
-
-			expect(dropdown.classList.contains('someClass')).toBe(false);
 		});
 
 		it('should pass [class] binding classes into dropdown panel', async () => {
@@ -1327,7 +1079,6 @@ describe('HubSelectEngineComponent', () => {
 				`<hub-select-engine [items]="cities"
                         class="search-box"
                         [class]="dynamicClass"
-                        [ngClass]="{ 'ng-class': visible }"
                         [(ngModel)]="selectedCity">
                 </hub-select-engine>`
 			);
@@ -1336,10 +1087,9 @@ describe('HubSelectEngineComponent', () => {
 			fixture.componentInstance.select().open();
 
 			await tickAndDetectChanges(fixture);
-			const dropdown = <HTMLElement>document.querySelector('.ng-dropdown-panel');
+			const dropdown = <HTMLElement>document.querySelector('.hub-select__panel');
 			expect(dropdown.classList.contains('search-box')).toBe(true);
 			expect(dropdown.classList.contains('dynamic-class')).toBe(true);
-			expect(dropdown.classList.contains('ng-class')).toBe(true);
 			expect(dropdown.classList.contains('ng-valid')).toBe(false);
 			expect(dropdown.classList.contains('ng-untouched')).toBe(false);
 			expect(dropdown.classList.contains('ng-pristine')).toBe(false);
@@ -1349,7 +1099,6 @@ describe('HubSelectEngineComponent', () => {
 			await tickAndDetectChanges(fixture);
 
 			expect(dropdown.classList.contains('dynamic-class')).toBe(false);
-			expect(dropdown.classList.contains('ng-class')).toBe(false);
 			expect(dropdown.classList.contains('search-box')).toBe(true);
 		});
 
@@ -1368,7 +1117,7 @@ describe('HubSelectEngineComponent', () => {
 			fixture.componentInstance.select().open();
 			await tickAndDetectChanges(fixture);
 
-			const dropdown = <HTMLElement>document.querySelector('.ng-dropdown-panel');
+			const dropdown = <HTMLElement>document.querySelector('.hub-select__panel');
 			expect(dropdown.classList.contains('someClass')).toBe(true);
 			expect(dropdown.classList.contains('panel-only')).toBe(true);
 
@@ -1420,7 +1169,7 @@ describe('HubSelectEngineComponent', () => {
 				const select = fixture.componentInstance.select();
 				await openSelect(select, fixture);
 
-				expect(document.querySelector('.ng-dropdown-panel').closest('[dir="rtl"]')).not.toBeNull();
+				expect(document.querySelector('.hub-select__panel').closest('[dir="rtl"]')).not.toBeNull();
 			} finally {
 				document.documentElement.dir = previousDir;
 			}
@@ -1442,7 +1191,7 @@ describe('HubSelectEngineComponent', () => {
 
 			const root = select.element.getRootNode() as ShadowRoot;
 			expect(root instanceof ShadowRoot).toBe(true);
-			expect(root.querySelector('.shadow-append-host .ng-dropdown-panel')).not.toBeNull();
+			expect(root.querySelector('.shadow-append-host .hub-select__panel')).not.toBeNull();
 		});
 	});
 
@@ -1453,27 +1202,12 @@ describe('HubSelectEngineComponent', () => {
 				`<hub-select-engine [items]="cities" bindLabel="name"></hub-select-engine>`
 			);
 
-			const input: HTMLInputElement = fixture.nativeElement.querySelector('.ng-input input');
+			const input: HTMLInputElement = fixture.nativeElement.querySelector('.hub-select__search input');
 			const changeListener = vi.fn();
 			getNgSelectNativeElement(fixture).addEventListener('change', changeListener);
 			input.dispatchEvent(new Event('change', { bubbles: true }));
 
 			expect(changeListener).not.toHaveBeenCalled();
-		});
-
-		it('should filter with the input value on native compositionend', async () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities" bindLabel="name" [searchWhileComposing]="false"></hub-select-engine>`
-			);
-
-			const input: HTMLInputElement = fixture.nativeElement.querySelector('.ng-input input');
-			input.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true }));
-			input.value = 'new';
-			input.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true }));
-			await tickAndDetectChanges(fixture);
-
-			expect(fixture.componentInstance.select().searchTerm).toBe('new');
 		});
 
 		it('should re-emit dropdown panel scroll events', async () => {

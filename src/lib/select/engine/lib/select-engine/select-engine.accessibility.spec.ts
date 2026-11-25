@@ -4,6 +4,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getNgSelectElement, tickAndDetectChanges, triggerKeyDownEvent } from '../../testing/helpers';
+import { HubSelectConfig } from '../services/select-config.service';
 import { KeyCode } from '../types/select-engine.types';
 import { HubSelectEngineComponent } from './select-engine.component';
 
@@ -93,7 +94,7 @@ describe('HubSelectEngineComponent', () => {
 			);
 			select = fixture.componentInstance.select();
 			input = fixture.debugElement.query(By.css('input')).nativeElement;
-			comboBoxDiv = fixture.debugElement.query(By.css('.ng-input')).nativeElement;
+			comboBoxDiv = fixture.debugElement.query(By.css('.hub-select__search')).nativeElement;
 		});
 
 		it('should set aria-activedescendant absent at start', async () => {
@@ -146,7 +147,7 @@ describe('HubSelectEngineComponent', () => {
 			select.filter('new');
 			await tickAndDetectChanges(fixture);
 
-			const options = document.querySelectorAll<HTMLElement>('.ng-option');
+			const options = document.querySelectorAll<HTMLElement>('.hub-select__panel-option');
 			expect(options.length).toBe(2);
 			expect(Array.from(options).map((option: HTMLElement) => option.getAttribute('aria-posinset'))).toEqual(['1', '2']);
 			expect(Array.from(options).map((option: HTMLElement) => option.getAttribute('aria-setsize'))).toEqual(['2', '2']);
@@ -214,7 +215,7 @@ describe('HubSelectEngineComponent', () => {
 
 	describe('Accessibility enhancements', () => {
 		function liveRegionText(fixture: ComponentFixture<NgSelectTestComponent>): string {
-			return fixture.debugElement.query(By.css('.ng-visually-hidden')).nativeElement.textContent.trim();
+			return fixture.debugElement.query(By.css('.hub-select__visually-hidden')).nativeElement.textContent.trim();
 		}
 
 		describe('selected value remove icon', () => {
@@ -227,22 +228,25 @@ describe('HubSelectEngineComponent', () => {
 				await tickAndDetectChanges(fixture);
 				await tickAndDetectChanges(fixture);
 
-				const icon = fixture.debugElement.query(By.css('.ng-value-icon')).nativeElement;
+				const icon = fixture.debugElement.query(By.css('.hub-select__value-remove')).nativeElement;
 				expect(icon.getAttribute('role')).toBe('button');
 				expect(icon.getAttribute('tabindex')).toBe('0');
 				expect(icon.getAttribute('aria-label')).toBe('Remove New York');
 			});
 
 			it('should use custom removeText in the remove icon aria-label', async () => {
+				const config = new HubSelectConfig();
+				config.removeText = 'Verwijder';
 				const fixture = createTestingModule(
 					NgSelectTestComponent,
-					`<hub-select-engine [items]="cities" bindLabel="name" [multiple]="true" removeText="Verwijder" [(ngModel)]="selectedCities"></hub-select-engine>`
+					`<hub-select-engine [items]="cities" bindLabel="name" [multiple]="true" [(ngModel)]="selectedCities"></hub-select-engine>`,
+					config
 				);
 				fixture.componentInstance.selectedCities = [fixture.componentInstance.cities[0]];
 				await tickAndDetectChanges(fixture);
 				await tickAndDetectChanges(fixture);
 
-				const icon = fixture.debugElement.query(By.css('.ng-value-icon')).nativeElement;
+				const icon = fixture.debugElement.query(By.css('.hub-select__value-remove')).nativeElement;
 				expect(icon.getAttribute('aria-label')).toBe('Verwijder New York');
 			});
 
@@ -258,7 +262,7 @@ describe('HubSelectEngineComponent', () => {
 				await tickAndDetectChanges(fixture);
 				await tickAndDetectChanges(fixture);
 
-				const icon = fixture.debugElement.query(By.css('.ng-value-icon'));
+				const icon = fixture.debugElement.query(By.css('.hub-select__value-remove'));
 				icon.triggerEventHandler('keydown', {
 					key: KeyCode.Enter,
 					preventDefault: () => {},
@@ -283,7 +287,7 @@ describe('HubSelectEngineComponent', () => {
 				await tickAndDetectChanges(fixture);
 				await tickAndDetectChanges(fixture);
 
-				const icon = fixture.debugElement.query(By.css('.ng-value-icon'));
+				const icon = fixture.debugElement.query(By.css('.hub-select__value-remove'));
 				icon.triggerEventHandler('keydown', {
 					key: KeyCode.Space,
 					preventDefault: () => {},
@@ -305,7 +309,7 @@ describe('HubSelectEngineComponent', () => {
 				await tickAndDetectChanges(fixture);
 				await tickAndDetectChanges(fixture);
 
-				const clear = fixture.debugElement.query(By.css('.ng-clear-wrapper')).nativeElement;
+				const clear = fixture.debugElement.query(By.css('.hub-select__clear')).nativeElement;
 				expect(clear.getAttribute('aria-label')).toBe('Clear all');
 			});
 

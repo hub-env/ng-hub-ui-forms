@@ -45,14 +45,14 @@ const SCROLL_SCHEDULER = typeof requestAnimationFrame !== 'undefined' ? animatio
 	selector: 'hub-select-panel',
 	template: `
 		@if (headerTemplate()) {
-			<div class="ng-dropdown-header">
+			<div class="ng-dropdown-header hub-select__panel-header">
 				<ng-container [ngTemplateOutlet]="headerTemplate()" [ngTemplateOutletContext]="{ searchTerm: filterValue() }" />
 			</div>
 		}
 		<div
 			#scroll
 			role="listbox"
-			class="ng-dropdown-panel-items scroll-host"
+			class="ng-dropdown-panel-items hub-select__panel-items scroll-host"
 			[attr.id]="listboxId()"
 			[attr.aria-label]="ariaLabelDropdown()"
 		>
@@ -62,7 +62,7 @@ const SCROLL_SCHEDULER = typeof requestAnimationFrame !== 'undefined' ? animatio
 			</div>
 		</div>
 		@if (footerTemplate()) {
-			<div class="ng-dropdown-footer">
+			<div class="ng-dropdown-footer hub-select__panel-footer">
 				<ng-container [ngTemplateOutlet]="footerTemplate()" [ngTemplateOutletContext]="{ searchTerm: filterValue() }" />
 			</div>
 		}
@@ -296,7 +296,7 @@ export class HubSelectPanelComponent implements OnInit, OnChanges {
 
 	/**
 	 * Applies the position chosen by the overlay's position strategy to the panel and host
-	 * as `ng-select-top` / `ng-select-bottom` (and `-left` / `-right`) classes, which the
+	 * as `hub-select__panel--top` / `--bottom` (and `--left` / `--right`) classes, which the
 	 * shipped themes use for borders, radius and spacing.
 	 *
 	 * @since 23.7.0
@@ -353,14 +353,17 @@ export class HubSelectPanelComponent implements OnInit, OnChanges {
 	 */
 	private _updateDropdownClass(currentPosition: string) {
 		DROPDOWN_CSS_POSITIONS.forEach((position) => {
-			const REMOVE_CSS_CLASS = `ng-select-${position}`;
-			this._renderer.removeClass(this._dropdown, REMOVE_CSS_CLASS);
-			this._renderer.removeClass(this._select, REMOVE_CSS_CLASS);
+			this._renderer.removeClass(this._dropdown, `ng-select-${position}`);
+			this._renderer.removeClass(this._dropdown, `hub-select__panel--${position}`);
+			this._renderer.removeClass(this._select, `ng-select-${position}`);
+			this._renderer.removeClass(this._select, `hub-select__control--${position}`);
 		});
 
-		const ADD_CSS_CLASS = `ng-select-${currentPosition}`;
-		this._renderer.addClass(this._dropdown, ADD_CSS_CLASS);
-		this._renderer.addClass(this._select, ADD_CSS_CLASS);
+		// The `ng-select-*` names are kept for one release so consumer stylesheets keep matching.
+		this._renderer.addClass(this._dropdown, `ng-select-${currentPosition}`);
+		this._renderer.addClass(this._dropdown, `hub-select__panel--${currentPosition}`);
+		this._renderer.addClass(this._select, `ng-select-${currentPosition}`);
+		this._renderer.addClass(this._select, `hub-select__control--${currentPosition}`);
 	}
 
 	/**

@@ -39,7 +39,7 @@ async function openPanel(controlLeft: number): Promise<HTMLElement> {
 	vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
 		if (this === document.body) return box(0, 1000, 0, 2000);
 		if (this.tagName.toLowerCase() === 'hub-select-panel') return box(0, 240, 0, 120);
-		if (this.classList.contains('ng-select-container') || this.classList.contains('ng-select')) {
+		if (this.classList.contains('hub-select__box') || this.classList.contains('hub-select__control')) {
 			return box(controlLeft, 120);
 		}
 		return box(0, 0, 0, 0);
@@ -54,7 +54,7 @@ async function openPanel(controlLeft: number): Promise<HTMLElement> {
 	fixture.detectChanges();
 	await fixture.whenStable();
 
-	const container = fixture.nativeElement.querySelector('.ng-select-container') as HTMLElement;
+	const container = fixture.nativeElement.querySelector('.hub-select__box') as HTMLElement;
 	container.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
 	await fixture.whenStable();
 	await new Promise((r) => setTimeout(r, 20));

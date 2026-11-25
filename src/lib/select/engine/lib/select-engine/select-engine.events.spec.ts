@@ -218,7 +218,6 @@ describe('HubSelectEngineComponent', () => {
 					`<hub-select-engine [items]="cities"
                             bindLabel="name"
                             [multiple]="true"
-							[preventToggleOnRightClick]="preventToggleOnRightClick"
                             [(ngModel)]="selectedCities">
                     </hub-select-engine>`
 				);
@@ -227,7 +226,7 @@ describe('HubSelectEngineComponent', () => {
 				await tickAndDetectChanges(fixture);
 				await tickAndDetectChanges(fixture);
 				triggerMousedown = () => {
-					const control = fixture.debugElement.query(By.css('.ng-select-container'));
+					const control = fixture.debugElement.query(By.css('.hub-select__box'));
 					control.triggerEventHandler('mousedown', createEvent({ className: 'ng-control' }));
 				};
 			});
@@ -264,7 +263,7 @@ describe('HubSelectEngineComponent', () => {
 
 				event = createEvent({ tagName: 'INPUT' }) as any;
 				triggerMousedown = () => {
-					const control = fixture.debugElement.query(By.css('.ng-select-container'));
+					const control = fixture.debugElement.query(By.css('.hub-select__box'));
 					control.triggerEventHandler('mousedown', event);
 				};
 			});
@@ -293,7 +292,7 @@ describe('HubSelectEngineComponent', () => {
 			});
 
 			it('should not preventDefault on mousedown of selected value label', async () => {
-				const label = fixture.debugElement.query(By.css('.ng-value-label')).nativeElement as HTMLElement;
+				const label = fixture.debugElement.query(By.css('.hub-select__value-label')).nativeElement as HTMLElement;
 				const event = new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 });
 				label.dispatchEvent(event);
 				await tickAndDetectChanges(fixture);
@@ -302,21 +301,21 @@ describe('HubSelectEngineComponent', () => {
 
 			it('should not toggle dropdown when mousedown is on selected value label', async () => {
 				expect(select.isOpen()).toBe(false);
-				const label = fixture.debugElement.query(By.css('.ng-value-label')).nativeElement as HTMLElement;
+				const label = fixture.debugElement.query(By.css('.hub-select__value-label')).nativeElement as HTMLElement;
 				label.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
 				await tickAndDetectChanges(fixture);
 				expect(select.isOpen()).toBe(false);
 			});
 
 			it('should still toggle dropdown when mousedown is on arrow', async () => {
-				const arrow = fixture.debugElement.query(By.css('.ng-arrow-wrapper')).nativeElement as HTMLElement;
+				const arrow = fixture.debugElement.query(By.css('.hub-select__arrow-wrapper')).nativeElement as HTMLElement;
 				arrow.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
 				await tickAndDetectChanges(fixture);
 				expect(select.isOpen()).toBe(true);
 			});
 
-			it('should ignore pointer events on .ng-input when not searchable', async () => {
-				const ngInput = fixture.debugElement.query(By.css('.ng-input')).nativeElement as HTMLElement;
+			it('should ignore pointer events on .hub-select__search when not searchable', async () => {
+				const ngInput = fixture.debugElement.query(By.css('.hub-select__search')).nativeElement as HTMLElement;
 				expect(getComputedStyle(ngInput).pointerEvents).toBe('none');
 			});
 		});
@@ -343,7 +342,7 @@ describe('HubSelectEngineComponent', () => {
 					throw new Error('`preventDefault` called during event replay.');
 				});
 
-				const control = fixture.debugElement.query(By.css('.ng-select-container'));
+				const control = fixture.debugElement.query(By.css('.hub-select__box'));
 				expect(() => control.triggerEventHandler('mousedown', event)).not.toThrow();
 				await tickAndDetectChanges(fixture);
 
@@ -355,7 +354,7 @@ describe('HubSelectEngineComponent', () => {
 				const event = createEvent({ tagName: 'DIV', className: 'ng-control' }) as any;
 				const preventDefault = vi.spyOn(event, 'preventDefault').mockReturnValue(undefined);
 
-				const control = fixture.debugElement.query(By.css('.ng-select-container'));
+				const control = fixture.debugElement.query(By.css('.hub-select__box'));
 				control.triggerEventHandler('mousedown', event);
 				await tickAndDetectChanges(fixture);
 
@@ -373,7 +372,6 @@ describe('HubSelectEngineComponent', () => {
                             bindLabel="name"
                             [multiple]="true"
                             [disabled]="disabled"
-                            [clearKeepsDisabledOptions]="clearKeepsDisabledOptions"
                             [readonly]="readonly"
                             [(ngModel)]="selectedCities">
                     </hub-select-engine>`
@@ -387,7 +385,7 @@ describe('HubSelectEngineComponent', () => {
 				fixture.componentInstance.cities = [...fixture.componentInstance.cities];
 				await tickAndDetectChanges(fixture);
 				triggerMousedown = () => {
-					const clearButton = fixture.debugElement.query(By.css('.ng-clear-wrapper'));
+					const clearButton = fixture.debugElement.query(By.css('.hub-select__clear'));
 					clearButton.triggerEventHandler('click', createEvent({}));
 				};
 			});
@@ -402,15 +400,6 @@ describe('HubSelectEngineComponent', () => {
 						name: 'London'
 					})
 				);
-				expect(fixture.componentInstance.onChange).toHaveBeenCalledTimes(1);
-			});
-
-			it('should clear model including disabled when clearKeepsDisabledOptions is disabled', async () => {
-				fixture.componentInstance.clearKeepsDisabledOptions = false;
-				await tickAndDetectChanges(fixture);
-				triggerMousedown();
-				await tickAndDetectChanges(fixture);
-				expect(fixture.componentInstance.selectedCities.length).toBe(0);
 				expect(fixture.componentInstance.onChange).toHaveBeenCalledTimes(1);
 			});
 
@@ -434,7 +423,7 @@ describe('HubSelectEngineComponent', () => {
 
 			it('should respond to click events for accessibility compliance', async () => {
 				// Test that mousedown alone doesn't trigger clear
-				const clearButton = fixture.debugElement.query(By.css('.ng-clear-wrapper'));
+				const clearButton = fixture.debugElement.query(By.css('.hub-select__clear'));
 				clearButton.triggerEventHandler('mousedown', createEvent({}));
 				await tickAndDetectChanges(fixture);
 				expect(fixture.componentInstance.selectedCities.length).toBe(2); // Should not have cleared
@@ -449,7 +438,7 @@ describe('HubSelectEngineComponent', () => {
 				fixture.componentInstance.disabled = true;
 				await tickAndDetectChanges(fixture);
 				await tickAndDetectChanges(fixture);
-				const el = fixture.debugElement.query(By.css('.ng-clear-wrapper'));
+				const el = fixture.debugElement.query(By.css('.hub-select__clear'));
 				expect(el).toBeNull();
 			});
 
@@ -457,7 +446,7 @@ describe('HubSelectEngineComponent', () => {
 				fixture.componentInstance.readonly = true;
 				await tickAndDetectChanges(fixture);
 				await tickAndDetectChanges(fixture);
-				const el = fixture.debugElement.query(By.css('.ng-clear-wrapper'));
+				const el = fixture.debugElement.query(By.css('.hub-select__clear'));
 				expect(el).toBeNull();
 			});
 		});
@@ -478,11 +467,11 @@ describe('HubSelectEngineComponent', () => {
 				await tickAndDetectChanges(fixture);
 				await tickAndDetectChanges(fixture);
 				triggerMousedown = () => {
-					const control = fixture.debugElement.query(By.css('.ng-select-container'));
+					const control = fixture.debugElement.query(By.css('.hub-select__box'));
 					control.triggerEventHandler(
 						'mousedown',
 						createEvent({
-							classList: { contains: (term) => term === 'ng-value-icon' }
+							classList: { contains: (term) => term === 'hub-select__value-remove' }
 						})
 					);
 				};
@@ -515,11 +504,11 @@ describe('HubSelectEngineComponent', () => {
 				fixture.componentInstance.selectedCity = fixture.componentInstance.cities[0];
 				await tickAndDetectChanges(fixture);
 				triggerMousedown = () => {
-					const control = fixture.debugElement.query(By.css('.ng-select-container'));
+					const control = fixture.debugElement.query(By.css('.hub-select__box'));
 					control.triggerEventHandler(
 						'mousedown',
 						createEvent({
-							classList: { contains: (term) => term === 'ng-arrow-wrapper' }
+							classList: { contains: (term) => term === 'hub-select__arrow-wrapper' }
 						})
 					);
 				};
@@ -593,19 +582,6 @@ describe('HubSelectEngineComponent', () => {
 			expect(focusEmit).toHaveBeenCalledTimes(1);
 		});
 
-		it('should measure zero outline notch width when no placeholder label is rendered', async () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine appearance="outline" [fixedPlaceholder]="false" [items]="cities" bindLabel="name" [(ngModel)]="selectedCity"></hub-select-engine>`
-			);
-
-			fixture.componentInstance.selectedCity = fixture.componentInstance.cities[0];
-			await tickAndDetectChanges(fixture);
-
-			expect(fixture.nativeElement.querySelector('.ng-placeholder')).toBeNull();
-			expect(fixture.componentInstance.select().outlineNotchWidth()).toBe(0);
-		});
-
 		it('should use fixedPlaceholder from HubSelectConfig when not provided in template', async () => {
 			const config = new HubSelectConfig();
 			config.fixedPlaceholder = false;
@@ -619,7 +595,7 @@ describe('HubSelectEngineComponent', () => {
 			await tickAndDetectChanges(fixture);
 
 			expect(fixture.componentInstance.select().fixedPlaceholder()).toBe(false);
-			expect(fixture.nativeElement.querySelector('.ng-placeholder')).toBeNull();
+			expect(fixture.nativeElement.querySelector('.hub-select__placeholder')).toBeNull();
 		});
 
 		it('should override fixedPlaceholder from HubSelectConfig when provided in template', async () => {
@@ -634,7 +610,7 @@ describe('HubSelectEngineComponent', () => {
 			fixture.componentInstance.selectedCity = fixture.componentInstance.cities[0];
 			await tickAndDetectChanges(fixture);
 
-			expect(fixture.nativeElement.querySelector('.ng-placeholder')).not.toBeNull();
+			expect(fixture.nativeElement.querySelector('.hub-select__placeholder')).not.toBeNull();
 		});
 
 		// fork: patch #6 — a null fixedPlaceholder no longer falls back to config.fixedPlaceholder
@@ -647,7 +623,7 @@ describe('HubSelectEngineComponent', () => {
 			fixture.componentInstance.selectedCity = fixture.componentInstance.cities[0];
 			await tickAndDetectChanges(fixture);
 
-			expect(fixture.nativeElement.querySelector('.ng-placeholder')).toBeNull();
+			expect(fixture.nativeElement.querySelector('.hub-select__placeholder')).toBeNull();
 		});
 
 		it('should regroup items when groupBy signal changes after init', async () => {

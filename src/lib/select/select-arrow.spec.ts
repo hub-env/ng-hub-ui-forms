@@ -7,7 +7,7 @@ import { HubSelectComponent } from './select.component';
 /**
  * Regression spec for the select caret (upstream report, 2026-07-29).
  *
- * The select engine ships `.ng-arrow` as a 0×0 span — the CSS
+ * The select engine ships `.hub-select__arrow` as a 0×0 span — the CSS
  * border-triangle technique — so the hub theme must publish the FULL caret
  * declaration: `border-style` + `border-width` + `border-color`, for the closed
  * AND the open state. Up to 22.10.0 the theme only published `border-color`:
@@ -64,10 +64,13 @@ describe('hub-select caret (regression: the full triangle declaration is publish
 	});
 
 	it('draws the closed caret: solid borders sized by --hub-select-arrow-size', () => {
-		// `.ng-select .ng-arrow…` (descendant) matches the structural + themed
-		// closed rules; the open rule chains `.ng-select.ng-select-opened` and
+		// `.hub-select__control .hub-select__arrow…` (descendant) matches the structural + themed
+		// closed rules; the open rule chains `.hub-select__control--opened` and
 		// stays out.
-		const closed = declarationsFor(publishedCss(), /\.ng-select\s+\.ng-arrow-wrapper\s+\.ng-arrow\s*$/).join('\n');
+		const closed = declarationsFor(
+			publishedCss(),
+			/\.hub-select__control\s+\.hub-select__arrow-wrapper\s+\.hub-select__arrow\s*$/
+		).join('\n');
 
 		expect(closed).toMatch(/border-style:\s*solid/);
 		expect(closed).toMatch(/border-width:\s*var\(--hub-select-arrow-size\)/);
@@ -75,7 +78,10 @@ describe('hub-select caret (regression: the full triangle declaration is publish
 	});
 
 	it('flips the caret upwards while the panel is open, in the same box and at the same height', () => {
-		const open = declarationsFor(publishedCss(), /\.ng-select-opened\s+\.ng-arrow-wrapper\s+\.ng-arrow\s*$/).join('\n');
+		const open = declarationsFor(
+			publishedCss(),
+			/\.hub-select__control--opened\s+\.hub-select__arrow-wrapper\s+\.hub-select__arrow\s*$/
+		).join('\n');
 
 		expect(open).toMatch(
 			/border-width:\s*calc\(var\(--hub-select-arrow-size\)\s*\/\s*2\)\s+var\(--hub-select-arrow-size\)\s+var\(--hub-select-arrow-size\)/
@@ -85,7 +91,7 @@ describe('hub-select caret (regression: the full triangle declaration is publish
 	});
 
 	it('gives the caret clearance from the value via --hub-select-arrow-gap', () => {
-		const wrapper = declarationsFor(publishedCss(), /\.ng-arrow-wrapper\s*$/m).join('\n');
+		const wrapper = declarationsFor(publishedCss(), /\.hub-select__arrow-wrapper\s*$/m).join('\n');
 
 		expect(wrapper).toMatch(/padding-inline:\s*var\(--hub-select-arrow-gap\)/);
 	});

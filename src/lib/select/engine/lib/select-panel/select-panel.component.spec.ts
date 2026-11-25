@@ -65,7 +65,7 @@ async function waitForFrames(count = 2): Promise<void> {
 				opacity: 0;
 				width: 200px;
 			}
-			.ng-dropdown-panel-items {
+			.hub-select__panel-items {
 				display: block;
 				position: relative;
 				max-height: 100px;
@@ -186,7 +186,7 @@ describe('HubSelectPanelComponent', () => {
 	}
 
 	function scrollHostElement(): HTMLElement {
-		return fixture.nativeElement.querySelector('.ng-dropdown-panel-items');
+		return fixture.nativeElement.querySelector('.hub-select__panel-items');
 	}
 
 	function panelService(): SelectPanelService {
@@ -231,8 +231,8 @@ describe('HubSelectPanelComponent', () => {
 			await flushAsync();
 
 			expect(cmp.currentPosition).toBe('bottom');
-			expect(panelElement().classList.contains('ng-select-bottom')).toBe(true);
-			expect(selectHostElement().classList.contains('ng-select-bottom')).toBe(true);
+			expect(panelElement().classList.contains('hub-select__panel--bottom')).toBe(true);
+			expect(selectHostElement().classList.contains('hub-select__control--bottom')).toBe(true);
 			expect(panelElement().style.opacity).toBe('1');
 		});
 
@@ -241,8 +241,8 @@ describe('HubSelectPanelComponent', () => {
 			await flushAsync();
 
 			expect(cmp.currentPosition).toBe('top');
-			expect(panelElement().classList.contains('ng-select-top')).toBe(true);
-			expect(selectHostElement().classList.contains('ng-select-top')).toBe(true);
+			expect(panelElement().classList.contains('hub-select__panel--top')).toBe(true);
+			expect(selectHostElement().classList.contains('hub-select__control--top')).toBe(true);
 		});
 
 		it('should use the provided select element instead of the parent element', async () => {
@@ -251,8 +251,8 @@ describe('HubSelectPanelComponent', () => {
 			await flushAsync();
 
 			expect(cmp.currentPosition).toBe('bottom');
-			expect(external.classList.contains('ng-select-bottom')).toBe(true);
-			expect(selectHostElement().classList.contains('ng-select-bottom')).toBe(false);
+			expect(external.classList.contains('hub-select__control--bottom')).toBe(true);
+			expect(selectHostElement().classList.contains('hub-select__control--bottom')).toBe(false);
 		});
 
 		it('should reposition through adjustPosition only when an overlay exists', async () => {
@@ -294,26 +294,26 @@ describe('HubSelectPanelComponent', () => {
 		it('should map a below pair to bottom', () => {
 			emitPair({ originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' });
 			expect(cmp.currentPosition).toBe('bottom');
-			expect(panelElement().classList.contains('ng-select-bottom')).toBe(true);
+			expect(panelElement().classList.contains('hub-select__panel--bottom')).toBe(true);
 		});
 
 		it('should map an above pair to top', () => {
 			emitPair({ originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom' });
 			expect(cmp.currentPosition).toBe('top');
-			expect(panelElement().classList.contains('ng-select-top')).toBe(true);
-			expect(selectHostElement().classList.contains('ng-select-top')).toBe(true);
+			expect(panelElement().classList.contains('hub-select__panel--top')).toBe(true);
+			expect(selectHostElement().classList.contains('hub-select__control--top')).toBe(true);
 		});
 
 		it('should map a horizontal end/start pair to right', () => {
 			emitPair({ originX: 'end', originY: 'top', overlayX: 'start', overlayY: 'top' });
 			expect(cmp.currentPosition).toBe('right');
-			expect(panelElement().classList.contains('ng-select-right')).toBe(true);
+			expect(panelElement().classList.contains('hub-select__panel--right')).toBe(true);
 		});
 
 		it('should map a horizontal start/end pair to left', () => {
 			emitPair({ originX: 'start', originY: 'top', overlayX: 'end', overlayY: 'top' });
 			expect(cmp.currentPosition).toBe('left');
-			expect(panelElement().classList.contains('ng-select-left')).toBe(true);
+			expect(panelElement().classList.contains('hub-select__panel--left')).toBe(true);
 		});
 
 		it('should fall back to bottom for unknown horizontal pairs', () => {
@@ -406,7 +406,7 @@ describe('HubSelectPanelComponent', () => {
 			createFixture();
 			await flushAsync();
 
-			const padding: HTMLElement = fixture.nativeElement.querySelector('.ng-dropdown-panel-items > div:first-child');
+			const padding: HTMLElement = fixture.nativeElement.querySelector('.hub-select__panel-items > div:first-child');
 			padding.style.height = '100px';
 
 			host.items.set(createItems(5));

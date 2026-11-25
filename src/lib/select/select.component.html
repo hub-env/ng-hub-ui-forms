@@ -122,6 +122,7 @@
 						[compareWith]="$any(compareWith())"
 						[inputAttrs]="a11yInputAttrs()"
 						[dropdownAnchor]="_dropdownAnchor"
+						[templates]="_templates()"
 						[ngModel]="_value()"
 						[ngModelOptions]="{ standalone: true }"
 						(ngModelChange)="setValue($event)"
@@ -137,84 +138,6 @@
 						(scroll)="scroll.emit($event)"
 						(scrollToEnd)="scrollToEnd.emit($event)"
 					>
-						@if (_optionTpl(); as tpl) {
-							<ng-template
-								ng-option-tmp
-								let-item="item"
-								let-item$="item$"
-								let-index="index"
-								let-searchTerm="searchTerm"
-							>
-								<ng-container
-									[ngTemplateOutlet]="tpl"
-									[ngTemplateOutletContext]="{ item, item$, index, searchTerm }"
-								/>
-							</ng-template>
-						}
-						@if (_optgroupTpl(); as tpl) {
-							<ng-template
-								ng-optgroup-tmp
-								let-item="item"
-								let-item$="item$"
-								let-index="index"
-								let-searchTerm="searchTerm"
-							>
-								<ng-container
-									[ngTemplateOutlet]="tpl"
-									[ngTemplateOutletContext]="{ item, item$, index, searchTerm }"
-								/>
-							</ng-template>
-						}
-						@if (_labelTpl(); as tpl) {
-							<ng-template ng-label-tmp let-item="item" let-clear="clear" let-label="label">
-								<ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ item, clear, label }" />
-							</ng-template>
-						}
-						@if (_multiLabelTpl(); as tpl) {
-							<ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
-								<ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ items, clear }" />
-							</ng-template>
-						}
-						@if (_headerTpl(); as tpl) {
-							<ng-template ng-header-tmp let-searchTerm="searchTerm">
-								<ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ searchTerm }" />
-							</ng-template>
-						}
-						@if (_footerTpl(); as tpl) {
-							<ng-template ng-footer-tmp let-searchTerm="searchTerm">
-								<ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ searchTerm }" />
-							</ng-template>
-						}
-						@if (_notFoundTpl(); as tpl) {
-							<ng-template ng-notfound-tmp let-searchTerm="searchTerm">
-								<ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ searchTerm }" />
-							</ng-template>
-						}
-						@if (_typeToSearchTpl(); as tpl) {
-							<ng-template ng-typetosearch-tmp>
-								<ng-container [ngTemplateOutlet]="tpl" />
-							</ng-template>
-						}
-						@if (_loadingTextTpl(); as tpl) {
-							<ng-template ng-loadingtext-tmp let-searchTerm="searchTerm">
-								<ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ searchTerm }" />
-							</ng-template>
-						}
-						@if (_loadingSpinnerTpl(); as tpl) {
-							<ng-template ng-loadingspinner-tmp>
-								<ng-container [ngTemplateOutlet]="tpl" />
-							</ng-template>
-						}
-						@if (_tagTpl(); as tpl) {
-							<ng-template ng-tag-tmp let-searchTerm="searchTerm">
-								<ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ searchTerm }" />
-							</ng-template>
-						}
-						@if (_clearButtonTpl(); as tpl) {
-							<ng-template ng-clearbutton-tmp>
-								<ng-container [ngTemplateOutlet]="tpl" />
-							</ng-template>
-						}
 						<ng-content></ng-content>
 					</hub-select-engine>
 					@for (addon of _append(); track $index) {

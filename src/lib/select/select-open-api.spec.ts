@@ -57,7 +57,8 @@ async function host(options: { auto?: boolean; items?: unknown[]; term?: string 
  * Read off the field's own class rather than by looking for a panel in the document: the panel is
  * appended to the body, so a global query also finds the one left by the test before this.
  */
-const panel = (fixture: { nativeElement: HTMLElement }) => !!fixture.nativeElement.querySelector('.ng-select.ng-select-opened');
+const panel = (fixture: { nativeElement: HTMLElement }) =>
+	!!fixture.nativeElement.querySelector('.hub-select__control--opened');
 
 describe('hub-select worked from outside', () => {
 	it('opens its list on request', async () => {
@@ -106,12 +107,12 @@ describe('hub-select worked from outside', () => {
 
 		expect(panel(fixture)).toBe(true);
 
-		const options = [...document.querySelectorAll('.ng-option')].map((option) => option.textContent?.trim());
+		const options = [...document.querySelectorAll('.hub-select__panel-option')].map((option) => option.textContent?.trim());
 
 		expect(options).toEqual(['Green']);
 		// And the box shows what it is filtering by, so the next keystroke continues the word
 		// rather than replacing it.
-		expect(fixture.nativeElement.querySelector('.ng-input input').value).toBe('Gr');
+		expect(fixture.nativeElement.querySelector('.hub-select__search input').value).toBe('Gr');
 	});
 
 	it('puts the keyboard in the field without opening the list', async () => {

@@ -35,7 +35,7 @@ export class HubSelectConfig {
 	bindValue?: string;
 	/** Object property to use for label. */
 	bindLabel?: string;
-	/** Allows to select dropdown appearance. Set to `outline` or `fill` for Material form-field styles (applies only to Material theme). */
+	/** @deprecated Has no effect: the Material appearances were removed along with the unused themes. */
 	appearance = 'underline';
 	/** Clears search input when item is selected. */
 	clearSearchOnAdd?: boolean;

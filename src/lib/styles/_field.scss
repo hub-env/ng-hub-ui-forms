@@ -426,7 +426,7 @@ hub-timepicker {
 	.hub-field__control:focus-visible,
 	.hub-input__control:focus,
 	.hub-textarea__control:focus,
-	.hub-select__control.ng-select-focused {
+	.hub-select__control-focused {
 		border-color: var(--hub-input-readonly-border-color);
 		box-shadow: none;
 		outline: none;
@@ -436,8 +436,8 @@ hub-timepicker {
 	// offer. The datepicker already hides its own clear when read-only; the icon it
 	// opens with is the same promise.
 	.hub-select__control {
-		.ng-arrow-wrapper,
-		.ng-clear-wrapper {
+		.hub-select__arrow-wrapper,
+		.hub-select__clear {
 			display: none;
 		}
 	}
@@ -498,7 +498,7 @@ hub-timepicker {
 	.hub-field__control:focus-visible,
 	.hub-input__control:focus,
 	.hub-textarea__control:focus,
-	.hub-select__control.ng-select-focused {
+	.hub-select__control-focused {
 		border-color: transparent;
 		box-shadow: none;
 		outline: none;
@@ -511,8 +511,8 @@ hub-timepicker {
 
 	// Every affordance promises a choice that is not on offer here.
 	.hub-select__control {
-		.ng-arrow-wrapper,
-		.ng-clear-wrapper {
+		.hub-select__arrow-wrapper,
+		.hub-select__clear {
 			display: none;
 		}
 	}

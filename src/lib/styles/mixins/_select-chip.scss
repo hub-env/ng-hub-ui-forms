@@ -81,20 +81,20 @@
 		}
 	}
 
-	.ng-select-container {
+	.hub-select__box {
 		cursor: pointer;
 	}
 
-	.ng-clear-wrapper {
+	.hub-select__clear {
 		margin-inline-start: var(--hub-ref-space-2, 0.5rem);
 	}
 
-	&:has(.ng-has-value) .hub-select__group {
+	&:has(.hub-select__box--has-value) .hub-select__group {
 		border-color: var(--hub-select-chip-accent);
 		background: color-mix(in oklch, var(--hub-select-chip-accent) 16%, var(--hub-sys-surface-page, #fff));
 	}
 
-	&:has(.ng-has-value) .ng-value-label {
+	&:has(.hub-select__box--has-value) .hub-select__value-label {
 		color: var(--hub-select-chip-accent-emphasis);
 		font-weight: 600;
 	}

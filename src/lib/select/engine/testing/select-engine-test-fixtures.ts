@@ -96,31 +96,21 @@ export class NgSelectTestComponent {
 	readonly select = viewChild(HubSelectEngineComponent);
 	multiple = false;
 	label = 'Yes';
-	clearOnBackspace = true;
 	disabled = false;
 	readonly = false;
-	dropdownPosition = 'bottom';
 	visible = true;
 	dynamicClass = '';
 	panelClassBinding: string | string[] | Set<string> | Record<string, boolean> = '';
 	minTermLength = 0;
 	filter = new Subject<string>();
 	searchFn: (term: string, item: any) => boolean = null;
-	selectOnTab = true;
-	tabFocusOnClearButton: boolean;
 	hideSelected = false;
 	closeOnSelect = true;
 	clearable = true;
-	clearKeepsDisabledOptions = true;
-	markFirst = true;
 	searchable = true;
-	openOnEnter = undefined;
 	maxSelectedItems = undefined;
 	addTag: boolean | AddTagFn = false;
 	typeahead = undefined;
-	preventToggleOnRightClick = false;
-	searchWhileComposing = true;
-	popoverEnabled = false;
 	appendToSelector = '.container-a';
 	inputAttrs = { 'aria-invalid': 'false' };
 
@@ -170,7 +160,6 @@ export class NgSelectTestComponent {
 		},
 		{ id: 3, description: { name: 'Australia', id: 'c' } }
 	];
-	keyDownFn = () => {};
 
 	tagFunc(term: string) {
 		return { id: term, name: term, custom: true };

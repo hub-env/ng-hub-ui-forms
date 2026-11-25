@@ -79,7 +79,7 @@ async function render<T>(host: Type<T>, configure: (config: HubSelectConfig) => 
 	await fixture.whenStable();
 
 	// The engine toggles on mousedown, not click — `.click()` alone leaves the panel shut.
-	(fixture.nativeElement.querySelector('.ng-select-container') as HTMLElement).dispatchEvent(
+	(fixture.nativeElement.querySelector('.hub-select__box') as HTMLElement).dispatchEvent(
 		new MouseEvent('mousedown', { bubbles: true })
 	);
 	await fixture.whenStable();
@@ -89,9 +89,9 @@ async function render<T>(host: Type<T>, configure: (config: HubSelectConfig) => 
 	return {
 		fixture,
 		// The panel renders into the body, so it is read off the document rather than the fixture.
-		emptyText: () => document.querySelector('.ng-option-disabled')?.textContent?.trim() ?? null,
+		emptyText: () => document.querySelector('.hub-select__panel-option--disabled')?.textContent?.trim() ?? null,
 		placeholder: () =>
-			(fixture.nativeElement.querySelector('.ng-placeholder') as HTMLElement | null)?.textContent?.trim() ?? null
+			(fixture.nativeElement.querySelector('.hub-select__placeholder') as HTMLElement | null)?.textContent?.trim() ?? null
 	};
 }
 
@@ -142,13 +142,13 @@ describe('HubSelectComponent dropdown text', () => {
 	it('takes the add-item text from HubSelectConfig', async () => {
 		const { fixture } = await render(SilentHostComponent, (c) => (c.addTagText = 'Añadir'));
 
-		const input = document.querySelector('.ng-select input[type="text"]') as HTMLInputElement;
+		const input = document.querySelector('.hub-select__control input[type="text"]') as HTMLInputElement;
 		input.value = 'nuevo';
 		input.dispatchEvent(new Event('input'));
 		fixture.detectChanges();
 		await fixture.whenStable();
 		await new Promise((r) => setTimeout(r, 20));
 
-		expect(document.querySelector('.ng-tag-label')?.textContent?.trim()).toBe('Añadir');
+		expect(document.querySelector('.hub-select__panel-tag-label')?.textContent?.trim()).toBe('Añadir');
 	});
 });

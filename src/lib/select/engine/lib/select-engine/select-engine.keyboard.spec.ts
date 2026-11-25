@@ -23,12 +23,8 @@ describe('HubSelectEngineComponent', () => {
 				`<hub-select-engine [items]="cities"
 					bindLabel="name"
 					[loading]="citiesLoading"
-					[selectOnTab]="selectOnTab"
-					[openOnEnter]="openOnEnter"
 					[multiple]="multiple"
-					[clearOnBackspace]="clearOnBackspace"
 					[clearable]="clearable"
-					[markFirst]="markFirst"
 					[searchable]="searchable"
 					[(ngModel)]="selectedCity">
 				</hub-select-engine>`
@@ -67,7 +63,7 @@ describe('HubSelectEngineComponent', () => {
 				await tickAndDetectChanges(fixture);
 				triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Space);
 				await tickAndDetectChanges(fixture);
-				const text = fixture.debugElement.query(By.css('.ng-option')).nativeElement.innerHTML;
+				const text = fixture.debugElement.query(By.css('.hub-select__panel-option')).nativeElement.innerHTML;
 				expect(text).toContain('No items found');
 			});
 
@@ -77,7 +73,7 @@ describe('HubSelectEngineComponent', () => {
 				await tickAndDetectChanges(fixture);
 				triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Space);
 				await tickAndDetectChanges(fixture);
-				const options = fixture.debugElement.queryAll(By.css('.ng-option'));
+				const options = fixture.debugElement.queryAll(By.css('.hub-select__panel-option'));
 				expect(options.length).toBe(1);
 				expect(options[0].nativeElement.innerHTML).toContain('Loading...');
 			});
@@ -95,13 +91,6 @@ describe('HubSelectEngineComponent', () => {
 				const result = { value: fixture.componentInstance.cities[1] };
 				triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Space);
 				expect(select.itemsList.markedItem).toEqual(expect.objectContaining(result));
-			});
-
-			it('should open dropdown without marking first item', async () => {
-				fixture.componentInstance.markFirst = false;
-				await tickAndDetectChanges(fixture);
-				triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Space);
-				expect(select.itemsList.markedItem).toEqual(undefined);
 			});
 		});
 
@@ -296,18 +285,6 @@ describe('HubSelectEngineComponent', () => {
 				expect(select.selectedItems).toEqual(result);
 				expect(remove).toHaveBeenCalled();
 			});
-
-			it('should not remove selected value when clearOnBackspace false', async () => {
-				fixture.componentInstance.multiple = true;
-				fixture.componentInstance.clearOnBackspace = false;
-				fixture.componentInstance.cities = [...fixture.componentInstance.cities];
-				await tickAndDetectChanges(fixture);
-				await selectOption(fixture, KeyCode.ArrowDown, 1);
-				await selectOption(fixture, KeyCode.ArrowDown, 1);
-				await tickAndDetectChanges(fixture);
-				triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Backspace);
-				expect(select.selectedItems.length).toEqual(2);
-			});
 		});
 
 		describe('key presses', () => {
@@ -347,7 +324,6 @@ describe('HubSelectEngineComponent', () => {
 			});
 
 			it('should open dropdown when it is closed', async () => {
-				fixture.componentInstance.openOnEnter = true;
 				await tickAndDetectChanges(fixture);
 				triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Enter);
 				await tickAndDetectChanges(fixture);
@@ -358,12 +334,6 @@ describe('HubSelectEngineComponent', () => {
 				triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Space);
 				triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Enter);
 				expect(select.selectedItems[0].value).toEqual(fixture.componentInstance.cities[0]);
-				expect(select.isOpen()).toBe(false);
-			});
-
-			it('should not open dropdown if [openOnEnter]="false"', async () => {
-				fixture.componentInstance.openOnEnter = false;
-				triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Enter);
 				expect(select.isOpen()).toBe(false);
 			});
 
@@ -395,9 +365,7 @@ describe('HubSelectEngineComponent', () => {
 				`<hub-select-engine [items]="cities"
 					bindLabel="name"
 					[loading]="citiesLoading"
-					[selectOnTab]="selectOnTab"
 					[multiple]="multiple"
-					[tabFocusOnClearButton]="tabFocusOnClearButton"
 					[closeOnSelect]="closeOnSelect"
 					[ngModelOptions]="{ updateOn: '${updateOn}' }"
 					[(ngModel)]="selectedCity" />
@@ -416,16 +384,6 @@ describe('HubSelectEngineComponent', () => {
 			expect(select.isOpen()).toBeFalsy();
 		});
 
-		it('should close dropdown when [selectOnTab]="false"', async () => {
-			const { fixture, select } = genericFixture();
-			fixture.componentInstance.selectOnTab = false;
-			await tickAndDetectChanges(fixture);
-			triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Space);
-			triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Tab);
-			expect(select.selectedItems).toEqual([]);
-			expect(select.isOpen()).toBeFalsy();
-		});
-
 		it('should close dropdown and keep selected value', async () => {
 			const { fixture, select } = genericFixture();
 			fixture.componentInstance.selectedCity = fixture.componentInstance.cities[0];
@@ -440,37 +398,6 @@ describe('HubSelectEngineComponent', () => {
 			];
 			expect(select.selectedItems).toEqual(result);
 			expect(select.isOpen()).toBeFalsy();
-		});
-
-		it('should mark first item on filter when tab', async () => {
-			const { fixture } = genericFixture();
-			await advanceDebounce(fixture, 200);
-			fixture.componentInstance.select().filter('bei');
-			await advanceDebounce(fixture, 200);
-
-			const result = expect.objectContaining({
-				value: fixture.componentInstance.cities[2]
-			});
-			expect(fixture.componentInstance.select().itemsList.markedItem).toEqual(result);
-			triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Tab);
-			expect(fixture.componentInstance.select().selectedItems).toEqual([result]);
-		});
-
-		it('should not select marked item on blur when [selectOnTab]="true"', async () => {
-			const { fixture, select } = genericFixture();
-			await advanceDebounce(fixture, 200);
-			select.filter('bei');
-			await advanceDebounce(fixture, 200);
-
-			const result = expect.objectContaining({ value: fixture.componentInstance.cities[2] });
-			expect(select.isOpen()).toBeTruthy();
-			expect(select.itemsList.markedItem).toEqual(result);
-
-			select.searchInput().nativeElement.dispatchEvent(new FocusEvent('blur'));
-			await tickAndDetectChanges(fixture);
-
-			expect(select.selectedItems).toEqual([]);
-			expect(fixture.componentInstance.selectedCity).toBeUndefined();
 		});
 
 		for (const multiple of [false, true]) {
@@ -497,159 +424,28 @@ describe('HubSelectEngineComponent', () => {
 				}
 			}
 
-			for (const gesture of ['click', 'Tab'] as const) {
-				it(`should commit an explicit ${gesture} selection with updateOn blur (multiple=${multiple})`, async () => {
-					const { fixture, select } = genericFixture('blur');
-					fixture.componentInstance.multiple = multiple;
-					fixture.componentInstance.closeOnSelect = false;
-					await tickAndDetectChanges(fixture);
-					select.open();
-					if (gesture === 'click') {
-						document.querySelector<HTMLElement>('.ng-dropdown-panel .ng-option').click();
-					} else {
-						triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Tab);
-					}
-					await tickAndDetectChanges(fixture);
-					expect(select.selectedItems.map((item) => item.value)).toEqual([fixture.componentInstance.cities[0]]);
-					expect(fixture.componentInstance.selectedCity).toBeUndefined();
-					select.onItemHover(select.itemsList.items[1]);
-					select.searchInput().nativeElement.blur();
-					document.body.click();
-					await tickAndDetectChanges(fixture);
-					const chosenCity = fixture.componentInstance.cities[0];
-					expect(fixture.componentInstance.selectedCity).toEqual(multiple ? [chosenCity] : chosenCity);
-					expect(select.selectedItems.map((item) => item.value)).toEqual([chosenCity]);
-				});
-			}
+			it(`should commit an explicit click selection with updateOn blur (multiple=${multiple})`, async () => {
+				const { fixture, select } = genericFixture('blur');
+				fixture.componentInstance.multiple = multiple;
+				fixture.componentInstance.closeOnSelect = false;
+				await tickAndDetectChanges(fixture);
+				select.open();
+				document.querySelector<HTMLElement>('.hub-select__panel .hub-select__panel-option').click();
+				await tickAndDetectChanges(fixture);
+				expect(select.selectedItems.map((item) => item.value)).toEqual([fixture.componentInstance.cities[0]]);
+				expect(fixture.componentInstance.selectedCity).toBeUndefined();
+				select.onItemHover(select.itemsList.items[1]);
+				select.searchInput().nativeElement.blur();
+				document.body.click();
+				await tickAndDetectChanges(fixture);
+				const chosenCity = fixture.componentInstance.cities[0];
+				expect(fixture.componentInstance.selectedCity).toEqual(multiple ? [chosenCity] : chosenCity);
+				expect(select.selectedItems.map((item) => item.value)).toEqual([chosenCity]);
+			});
 		}
-
-		it('should not select marked item on blur when [selectOnTab]="false"', async () => {
-			const { fixture, select } = genericFixture();
-			fixture.componentInstance.selectOnTab = false;
-			await tickAndDetectChanges(fixture);
-			await advanceDebounce(fixture, 200);
-			select.filter('bei');
-			await advanceDebounce(fixture, 200);
-
-			expect(select.itemsList.markedItem).toBeTruthy();
-
-			select.searchInput().nativeElement.dispatchEvent(new FocusEvent('blur'));
-			await tickAndDetectChanges(fixture);
-
-			expect(select.selectedItems).toEqual([]);
-		});
 
 		it('should focus on clear button when tab pressed while not opened and clear showing', async () => {
 			const { fixture, select } = genericFixture();
-			fixture.componentInstance.tabFocusOnClearButton = true;
-			await selectOption(fixture, KeyCode.ArrowDown, 0);
-			await tickAndDetectChanges(fixture);
-			expect(select.showClear()).toBeTruthy();
-
-			select.searchInput().nativeElement.focus();
-			const focusOnClear = vi.spyOn(select, 'focusOnClear').mockReturnValue(undefined);
-			triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Tab);
-			expect(focusOnClear).toHaveBeenCalled();
-		});
-
-		it('should not focus on clear button when tab pressed if global flag is false and [tabFocusOnClearButton]="false"', async () => {
-			const config = new HubSelectConfig();
-			config.tabFocusOnClear = false;
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities"
-                        bindLabel="name"
-                        [loading]="citiesLoading"
-                        [selectOnTab]="selectOnTab"
-                        [multiple]="multiple"
-												[tabFocusOnClearButton]="tabFocusOnClearButton"
-                        [(ngModel)]="selectedCity">
-                </hub-select-engine>`,
-				config
-			);
-			const select = fixture.componentInstance.select();
-			fixture.componentInstance.tabFocusOnClearButton = false;
-			await selectOption(fixture, KeyCode.ArrowDown, 0);
-			await tickAndDetectChanges(fixture);
-			expect(select.showClear()).toBeTruthy();
-
-			select.searchInput().nativeElement.focus();
-			const focusOnClear = vi.spyOn(select, 'focusOnClear').mockReturnValue(undefined);
-			triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Tab);
-			expect(focusOnClear).not.toHaveBeenCalled();
-		});
-
-		it('should not focus on clear button when tab pressed if global flag is true and [tabFocusOnClearButton]="false"', async () => {
-			const config = new HubSelectConfig();
-			config.tabFocusOnClear = true;
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities"
-                        bindLabel="name"
-                        [loading]="citiesLoading"
-                        [selectOnTab]="selectOnTab"
-                        [multiple]="multiple"
-												[tabFocusOnClearButton]="tabFocusOnClearButton"
-                        [(ngModel)]="selectedCity">
-                </hub-select-engine>`,
-				config
-			);
-			const select = fixture.componentInstance.select();
-			fixture.componentInstance.tabFocusOnClearButton = false;
-			await selectOption(fixture, KeyCode.ArrowDown, 0);
-			await tickAndDetectChanges(fixture);
-			expect(select.showClear()).toBeTruthy();
-
-			select.searchInput().nativeElement.focus();
-			const focusOnClear = vi.spyOn(select, 'focusOnClear').mockReturnValue(undefined);
-			triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Tab);
-			expect(focusOnClear).not.toHaveBeenCalled();
-		});
-
-		it('should focus on clear button when tab pressed if global flag is false and [tabFocusOnClearButton]="true"', async () => {
-			const config = new HubSelectConfig();
-			config.tabFocusOnClear = false;
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities"
-                        bindLabel="name"
-                        [loading]="citiesLoading"
-                        [selectOnTab]="selectOnTab"
-                        [multiple]="multiple"
-						[tabFocusOnClearButton]="tabFocusOnClearButton"
-                        [(ngModel)]="selectedCity">
-                </hub-select-engine>`,
-				config
-			);
-			const select = fixture.componentInstance.select();
-			fixture.componentInstance.tabFocusOnClearButton = true;
-			await selectOption(fixture, KeyCode.ArrowDown, 0);
-			await tickAndDetectChanges(fixture);
-			expect(select.showClear()).toBeTruthy();
-
-			select.searchInput().nativeElement.focus();
-			const focusOnClear = vi.spyOn(select, 'focusOnClear').mockReturnValue(undefined);
-			triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode.Tab);
-			expect(focusOnClear).toHaveBeenCalled();
-		});
-
-		it('should focus on clear button when tab pressed if global flag is true and [tabFocusOnClearButton]="true"', async () => {
-			const config = new HubSelectConfig();
-			config.tabFocusOnClear = true;
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities"
-                        bindLabel="name"
-                        [loading]="citiesLoading"
-                        [selectOnTab]="selectOnTab"
-                        [multiple]="multiple"
-												[tabFocusOnClearButton]="tabFocusOnClearButton"
-                        [(ngModel)]="selectedCity">
-                </hub-select-engine>`,
-				config
-			);
-			const select = fixture.componentInstance.select();
-			fixture.componentInstance.tabFocusOnClearButton = true;
 			await selectOption(fixture, KeyCode.ArrowDown, 0);
 			await tickAndDetectChanges(fixture);
 			expect(select.showClear()).toBeTruthy();
@@ -668,7 +464,6 @@ describe('HubSelectEngineComponent', () => {
 				`<hub-select-engine [items]="cities"
                         bindLabel="name"
                         [loading]="citiesLoading"
-                        [selectOnTab]="selectOnTab"
                         [multiple]="multiple"
                         [(ngModel)]="selectedCity">
                 </hub-select-engine>`,
@@ -693,7 +488,6 @@ describe('HubSelectEngineComponent', () => {
 				`<hub-select-engine [items]="cities"
                         bindLabel="name"
                         [loading]="citiesLoading"
-                        [selectOnTab]="selectOnTab"
                         [multiple]="multiple"
                         [(ngModel)]="selectedCity">
                 </hub-select-engine>`,
@@ -724,20 +518,6 @@ describe('HubSelectEngineComponent', () => {
 			expect(select.isOpen()).toBe(false);
 		});
 
-		it('should prevent toggle on right click when preventToggleOnRightClick is true', () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities" bindLabel="name" [preventToggleOnRightClick]="true"></hub-select-engine>`
-			);
-
-			const select = fixture.componentInstance.select();
-			expect(select.handleMousedown({ ...createEvent(), button: 2 } as any)).toBe(false);
-			expect(select.isOpen()).toBe(false);
-
-			select.handleMousedown({ ...createEvent(), button: 0 } as any);
-			expect(select.isOpen()).toBe(true);
-		});
-
 		it('should not toggle on mousedown over the clear wrapper', () => {
 			const fixture = createTestingModule(
 				NgSelectTestComponent,
@@ -748,7 +528,7 @@ describe('HubSelectEngineComponent', () => {
 			select.handleMousedown(
 				createEvent({
 					tagName: 'SPAN',
-					classList: { contains: (token: string) => token === 'ng-clear-wrapper' }
+					classList: { contains: (token: string) => token === 'hub-select__clear' }
 				}) as any
 			);
 
@@ -785,20 +565,6 @@ describe('HubSelectEngineComponent', () => {
 			select.setDisabledState(true);
 			select.toggleItem(select.itemsList.items[0]);
 			expect(select.selectedItems.length).toBe(0);
-		});
-
-		it('should sync search term with selected item when toggling with editableSearchTerm', async () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities" bindLabel="name" [editableSearchTerm]="true" [(ngModel)]="selectedCity"></hub-select-engine>`
-			);
-
-			const select = fixture.componentInstance.select();
-			await openSelect(select, fixture);
-			select.toggleItem(select.itemsList.items[1]);
-			await tickAndDetectChanges(fixture);
-
-			expect(select.searchTerm).toBe('London');
 		});
 
 		it('should ignore unselect when no item is given', () => {
@@ -869,7 +635,7 @@ describe('HubSelectEngineComponent', () => {
 			await tickAndDetectChanges(fixture);
 			await tickAndDetectChanges(fixture);
 
-			fixture.debugElement.query(By.css('.ng-value-icon')).triggerEventHandler('click', {});
+			fixture.debugElement.query(By.css('.hub-select__value-remove')).triggerEventHandler('click', {});
 			await tickAndDetectChanges(fixture);
 
 			expect(fixture.componentInstance.select().selectedItems.length).toBe(2);
@@ -888,7 +654,7 @@ describe('HubSelectEngineComponent', () => {
 			await tickAndDetectChanges(fixture);
 
 			fixture.debugElement
-				.query(By.css('.ng-value-icon'))
+				.query(By.css('.hub-select__value-remove'))
 				.triggerEventHandler('keydown', { key: KeyCode.Enter, preventDefault: () => {}, stopPropagation: () => {} });
 			await tickAndDetectChanges(fixture);
 
@@ -937,20 +703,10 @@ describe('HubSelectEngineComponent', () => {
 			expect(() => fixture.componentInstance.select().focusOnClear()).not.toThrow();
 		});
 
-		it('should track options through trackByFn when provided', () => {
-			const fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities" bindLabel="name" [trackByFn]="trackByIdFn"></hub-select-engine>`
-			);
-
-			const select = fixture.componentInstance.select();
-			expect(select.trackByOption(0, { value: { id: 7 } } as SelectEngineOption)).toBe(7);
-		});
-
 		it('should mark hovered items but skip disabled ones', async () => {
 			const fixture = createTestingModule(
 				NgSelectTestComponent,
-				`<hub-select-engine [items]="cities" bindLabel="name" [markFirst]="false"></hub-select-engine>`
+				`<hub-select-engine [items]="cities" bindLabel="name"></hub-select-engine>`
 			);
 
 			const select = fixture.componentInstance.select();
@@ -1061,120 +817,6 @@ describe('HubSelectEngineComponent', () => {
 			} finally {
 				disableDebounceFakeTimers();
 			}
-		});
-	});
-
-	describe('Input method composition', () => {
-		let fixture: ComponentFixture<NgSelectTestComponent>;
-		let select: HubSelectEngineComponent;
-		const originValue = '';
-		const imeInputValue = 'zhangsan';
-
-		beforeEach(() => {
-			fixture = createTestingModule(
-				NgSelectTestComponent,
-				`<hub-select-engine [items]="citiesNames"
-					[keyDownFn]="keyDownFn"
-                    [addTag]="true"
-                    placeholder="select value"
-                    [searchWhileComposing]="searchWhileComposing"
-                    [(ngModel)]="selectedCity">
-                </hub-select-engine>`
-			);
-			select = fixture.componentInstance.select();
-			fixture.componentInstance.searchWhileComposing = false;
-		});
-
-		describe('composition start', () => {
-			it('should not update search term', async () => {
-				select.filter(originValue);
-				await tickAndDetectChanges(fixture);
-				select.onCompositionStart();
-				await tickAndDetectChanges(fixture);
-				select.filter(imeInputValue);
-
-				expect(select.searchTerm).toBe(originValue);
-			});
-
-			it('should be filtered even search term is empty', async () => {
-				select.filter('');
-				await tickAndDetectChanges(fixture);
-				select.onCompositionStart();
-				await tickAndDetectChanges(fixture);
-				select.filter(imeInputValue);
-
-				expect(select.searchTerm).toBe('');
-				expect(select.filtered).toBeTruthy();
-			});
-		});
-
-		describe('composition end', () => {
-			it('should update search term', async () => {
-				await tickAndDetectChanges(fixture);
-				select.filter(originValue);
-				await tickAndDetectChanges(fixture);
-				select.onCompositionEnd(imeInputValue);
-				await tickAndDetectChanges(fixture);
-
-				expect(select.searchTerm).toBe(imeInputValue);
-			});
-
-			it('should update search term when searchWhileComposing', async () => {
-				fixture.componentInstance.searchWhileComposing = true;
-				select.onCompositionStart();
-				select.onCompositionEnd(imeInputValue);
-				select.filter('new term');
-
-				expect(select.searchTerm).toBe('new term');
-			});
-		});
-	});
-
-	describe('User defined keyDown handler', () => {
-		let fixture: ComponentFixture<NgSelectTestComponent>;
-		let select: HubSelectEngineComponent;
-
-		beforeEach(() => {
-			fixture = createTestingModule(NgSelectTestComponent, `<hub-select-engine [keyDownFn]="keyDownFn" />`);
-			select = fixture.componentInstance.select();
-		});
-
-		const expectSpyToBeCalledAfterKeyDown = (spy, expectedNumber) => {
-			const possibleKeyCodes = Object.keys(KeyCode);
-			possibleKeyCodes.forEach((keyCode) => {
-				triggerKeyDownEvent(getNgSelectElement(fixture), KeyCode[keyCode]);
-			});
-			expect(spy).toHaveBeenCalledTimes(expectedNumber);
-		};
-
-		it('should execute user function if any of defined keys was pressed', () => {
-			const spy = vi.spyOn(fixture.componentInstance.select()._keyDownFn[SIGNAL], 'value').mockReturnValue(undefined);
-
-			expectSpyToBeCalledAfterKeyDown(spy, Object.keys(KeyCode).length);
-		});
-
-		it('should not call any of default keyDown handlers if user handler returns false', async () => {
-			fixture.componentInstance.keyDownFn = () => false;
-			await tickAndDetectChanges(fixture);
-			const spy = vi.spyOn(fixture.componentInstance.select(), 'handleKeyCode').mockReturnValue(undefined);
-
-			expectSpyToBeCalledAfterKeyDown(spy, 0);
-		});
-
-		it('should call default keyHandler if user handler returns truthy', async () => {
-			fixture.componentInstance.keyDownFn = () => true;
-			await tickAndDetectChanges(fixture);
-
-			const spy = vi.spyOn(fixture.componentInstance.select(), 'handleKeyCode').mockReturnValue(undefined);
-			expectSpyToBeCalledAfterKeyDown(spy, Object.keys(KeyCode).length);
-		});
-
-		it('should call default keyHandler if user handler returns falsy but not `false`', async () => {
-			fixture.componentInstance.keyDownFn = () => null;
-			await tickAndDetectChanges(fixture);
-
-			const spy = vi.spyOn(fixture.componentInstance.select(), 'handleKeyCode').mockReturnValue(undefined);
-			expectSpyToBeCalledAfterKeyDown(spy, Object.keys(KeyCode).length);
 		});
 	});
 });

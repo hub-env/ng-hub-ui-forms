@@ -101,8 +101,8 @@
 
 		.hub-field__control:focus,
 		.hub-#{$field}__control:focus,
-		.ng-select.ng-select-focused .ng-select-container,
-		.ng-select.ng-select-opened .ng-select-container {
+		.hub-select__control--focused .hub-select__box,
+		.hub-select__control--opened .hub-select__box {
 			box-shadow: none;
 		}
 
@@ -274,7 +274,7 @@
 		// padding it should never have taken, and the control inside takes the squaring.
 		//
 		// Not wrapped in `:where()`, unlike the fill below. The select's own radius arrives
-		// from `.hub-select__control.ng-select .ng-select-container` — three classes — and a
+		// from `.hub-select__control .hub-select__box` — three classes — and a
 		// zero-specificity rule would lose to it in silence.
 		> hub-input,
 		> hub-select,
@@ -287,7 +287,7 @@
 		}
 
 		&--prepend > hub-input .hub-field__control,
-		&--prepend > hub-select .ng-select-container,
+		&--prepend > hub-select .hub-select__box,
 		&--prepend > hub-textarea .hub-field__control,
 		&--prepend > hub-datepicker .hub-field__control,
 		&--prepend > hub-timepicker .hub-field__control {
@@ -322,13 +322,13 @@
 			border-end-start-radius: var(--hub-input-border-radius);
 		}
 
-		&--prepend > hub-select:first-child .ng-select-container {
+		&--prepend > hub-select:first-child .hub-select__box {
 			border-start-start-radius: var(--hub-select-border-radius);
 			border-end-start-radius: var(--hub-select-border-radius);
 		}
 
 		&--append > hub-input .hub-field__control,
-		&--append > hub-select .ng-select-container,
+		&--append > hub-select .hub-select__box,
 		&--append > hub-textarea .hub-field__control,
 		&--append > hub-datepicker .hub-field__control,
 		&--append > hub-timepicker .hub-field__control {
@@ -345,7 +345,7 @@
 			border-end-end-radius: var(--hub-input-border-radius);
 		}
 
-		&--append > hub-select:last-child .ng-select-container {
+		&--append > hub-select:last-child .hub-select__box {
 			border-start-end-radius: var(--hub-select-border-radius);
 			border-end-end-radius: var(--hub-select-border-radius);
 		}
@@ -387,7 +387,7 @@
 	//
 	// Descendant, not child. The element that PAINTS the box is not always a child of
 	// the group: the datepicker wraps its input in a `__trigger` (it is the overlay
-	// origin) and the select paints on `.ng-select-container`, two levels down. A child
+	// origin) and the select paints on `.hub-select__box`, two levels down. A child
 	// combinator here reproduces 22.13.1 one storey lower — the rule reads as though it
 	// covers every field while quietly matching nothing on the nested ones.
 	//
@@ -397,7 +397,7 @@
 	// The select's branch stays spelled out to the engine's own class. Reaching the element
 	// is not enough — the rule has to OUTRANK whatever else paints that corner, and the
 	// select theme claims it with three classes from a stylesheet that loads later. Trimming
-	// this branch to a bare `.ng-select-container` shipped 22.17.0 with every select round
+	// this branch to a bare `.hub-select__box` shipped 22.17.0 with every select round
 	// again: the selector still matched, so a test that asks `matches()` stayed green.
 	.hub-#{$field}__group {
 		// Governed by the same token as the strip's own corners: the seam is one decision, not
@@ -406,14 +406,14 @@
 		// corners back too, or the flat side betrays a join that is no longer there.
 		&--has-prepend .hub-#{$field}__control,
 		&--has-prepend .hub-field__control,
-		&--has-prepend .hub-#{$field}__control.ng-select .ng-select-container {
+		&--has-prepend .hub-#{$field}__control.hub-select__control .hub-select__box {
 			border-start-start-radius: #{$attached-radius};
 			border-end-start-radius: #{$attached-radius};
 		}
 
 		&--has-append .hub-#{$field}__control,
 		&--has-append .hub-field__control,
-		&--has-append .hub-#{$field}__control.ng-select .ng-select-container {
+		&--has-append .hub-#{$field}__control.hub-select__control .hub-select__box {
 			border-start-end-radius: #{$attached-radius};
 			border-end-end-radius: #{$attached-radius};
 		}

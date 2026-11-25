@@ -42,7 +42,7 @@ describe('glass layer', () => {
 
 	it('marks the open select list as a glass surface', async () => {
 		const fixture = await render();
-		const container = fixture.nativeElement.querySelector('.ng-select-container') as HTMLElement;
+		const container = fixture.nativeElement.querySelector('.hub-select__box') as HTMLElement;
 		container.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
 		await fixture.whenStable();
 		await new Promise((r) => setTimeout(r, 20));

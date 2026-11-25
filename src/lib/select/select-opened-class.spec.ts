@@ -5,15 +5,15 @@ import { provideHubForms } from '../services/forms-config';
 import { HubSelectComponent } from './select.component';
 
 /**
- * Regression spec for `ng-select-opened` (upstream report, 2026-07-30).
+ * Regression spec for `hub-select__control--opened` (upstream report, 2026-07-30).
  *
  * The open state used to be reflected through a `host` binding, which only
  * applies while the PARENT view is being refreshed. Under signal-scheduled CD
  * the component's own template updated (the panel rendered, `aria-expanded`
  * flipped) while the host class stayed stale — so the theme's caret flip,
- * keyed on `.ng-select-opened`, never engaged. The class is now reflected
+ * keyed on `.hub-select__control--opened`, never engaged. The class is now reflected
  * imperatively (an `effect` + `Renderer2`, the same mechanism as the panel's
- * `ng-select-bottom`), which no parent refresh can starve.
+ * `hub-select__control--bottom`), which no parent refresh can starve.
  *
  * Deliberately NO manual `detectChanges()` after the interaction: a real app
  * only has the scheduler, and forcing a fixture-wide refresh here is exactly
@@ -46,17 +46,17 @@ async function toggleAndInspect(zoneless: boolean): Promise<{ open: OpenedSnapsh
 	fixture.detectChanges();
 	await fixture.whenStable();
 
-	const container = fixture.nativeElement.querySelector('.ng-select-container') as HTMLElement;
+	const container = fixture.nativeElement.querySelector('.hub-select__box') as HTMLElement;
 	const settle = async () => {
 		await fixture.whenStable();
 		await new Promise((r) => setTimeout(r, 20));
 		await fixture.whenStable();
 	};
 	const snapshot = (): OpenedSnapshot => {
-		const select = fixture.nativeElement.querySelector('.ng-select') as HTMLElement;
+		const select = fixture.nativeElement.querySelector('.hub-select__control') as HTMLElement;
 		const input = fixture.nativeElement.querySelector('[role="combobox"]') as HTMLElement | null;
 		return {
-			opened: select.classList.contains('ng-select-opened'),
+			opened: select.classList.contains('hub-select__control--opened'),
 			panel: !!document.querySelector('hub-select-panel'),
 			ariaExpanded: input?.getAttribute('aria-expanded') ?? null
 		};
@@ -68,7 +68,7 @@ async function toggleAndInspect(zoneless: boolean): Promise<{ open: OpenedSnapsh
 
 	// A searchable select never toggles from the container — the arrow wrapper
 	// is the user-facing close affordance (handleMousedown checks the target).
-	const arrowWrapper = fixture.nativeElement.querySelector('.ng-arrow-wrapper') as HTMLElement;
+	const arrowWrapper = fixture.nativeElement.querySelector('.hub-select__arrow-wrapper') as HTMLElement;
 	arrowWrapper.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
 	await settle();
 	const closed = snapshot();

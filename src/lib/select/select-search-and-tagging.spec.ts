@@ -132,7 +132,7 @@ describe('hub-select — searching and tagging', () => {
 	 * The panel is appended to `<body>` and sits above the modal layer, so while the promise was
 	 * pending it covered the form the user had just been sent to fill in — and if the dialog was
 	 * dismissed, the promise resolved with nothing and the list never closed at all. Measured in
-	 * a real page: `.ng-dropdown-panel` at z-index 1060 over a modal at 1055.
+	 * a real page: `.hub-select__panel` at z-index 1060 over a modal at 1055.
 	 */
 	it('closes the list as soon as an async addTag is chosen, not when it resolves', async () => {
 		const { fixture, engine } = await render(DialogTagHostComponent);

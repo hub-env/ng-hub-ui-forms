@@ -6,8 +6,18 @@ import { getNgSelectNativeElement } from '../../testing/helpers';
 import { createTestingModule, NgSelectTestComponent } from '../../testing/select-engine-test-fixtures';
 describe('HubSelectEngineComponent', () => {
 	const selectTypes = [
-		{ name: 'single', classContains: 'ng-select-single', classNotContains: 'ng-select-multiple', isMultiple: false },
-		{ name: 'multiple', classContains: 'ng-select-multiple', classNotContains: 'ng-select-single', isMultiple: true }
+		{
+			name: 'single',
+			classContains: 'hub-select__control--single',
+			classNotContains: 'hub-select__control--multiple',
+			isMultiple: false
+		},
+		{
+			name: 'multiple',
+			classContains: 'hub-select__control--multiple',
+			classNotContains: 'hub-select__control--single',
+			isMultiple: true
+		}
 	];
 
 	selectTypes.forEach(({ name, classContains, classNotContains, isMultiple }) => {
@@ -36,17 +46,17 @@ describe('HubSelectEngineComponent', () => {
 
 			it('should have ng-select class on host element', () => {
 				const ngSelectEl = getNgSelectNativeElement(fixture);
-				expect(ngSelectEl.classList.contains('ng-select')).toBe(true);
+				expect(ngSelectEl.classList.contains('hub-select__control')).toBe(true);
 				expect(ngSelectEl.classList.contains(classContains)).toBe(true);
 
 				expect(ngSelectEl.classList.contains(classNotContains)).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-typeahead')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-taggable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-searchable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-clearable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-opened')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-filtered')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-disabled')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--typeahead')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--taggable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--searchable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--clearable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--opened')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--filtered')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--disabled')).toBe(false);
 			});
 
 			it('should have ng-select-typeahead class when typeahead is true', () => {
@@ -54,17 +64,17 @@ describe('HubSelectEngineComponent', () => {
 				fixture.detectChanges();
 
 				const ngSelectEl = getNgSelectNativeElement(fixture);
-				expect(ngSelectEl.classList.contains('ng-select')).toBe(true);
-				expect(ngSelectEl.classList.contains('ng-select-typeahead')).toBe(true);
+				expect(ngSelectEl.classList.contains('hub-select__control')).toBe(true);
+				expect(ngSelectEl.classList.contains('hub-select__control--typeahead')).toBe(true);
 				expect(ngSelectEl.classList.contains(classContains)).toBe(true);
 
 				expect(ngSelectEl.classList.contains(classNotContains)).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-taggable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-searchable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-clearable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-opened')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-filtered')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-disabled')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--taggable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--searchable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--clearable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--opened')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--filtered')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--disabled')).toBe(false);
 			});
 
 			it('should have appropriate ng-select-typeahead when taggable is true', () => {
@@ -72,17 +82,17 @@ describe('HubSelectEngineComponent', () => {
 				fixture.detectChanges();
 
 				const ngSelectEl = getNgSelectNativeElement(fixture);
-				expect(ngSelectEl.classList.contains('ng-select')).toBe(true);
-				expect(ngSelectEl.classList.contains('ng-select-taggable')).toBe(true);
+				expect(ngSelectEl.classList.contains('hub-select__control')).toBe(true);
+				expect(ngSelectEl.classList.contains('hub-select__control--taggable')).toBe(true);
 				expect(ngSelectEl.classList.contains(classContains)).toBe(true);
 
 				expect(ngSelectEl.classList.contains(classNotContains)).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-typeahead')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-searchable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-clearable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-opened')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-filtered')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-disabled')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--typeahead')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--searchable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--clearable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--opened')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--filtered')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--disabled')).toBe(false);
 			});
 
 			it('should have appropriate ng-select-typeahead when searchable is true', () => {
@@ -90,17 +100,17 @@ describe('HubSelectEngineComponent', () => {
 				fixture.detectChanges();
 
 				const ngSelectEl = getNgSelectNativeElement(fixture);
-				expect(ngSelectEl.classList.contains('ng-select')).toBe(true);
-				expect(ngSelectEl.classList.contains('ng-select-searchable')).toBe(true);
+				expect(ngSelectEl.classList.contains('hub-select__control')).toBe(true);
+				expect(ngSelectEl.classList.contains('hub-select__control--searchable')).toBe(true);
 				expect(ngSelectEl.classList.contains(classContains)).toBe(true);
 
 				expect(ngSelectEl.classList.contains(classNotContains)).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-typeahead')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-taggable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-clearable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-opened')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-filtered')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-disabled')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--typeahead')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--taggable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--clearable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--opened')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--filtered')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--disabled')).toBe(false);
 			});
 
 			it('should have appropriate ng-select-typeahead when clearable is true', () => {
@@ -108,17 +118,17 @@ describe('HubSelectEngineComponent', () => {
 				fixture.detectChanges();
 
 				const ngSelectEl = getNgSelectNativeElement(fixture);
-				expect(ngSelectEl.classList.contains('ng-select')).toBe(true);
-				expect(ngSelectEl.classList.contains('ng-select-clearable')).toBe(true);
+				expect(ngSelectEl.classList.contains('hub-select__control')).toBe(true);
+				expect(ngSelectEl.classList.contains('hub-select__control--clearable')).toBe(true);
 				expect(ngSelectEl.classList.contains(classContains)).toBe(true);
 
 				expect(ngSelectEl.classList.contains(classNotContains)).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-typeahead')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-taggable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-searchable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-opened')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-filtered')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-disabled')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--typeahead')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--taggable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--searchable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--opened')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--filtered')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--disabled')).toBe(false);
 			});
 
 			it('should have appropriate ng-select-typeahead when disabled is true', () => {
@@ -126,17 +136,17 @@ describe('HubSelectEngineComponent', () => {
 				fixture.detectChanges();
 
 				const ngSelectEl = getNgSelectNativeElement(fixture);
-				expect(ngSelectEl.classList.contains('ng-select')).toBe(true);
-				expect(ngSelectEl.classList.contains('ng-select-disabled')).toBe(true);
+				expect(ngSelectEl.classList.contains('hub-select__control')).toBe(true);
+				expect(ngSelectEl.classList.contains('hub-select__control--disabled')).toBe(true);
 				expect(ngSelectEl.classList.contains(classContains)).toBe(true);
 
 				expect(ngSelectEl.classList.contains(classNotContains)).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-typeahead')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-taggable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-searchable')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-opened')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-filtered')).toBe(false);
-				expect(ngSelectEl.classList.contains('ng-select-clearable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--typeahead')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--taggable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--searchable')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--opened')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--filtered')).toBe(false);
+				expect(ngSelectEl.classList.contains('hub-select__control--clearable')).toBe(false);
 			});
 		});
 	});

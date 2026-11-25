@@ -25,7 +25,7 @@ import { HubAppendDirective } from '../directives/append.directive';
 import { HubPrependDirective } from '../directives/prepend.directive';
 import { HubFieldControl } from '../shared/hub-field-control';
 import { areEqual, get } from '../utils/utils';
-import { HubSelectEngineComponent } from './engine/lib/select-engine/select-engine.component';
+import { HubSelectEngineComponent, HubSelectEngineTemplates } from './engine/lib/select-engine/select-engine.component';
 import { HubSelectConfig } from './engine/lib/services/select-config.service';
 import {
 	NgClearButtonTemplateDirective,
@@ -72,25 +72,7 @@ import { HubTooltipDirective } from 'ng-hub-ui-utils';
  */
 @Component({
 	selector: 'hub-select',
-	imports: [
-		NgTemplateOutlet,
-		KeyValuePipe,
-		FormsModule,
-		HubSelectEngineComponent,
-		NgOptionTemplateDirective,
-		NgOptgroupTemplateDirective,
-		NgLabelTemplateDirective,
-		NgMultiLabelTemplateDirective,
-		NgHeaderTemplateDirective,
-		NgFooterTemplateDirective,
-		NgNotFoundTemplateDirective,
-		NgTypeToSearchTemplateDirective,
-		NgLoadingTextTemplateDirective,
-		NgLoadingSpinnerTemplateDirective,
-		NgTagTemplateDirective,
-		NgClearButtonTemplateDirective,
-		HubTooltipDirective
-	],
+	imports: [NgTemplateOutlet, KeyValuePipe, FormsModule, HubSelectEngineComponent, HubTooltipDirective],
 	templateUrl: './select.component.html',
 	styleUrl: './select.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -156,11 +138,9 @@ export class HubSelectComponent extends HubFieldControl {
 	protected readonly _value = signal<any>(null);
 
 	// ── Customization templates ──────────────────────────────────────────────
-	// The engine resolves its templates with `contentChild` (no `descendants`),
-	// which does NOT see through this wrapper's `<ng-content>`. We grab the
-	// consumer-projected templates here and re-declare them as direct content of
-	// the inner engine (see the template), forwarding each with its context —
-	// so `<ng-template hubSelectOption>` etc. work through `<hub-select>`.
+	// The engine's own content queries do not see through this wrapper's `<ng-content>`, so the
+	// consumer-projected templates are collected here and handed to the engine as one input
+	// (see `_templates`), which renders them with its own context.
 	//
 	// Each slot is queried twice: once for the hub-named directive that is the supported way to
 	// write it, and once for the legacy `ng-*-tmp` attribute that used to be the only way. The
@@ -193,9 +173,6 @@ export class HubSelectComponent extends HubFieldControl {
 	private readonly _ngNotFoundTpl = contentChild(NgNotFoundTemplateDirective, { read: TemplateRef });
 	protected readonly _notFoundTpl = computed(() => this._hubNotFoundTpl() ?? this._ngNotFoundTpl());
 
-	// The five slots below were exported but never forwarded: written inside a `<hub-select>` they
-	// belonged to this wrapper's content, and the engine's own `contentChild` cannot see through an
-	// `<ng-content>`, so they did nothing at all. They are forwarded now, under hub names.
 	private readonly _hubTypeToSearchTpl = contentChild(HubSelectTypeToSearchDirective, { read: TemplateRef });
 	private readonly _ngTypeToSearchTpl = contentChild(NgTypeToSearchTemplateDirective, { read: TemplateRef });
 	protected readonly _typeToSearchTpl = computed(() => this._hubTypeToSearchTpl() ?? this._ngTypeToSearchTpl());
@@ -215,6 +192,22 @@ export class HubSelectComponent extends HubFieldControl {
 	private readonly _hubClearButtonTpl = contentChild(HubSelectClearButtonDirective, { read: TemplateRef });
 	private readonly _ngClearButtonTpl = contentChild(NgClearButtonTemplateDirective, { read: TemplateRef });
 	protected readonly _clearButtonTpl = computed(() => this._hubClearButtonTpl() ?? this._ngClearButtonTpl());
+
+	/** Every customization template found in this field's content, keyed the way the engine expects. */
+	protected readonly _templates = computed<HubSelectEngineTemplates>(() => ({
+		option: this._optionTpl(),
+		optgroup: this._optgroupTpl(),
+		label: this._labelTpl(),
+		multiLabel: this._multiLabelTpl(),
+		header: this._headerTpl(),
+		footer: this._footerTpl(),
+		notFound: this._notFoundTpl(),
+		typeToSearch: this._typeToSearchTpl(),
+		loadingText: this._loadingTextTpl(),
+		tag: this._tagTpl(),
+		loadingSpinner: this._loadingSpinnerTpl(),
+		clearButton: this._clearButtonTpl()
+	}));
 
 	/** Deprecated select-only slot, superseded by `[hubAppend]`. */
 	protected readonly _legacySuffixTpl = contentChild(HubSelectSuffixDirective, { read: TemplateRef });

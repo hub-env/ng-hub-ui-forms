@@ -19,14 +19,13 @@ hub-select.hidden-control {
 @include group-addons.group-addons('select');
 
 // ── In-place theme of the ng-select engine ──────────────────────────────────
-.hub-select__control.ng-select {
+.hub-select__control {
 	font-size: var(--hub-select-font-size);
 	color: var(--hub-select-color);
 
-	.ng-select-container {
+	.hub-select__box {
 		min-height: var(--hub-select-min-height);
 		align-items: center;
-		color: var(--hub-select-color);
 		background: var(--hub-select-bg);
 		border: var(--hub-select-border-width) solid var(--hub-select-border-color);
 		border-radius: var(--hub-select-border-radius);
@@ -34,26 +33,20 @@ hub-select.hidden-control {
 	}
 
 	// Horizontal padding lives on the value container so the arrow/clear stay aligned.
-	.ng-value-container {
+	.hub-select__values {
 		align-items: center;
 		padding-inline-start: var(--hub-select-padding-x);
 	}
 
-	.ng-placeholder {
+	.hub-select__placeholder {
 		color: var(--hub-select-placeholder-color);
 	}
 
-	// Hide the placeholder once a value is selected (ng-select's own theme — which
-	// we don't import — owns this rule; without it the placeholder overlaps the value).
-	&.ng-has-value .ng-placeholder {
-		display: none;
-	}
-
 	// Single-select height + search-input alignment.
-	&.ng-select-single .ng-select-container {
+	&.hub-select__control--single .hub-select__box {
 		height: var(--hub-select-min-height);
 
-		.ng-value-container .ng-input {
+		.hub-select__values .hub-select__search {
 			top: 50%;
 			transform: translateY(-50%);
 			padding-inline-start: var(--hub-select-padding-x);
@@ -61,34 +54,29 @@ hub-select.hidden-control {
 		}
 	}
 
-	.ng-value {
-		color: var(--hub-select-color);
-	}
-
-	&.ng-select-focused:not(.ng-select-opened) .ng-select-container,
-	&.ng-select-opened .ng-select-container {
+	&.hub-select__control--focused:not(.hub-select__control--opened) .hub-select__box,
+	&.hub-select__control--opened .hub-select__box {
 		border-color: var(--hub-select-focus-border-color);
 		box-shadow: var(--hub-select-focus-box-shadow);
 	}
 
 	// Multiple-selection chips.
-	&.ng-select-multiple {
+	&.hub-select__control--multiple {
 		// The gap parts the chips, also between wrapped rows. The padding keeps them off the
 		// border by the same amount above and below, so a single row sits in the middle; a margin
 		// under each chip used to do that job from one side only and left them 2px high.
-		.ng-value-container {
+		.hub-select__values {
 			padding-block: 0.25rem;
-			padding-inline-start: var(--hub-select-padding-x);
 			gap: 0.25rem;
 		}
 
-		.ng-placeholder {
+		.hub-select__placeholder {
 			top: 50%;
 			transform: translateY(-50%);
 			padding-bottom: 0;
 		}
 
-		.ng-value {
+		.hub-select__value {
 			display: inline-flex;
 			align-items: center;
 			margin: 0;
@@ -101,12 +89,12 @@ hub-select.hidden-control {
 			// way out was to redraw the whole chip through the label slot. The chip is a
 			// flex row, so the running order is settled here; the place of the cross is a
 			// token, and `--hub-select-value-remove-order: -1` puts it back in front.
-			.ng-value-label {
+			.hub-select__value-label {
 				order: 0;
 				padding: 0.1rem 0.4rem;
 			}
 
-			.ng-value-icon {
+			.hub-select__value-remove {
 				order: var(--hub-select-value-remove-order, 1);
 				padding: 0.1rem 0.4rem;
 				cursor: pointer;
@@ -117,7 +105,7 @@ hub-select.hidden-control {
 			}
 		}
 
-		.ng-input {
+		.hub-select__search {
 			padding-block: 0 0.2rem;
 			padding-inline: 0.25rem 0;
 		}
@@ -126,11 +114,11 @@ hub-select.hidden-control {
 	// Arrow + clear. The engine ships the caret as a 0×0 span (the
 	// border-triangle technique) and carries NO geometry — the full declaration
 	// (border-style + widths + colour) must live here or nothing renders.
-	.ng-arrow-wrapper {
+	.hub-select__arrow-wrapper {
 		padding-inline: var(--hub-select-arrow-gap);
 	}
 
-	.ng-arrow-wrapper .ng-arrow {
+	.hub-select__arrow-wrapper .hub-select__arrow {
 		border-style: solid;
 		border-width: var(--hub-select-arrow-size) var(--hub-select-arrow-size) calc(var(--hub-select-arrow-size) / 2);
 		border-color: var(--hub-select-arrow-color) transparent transparent;
@@ -139,30 +127,30 @@ hub-select.hidden-control {
 	// Open panel — flip to an upward triangle. Same box as the closed caret (the half-size edge
 	// moves to the top), lifted by that half, so the point turns without moving: with the top edge
 	// collapsed the box was shorter and the caret sat about two pixels low.
-	&.ng-select-opened .ng-arrow-wrapper .ng-arrow {
+	&.hub-select__control--opened .hub-select__arrow-wrapper .hub-select__arrow {
 		border-width: calc(var(--hub-select-arrow-size) / 2) var(--hub-select-arrow-size) var(--hub-select-arrow-size);
 		border-color: transparent transparent var(--hub-select-arrow-color);
 		transform: translateY(calc(var(--hub-select-arrow-size) / -2));
 	}
 
-	.ng-clear-wrapper {
+	.hub-select__clear {
 		color: var(--hub-select-clear-color);
 
-		&:hover .ng-clear {
+		&:hover .hub-select__clear-icon {
 			color: var(--hub-select-clear-hover-color);
 		}
 	}
 
 	// Disabled / invalid.
-	&.ng-select-disabled .ng-select-container {
+	&.hub-select__control--disabled .hub-select__box {
 		opacity: var(--hub-form-disabled-opacity);
 	}
 
-	&.hub-select__control--invalid .ng-select-container {
+	&.hub-select__control--invalid .hub-select__box {
 		border-color: var(--hub-form-invalid-border-color);
 	}
 
-	&.hub-select__control--invalid.ng-select-focused .ng-select-container {
+	&.hub-select__control--invalid.hub-select__control--focused .hub-select__box {
 		box-shadow: 0 0 0 var(--hub-form-focus-ring-width) var(--hub-form-invalid-focus-ring-color);
 	}
 }
@@ -170,7 +158,7 @@ hub-select.hidden-control {
 // ── Floating label ──────────────────────────────────────────────────────────
 //
 // After the engine theme on purpose, not before it. Several of the rules below tie on
-// specificity with the theme's own (`.ng-select-multiple .ng-value-container` zeroes the
+// specificity with the theme's own (`.hub-select__control--multiple .hub-select__values` zeroes the
 // very padding the floating layout adds), and a tie is settled by source order — so read
 // first, the floating label worked on a single select and sat on top of the chips of a
 // multiple one.
@@ -180,11 +168,11 @@ hub-select.hidden-control {
 	// positioned against the control's leading edge rather than the group's.
 	//
 	// Raised on purpose, and by this much. The engine draws its own box on
-	// `.ng-select-container`, which is `position: relative` (its rule, not ours) and comes
+	// `.hub-select__box`, which is `position: relative` (its rule, not ours) and comes
 	// later in the DOM — so at the same layer it paints last, and the label went under an
 	// opaque background and vanished. A `z-index: 1` fixed the closed field and not the open
 	// one: while the panel is up the engine lifts that same container to `z-index: 1001`
-	// (`engine/lib/select-engine/select-engine.component.scss`, `&.ng-select-opened`), so the label went out
+	// (`engine/lib/select-engine/select-engine.component.scss`, `&.hub-select__control--opened`), so the label went out
 	// for exactly as long as you were choosing — the one moment you are looking at the field.
 	//
 	// A literal above that constant rather than a token: this is not a taste anybody should
@@ -239,27 +227,27 @@ hub-select.hidden-control {
 	}
 
 	// Room for the lifted label, on top of the height the field already had.
-	.hub-select__control.ng-select .ng-select-container,
-	.hub-select__control.ng-select.ng-select-single .ng-select-container {
+	.hub-select__control .hub-select__box,
+	.hub-select__control--single .hub-select__box {
 		height: auto;
 		min-height: calc(var(--hub-select-min-height) + var(--hub-field-floating-inset));
 	}
 
-	.hub-select__control.ng-select .ng-value-container {
+	.hub-select__control .hub-select__values {
 		padding-block-start: var(--hub-field-floating-inset);
 	}
 
 	// The search box of a single select is positioned against the container, so the padding
 	// above does not move it: it has to be told about half the same offset, which is where
 	// the value it replaces now sits.
-	.hub-select__control.ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
+	.hub-select__control--single .hub-select__box .hub-select__values .hub-select__search {
 		top: calc(50% + var(--hub-field-floating-inset) / 2);
 	}
 
 	// At rest the label occupies the placeholder's place, so both would print in the
 	// same pixels. The placeholder comes back the moment the label lifts, which is the
 	// only moment it says anything the label does not.
-	&:not(.hub-select__group--raised) .ng-placeholder {
+	&:not(.hub-select__group--raised) .hub-select__placeholder {
 		visibility: hidden;
 	}
 }
@@ -270,7 +258,7 @@ hub-select.hidden-control {
 }
 
 // Dropdown panel (appended to the control by default).
-.ng-dropdown-panel {
+.hub-select__panel {
 	// Glass when an ancestor turns the layer on (ng-hub-ui-ds); opaque otherwise. The panel carries
 	// `hub-glass-surface` through the select's `panelClass`.
 	background-color: color-mix(in srgb, var(--hub-select-dropdown-bg) var(--hub-sys-glass-opacity, 100%), transparent);
@@ -281,22 +269,22 @@ hub-select.hidden-control {
 	border-radius: var(--hub-select-dropdown-border-radius);
 	box-shadow: var(--hub-sys-glass-rim, 0 0 #0000), var(--hub-select-dropdown-box-shadow);
 
-	.ng-dropdown-panel-items .ng-option {
+	.hub-select__panel-items .hub-select__panel-option {
 		padding: var(--hub-select-option-padding-y) var(--hub-select-option-padding-x);
 		color: var(--hub-select-option-color);
 		background: transparent;
 
-		&.ng-option-marked {
+		&.hub-select__panel-option--marked {
 			background: var(--hub-select-option-marked-bg);
 		}
 
-		&.ng-option-selected,
-		&.ng-option-selected.ng-option-marked {
+		&.hub-select__panel-option--selected,
+		&.hub-select__panel-option--selected.hub-select__panel-option--marked {
 			color: var(--hub-select-option-selected-color);
 			background: var(--hub-select-option-selected-bg);
 		}
 
-		&.ng-option-disabled {
+		&.hub-select__panel-option--disabled {
 			opacity: var(--hub-form-disabled-opacity);
 		}
 
@@ -304,12 +292,12 @@ hub-select.hidden-control {
 		// elements with nothing between them, so it read `Create type"color"`. The gap belongs
 		// to the label rather than to the text: an `addTagText` is a caption a consumer writes
 		// and nobody writes one ending in a space.
-		.ng-tag-label {
+		.hub-select__panel-tag-label {
 			margin-inline-end: 0.25em;
 		}
 	}
 
-	.ng-dropdown-panel-items .ng-optgroup {
+	.hub-select__panel-items .hub-select__panel-optgroup {
 		padding: var(--hub-select-option-padding-y) var(--hub-select-option-padding-x);
 		color: var(--hub-select-optgroup-color);
 		font-weight: var(--hub-ref-font-weight-medium, 500);
@@ -318,8 +306,8 @@ hub-select.hidden-control {
 
 // The list is never narrower than its control (an inline minimum on the panel carries that) and grows
 // to its options up to `--hub-select-dropdown-max-width`. `.hub-select__panel` is ours, unlike
-// the mirrored host classes, and its specificity beats the engine's `width: 100%`.
-.ng-dropdown-panel.hub-select__panel {
+// the mirrored host classes.
+.hub-select__panel.hub-select__panel {
 	width: max-content;
 	min-width: 100%;
 	max-width: min(var(--hub-select-dropdown-max-width, 24rem), calc(100vw - 2rem));

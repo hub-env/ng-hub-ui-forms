@@ -7,6 +7,7 @@ export type ClassValue = string | string[] | Set<string> | Record<string, any>;
 
 const INTERNAL_HOST_CLASSES = new Set([
 	'ng-select',
+	'hub-select__control',
 	'ng-select-single',
 	'ng-select-multiple',
 	'ng-select-typeahead',
@@ -20,7 +21,21 @@ const INTERNAL_HOST_CLASSES = new Set([
 	'ng-select-top',
 	'ng-select-bottom',
 	'ng-select-left',
-	'ng-select-right'
+	'ng-select-right',
+	'hub-select__control--single',
+	'hub-select__control--multiple',
+	'hub-select__control--typeahead',
+	'hub-select__control--taggable',
+	'hub-select__control--searchable',
+	'hub-select__control--clearable',
+	'hub-select__control--opened',
+	'hub-select__control--filtered',
+	'hub-select__control--disabled',
+	'hub-select__control--focused',
+	'hub-select__control--top',
+	'hub-select__control--bottom',
+	'hub-select__control--left',
+	'hub-select__control--right'
 ]);
 
 const ANGULAR_MANAGED_HOST_CLASSES = new Set([

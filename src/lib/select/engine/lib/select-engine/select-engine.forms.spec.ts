@@ -265,7 +265,7 @@ describe('HubSelectEngineComponent', () => {
 			const select = fixture.componentInstance.select();
 			await openSelect(select, fixture);
 
-			const options = document.querySelectorAll<HTMLElement>('.ng-option');
+			const options = document.querySelectorAll<HTMLElement>('.hub-select__panel-option');
 			expect(options[0].innerText).toBe('<img src="azd" (error)="alert(1)" />');
 		});
 
@@ -830,7 +830,7 @@ describe('HubSelectEngineComponent', () => {
 			]);
 		});
 
-		describe('ng-option', () => {
+		describe('hub-select__panel-option', () => {
 			it('should not render HTML from unknown ngModel when using ng-option', async () => {
 				const fixture = createTestingModule(
 					NgSelectTestComponent,
@@ -844,7 +844,7 @@ describe('HubSelectEngineComponent', () => {
 				fixture.componentInstance.selectedCityId = `<img src="x" onerror="window.__xss2374=1">` as any;
 				await tickAndDetectChanges(fixture);
 
-				const labelEl = document.querySelector('.ng-value-label') as HTMLElement;
+				const labelEl = document.querySelector('.hub-select__value-label') as HTMLElement;
 				expect(labelEl).toBeTruthy();
 				expect(labelEl.querySelector('img')).toBeNull();
 				expect(labelEl.textContent).toContain('<img');
@@ -909,7 +909,7 @@ describe('HubSelectEngineComponent', () => {
 				await tickAndDetectChanges(fixture);
 				fixture.detectChanges();
 
-				const options = document.querySelectorAll('.ng-dropdown-panel .ng-option');
+				const options = document.querySelectorAll('.hub-select__panel .hub-select__panel-option');
 				expect(options[0].classList).toContain('custom-city');
 				expect(options[1].classList).toContain('muted-city');
 				expect(options[0].querySelector('span').classList).not.toContain('custom-city');
@@ -1065,18 +1065,18 @@ describe('HubSelectEngineComponent', () => {
 					await tickAndDetectChanges(fixture);
 					await tickAndDetectChanges(fixture);
 
-					const classes = ['ng-select', 'ng-select-single', 'ng-select-searchable'];
+					const classes = ['hub-select__control', 'hub-select__control--single', 'hub-select__control--searchable'];
 					const selectEl = fixture.nativeElement.querySelector('hub-select-engine');
 					for (const c of classes) {
 						expect(selectEl.classList.contains(c), `expected to contain "${c}" class`).toBeTruthy();
 					}
-					let hasValueEl = fixture.nativeElement.querySelector('.ng-has-value');
+					let hasValueEl = fixture.nativeElement.querySelector('.hub-select__box--has-value');
 					expect(hasValueEl).not.toBeNull();
 
 					fixture.componentInstance.selectedCityId = null;
 					await tickAndDetectChanges(fixture);
 					await tickAndDetectChanges(fixture);
-					hasValueEl = fixture.nativeElement.querySelector('.ng-has-value');
+					hasValueEl = fixture.nativeElement.querySelector('.hub-select__box--has-value');
 					expect(hasValueEl).toBeNull();
 				});
 
@@ -1403,9 +1403,9 @@ describe('HubSelectEngineComponent', () => {
 			await tickAndDetectChanges(fixture);
 			fixture.detectChanges();
 
-			const optgroup = document.querySelector('.ng-dropdown-panel .ng-optgroup');
+			const optgroup = document.querySelector('.hub-select__panel .hub-select__panel-optgroup');
 			expect(optgroup).toBeTruthy();
-			expect(optgroup.classList).not.toContain('ng-option');
+			expect(optgroup.classList).not.toContain('hub-select__panel-option');
 		});
 
 		it('should group items with children array by group key', async () => {
@@ -1621,7 +1621,7 @@ describe('HubSelectEngineComponent', () => {
 			fixture.detectChanges();
 			const element = fixture.elementRef.nativeElement;
 			const elClasses: DOMTokenList = element.children[0].classList;
-			const hasClass = elClasses.contains('ng-select');
+			const hasClass = elClasses.contains('hub-select__control');
 
 			expect(hasClass).toBe(true);
 		});
@@ -1640,7 +1640,7 @@ describe('HubSelectEngineComponent', () => {
 			fixture.detectChanges();
 			const element = fixture.elementRef.nativeElement;
 			const elClasses: DOMTokenList = element.children[0].classList;
-			const hasClass = elClasses.contains('ng-select') && elClasses.contains('test');
+			const hasClass = elClasses.contains('hub-select__control') && elClasses.contains('test');
 
 			expect(hasClass).toBe(true);
 		});
@@ -1668,7 +1668,7 @@ describe('HubSelectEngineComponent', () => {
 			expect(fixture.componentInstance.selectedAccount).toBe('amalie@email.com');
 
 			select.filter('A');
-			expect(document.querySelectorAll('.ng-option-selected').length).toBe(1);
+			expect(document.querySelectorAll('.hub-select__panel-option--selected').length).toBe(1);
 			expect(select.viewPortItems.filter((opt) => opt.selected).length).toBe(1);
 			expect(select.viewPortItems.find((opt) => opt.selected).index).toBe(2);
 			expect(select.itemsList.selectedItems.length).toBe(1);

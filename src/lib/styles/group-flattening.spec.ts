@@ -219,7 +219,7 @@ describe('group corner flattening', () => {
 		{ field: 'input', painted: '.hub-field__control' },
 		{ field: 'textarea', painted: '.hub-field__control' },
 		{ field: 'datepicker', painted: '.hub-field__control' },
-		{ field: 'select', painted: '.ng-select-container' }
+		{ field: 'select', painted: '.hub-select__box' }
 	] as const;
 
 	for (const { field, painted } of fields) {
@@ -641,7 +641,7 @@ describe('a slot that projects a whole field', () => {
 	 * The append case that actually breaks.
 	 *
 	 * A projected SELECT is never reached by the flattening rule — its box is
-	 * `.ng-select-container`, which carries neither `.hub-field__control` nor the group's own
+	 * `.hub-select__box`, which carries neither `.hub-field__control` nor the group's own
 	 * `__control` class — so the test below it passes with the fix and without it. Deleting the
 	 * whole append half of the fix left the suite green while the corner measured `0px` in a
 	 * browser. A projected INPUT is the one the rule can see, and the one that has to be pinned.
@@ -666,7 +666,7 @@ describe('a slot that projects a whole field', () => {
 		const wrapper = fixture.nativeElement.querySelector('.hub-input__attached--append') as HTMLElement;
 		expect(wrapper).toBeTruthy();
 
-		const container = wrapper.querySelector('.ng-select-container') as HTMLElement;
+		const container = wrapper.querySelector('.hub-select__box') as HTMLElement;
 		expect(container).toBeTruthy();
 
 		expect(isSquare(winningCorner(container, 'border-start-start-radius'))).toBe(true);

@@ -14,7 +14,7 @@ import { HubSelectEngineComponent } from './engine/lib/select-engine/select-engi
  * by an asynchronous `addTag`, and compiled without a word either way — which is the part that
  * cost the time. A consumer who wrote it got a handler that fired sometimes.
  *
- * It carries the selected ITEM, the way `ng-select` has always spelled this event; the bound
+ * It carries the selected ITEM, the way `hub-select__control` has always spelled this event; the bound
  * value has its own output and its own name.
  */
 async function render<T>(host: Type<T>) {

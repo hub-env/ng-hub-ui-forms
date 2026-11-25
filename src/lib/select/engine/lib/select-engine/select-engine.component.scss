@@ -10,7 +10,7 @@
 	text-overflow: ellipsis;
 }
 
-.ng-select {
+.hub-select__control {
 	position: relative;
 	display: block;
 	@include box-sizing;
@@ -25,47 +25,47 @@
 		display: none;
 	}
 
-	&.ng-select-searchable {
-		.ng-select-container .ng-value-container .ng-input {
+	&.hub-select__control--searchable {
+		.hub-select__box .hub-select__values .hub-select__search {
 			opacity: 1;
 		}
 	}
 
 	// When search is disabled the input is still present for focus/ARIA, but it must not
 	// intercept clicks intended for the selected value (text selection / copy).
-	&:not(.ng-select-searchable) {
-		.ng-select-container .ng-value-container .ng-input {
+	&:not(.hub-select__control--searchable) {
+		.hub-select__box .hub-select__values .hub-select__search {
 			pointer-events: none;
 		}
 	}
 
-	&.ng-select-opened .ng-select-container {
+	&.hub-select__control--opened .hub-select__box {
 		z-index: 1001;
 	}
 
-	&.ng-select-disabled {
-		.ng-select-container {
-			.ng-value-container {
-				.ng-placeholder,
-				.ng-value {
+	&.hub-select__control--disabled {
+		.hub-select__box {
+			.hub-select__values {
+				.hub-select__placeholder,
+				.hub-select__value {
 					user-select: none;
 					cursor: default;
 				}
 			}
 		}
 
-		.ng-arrow-wrapper {
+		.hub-select__arrow-wrapper {
 			cursor: default;
 		}
 	}
 
-	&.ng-select-filtered {
-		.ng-placeholder {
+	&.hub-select__control--filtered {
+		.hub-select__placeholder {
 			display: none;
 		}
 	}
 
-	.ng-select-container {
+	.hub-select__box {
 		cursor: default;
 		display: flex;
 		outline: none;
@@ -73,11 +73,11 @@
 		position: relative;
 		width: 100%;
 
-		.ng-value-container {
+		.hub-select__values {
 			display: flex;
 			flex: 1;
 
-			.ng-input {
+			.hub-select__search {
 				opacity: 0;
 
 				> input {
@@ -104,26 +104,26 @@
 		}
 	}
 
-	&.ng-select-single {
-		&.ng-select-filtered {
-			.ng-select-container .ng-value-container .ng-value {
+	&.hub-select__control--single {
+		&.hub-select__control--filtered {
+			.hub-select__box .hub-select__values .hub-select__value {
 				visibility: hidden;
 			}
 		}
 
-		.ng-select-container {
-			.ng-value-container {
+		.hub-select__box {
+			.hub-select__values {
 				@include wrap-text;
 
-				.ng-value {
+				.hub-select__value {
 					@include wrap-text;
 
-					.ng-value-icon {
+					.hub-select__value-remove {
 						display: none;
 					}
 				}
 
-				.ng-input {
+				.hub-select__search {
 					position: absolute;
 					left: 0;
 					width: 100%;
@@ -132,56 +132,52 @@
 		}
 	}
 
-	&.ng-select-multiple {
-		&.ng-select-disabled {
-			> .ng-select-container .ng-value-container .ng-value {
-				.ng-value-icon {
+	&.hub-select__control--multiple {
+		&.hub-select__control--disabled {
+			> .hub-select__box .hub-select__values .hub-select__value {
+				.hub-select__value-remove {
 					display: none;
 				}
 			}
 		}
 
-		.ng-select-container {
-			.ng-value-container {
+		.hub-select__box {
+			.hub-select__values {
 				flex-wrap: wrap;
 
-				.ng-placeholder {
+				.hub-select__placeholder {
 					position: absolute;
 				}
 
-				.ng-value {
+				.hub-select__value {
 					white-space: nowrap;
 
-					&.ng-value-disabled {
-						.ng-value-icon {
+					&.hub-select__value--disabled {
+						.hub-select__value-remove {
 							display: none;
 						}
 					}
-
-					.ng-value-icon {
-						cursor: pointer;
-					}
 				}
 
-				.ng-input {
+				.hub-select__search {
 					flex: 1;
 					z-index: 2;
 				}
 
-				.ng-placeholder {
+				.hub-select__placeholder {
 					z-index: 1;
 				}
 			}
 		}
 	}
 
-	.ng-clear-wrapper {
+	.hub-select__clear {
 		cursor: pointer;
 		position: relative;
 		width: 17px;
 		user-select: none;
 
-		.ng-clear {
+		.hub-select__clear-icon {
 			display: inline-block;
 			font-size: 18px;
 			line-height: 1;
@@ -189,7 +185,7 @@
 		}
 	}
 
-	.ng-spinner-loader {
+	.hub-select__spinner {
 		border-radius: 50%;
 		width: 17px;
 		height: 17px;
@@ -232,13 +228,13 @@
 		}
 	}
 
-	.ng-arrow-wrapper {
+	.hub-select__arrow-wrapper {
 		cursor: pointer;
 		position: relative;
 		text-align: center;
 		user-select: none;
 
-		.ng-arrow {
+		.hub-select__arrow {
 			pointer-events: none;
 			display: inline-block;
 			height: 0;
@@ -248,7 +244,7 @@
 	}
 }
 
-.ng-dropdown-panel {
+.hub-select__panel {
 	box-sizing: border-box;
 	// The panel renders in-flow inside the overlay container: the container carries
 	// positioning and stacking, while theme margins on the panel still create the
@@ -258,10 +254,9 @@
 	// sets from the control; inside a CDK pane it was blockified as a flex item, here it is not.
 	display: block;
 	opacity: 0;
-	width: 100%;
 	-webkit-overflow-scrolling: touch;
 
-	.ng-dropdown-panel-items {
+	.hub-select__panel-items {
 		display: block;
 		height: auto;
 		-webkit-box-sizing: border-box;
@@ -270,26 +265,23 @@
 		max-height: 240px;
 		overflow-y: auto;
 
-		.ng-optgroup {
+		.hub-select__panel-optgroup {
 			@include wrap-text();
 		}
 
-		.ng-option {
+		.hub-select__panel-option {
 			box-sizing: border-box;
 			cursor: pointer;
 			display: block;
 			@include wrap-text();
 
-			.ng-option-label:empty:before {
+			.hub-select__panel-option-label:empty:before {
 				content: '\200b';
 			}
 
 			.highlighted {
 				font-weight: bold;
 				text-decoration: underline;
-			}
-			&.disabled {
-				cursor: default;
 			}
 		}
 	}
@@ -321,7 +313,7 @@
 // those offsets would displace the panel, so they are neutralized here. This rule is
 // injected after application stylesheets, letting it also cover consumer themes that
 // were copied from the old shipped ones.
-.hub-overlay-container .ng-dropdown-panel {
+.hub-overlay-container .hub-select__panel {
 	position: relative;
 	top: auto;
 	right: auto;
@@ -329,7 +321,7 @@
 	left: auto;
 }
 
-.ng-visually-hidden {
+.hub-select__visually-hidden {
 	position: absolute !important;
 	width: 1px;
 	height: 1px;
