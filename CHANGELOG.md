@@ -5,6 +5,27 @@ All notable changes to `ng-hub-ui-forms` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [22.50.0] - 2026-11-24
+
+### Changed
+
+- **The select's classes have `hub-select__*` names.** Each element of the select engine now carries
+  a class in the library's own scheme next to the old `.ng-*` one: `.hub-select__box`,
+  `.hub-select__value`, `.hub-select__panel-option`, `.hub-select__control--opened`, and so on (the
+  full table is in BREAKING_CHANGES.md). The library's own styles target only the new names. The
+  `.ng-*` classes are still emitted, unstyled, so an application stylesheet written against them
+  keeps matching for this release.
+- **The select engine is smaller.** The ng-select themes (default, Material, Ant Design) that were
+  never compiled or shipped are gone, along with the Material appearance code and about two dozen
+  engine inputs that `<hub-select>` never set; each now behaves as its former default. The engine
+  receives the field's templates directly instead of through a relay of `<ng-template>` blocks, so
+  each template gets the engine's full context. What the reader sees does not change.
+
+### Deprecated
+
+- The `.ng-*` classes on the select's DOM. They are removed in the next minor release.
+- `HubSelectConfig.appearance`. It has no effect since the Material appearance was removed.
+
 ## [22.49.0] - 2026-11-24
 
 ### Changed
