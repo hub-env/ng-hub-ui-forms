@@ -359,7 +359,7 @@ export class HubSelectPanelComponent implements OnInit, OnChanges {
 			this._renderer.removeClass(this._select, `hub-select__control--${position}`);
 		});
 
-		// The `ng-select-*` names are kept for one release so consumer stylesheets keep matching.
+		// The `ng-select-*` names are kept until 23.0.0 so consumer stylesheets keep matching.
 		this._renderer.addClass(this._dropdown, `ng-select-${currentPosition}`);
 		this._renderer.addClass(this._dropdown, `hub-select__panel--${currentPosition}`);
 		this._renderer.addClass(this._select, `ng-select-${currentPosition}`);

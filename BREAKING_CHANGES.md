@@ -11,24 +11,24 @@ This document tracks all breaking changes in the `ng-hub-ui-forms` library.
 - **Impact**: the select looks and behaves the same, and an application stylesheet that targets
   `.ng-*` still matches. The library's own selectors are one class lighter than before (for example
   `.hub-select__control .hub-select__box` where it was `.hub-select__control.ng-select
-  .ng-select-container`), so an application override that used to lose to the library on
+.ng-select-container`), so an application override that used to lose to the library on
   specificity may now apply. If a select changes look after the update, that override is the cause.
-  The `.ng-*` classes are removed in the next minor release. Separately,
+  The `.ng-*` classes are removed in 23.0.0. Separately,
   `HubSelectConfig.appearance` no longer has any effect.
 - **Migration**: replace the selectors with the new names.
 
-| Element | Before | Now |
-| --- | --- | --- |
-| Host | `.ng-select` | `.hub-select__control` |
-| Host state | `.ng-select-single`, `-multiple`, `-opened`, `-focused`, `-disabled`, `-searchable`, `-clearable`, `-taggable`, `-typeahead`, `-filtered`, `-top`, `-bottom`, `-left`, `-right` | `.hub-select__control--single`, `--multiple`, `--opened`, `--focused`, `--disabled`, `--searchable`, `--clearable`, `--taggable`, `--typeahead`, `--filtered`, `--top`, `--bottom`, `--left`, `--right` |
-| Box | `.ng-select-container`, `.ng-has-value` | `.hub-select__box`, `.hub-select__box--has-value` |
-| Values | `.ng-value-container`, `.ng-value`, `.ng-value-disabled`, `.ng-value-label`, `.ng-value-icon` | `.hub-select__values`, `.hub-select__value`, `.hub-select__value--disabled`, `.hub-select__value-label`, `.hub-select__value-remove` |
-| Placeholder and search | `.ng-placeholder`, `.ng-input` | `.hub-select__placeholder`, `.hub-select__search` |
-| Clear, arrow, spinner | `.ng-clear-wrapper`, `.ng-clear`, `.ng-arrow-wrapper`, `.ng-arrow`, `.ng-spinner-loader` | `.hub-select__clear`, `.hub-select__clear-icon`, `.hub-select__arrow-wrapper`, `.hub-select__arrow`, `.hub-select__spinner` |
-| Live region | `.ng-visually-hidden` | `.hub-select__visually-hidden` |
-| Panel | `.ng-dropdown-panel`, `.ng-select-top` / `-bottom` / `-left` / `-right` | `.hub-select__panel`, `.hub-select__panel--top` / `--bottom` / `--left` / `--right` |
-| Panel parts | `.ng-dropdown-panel-items`, `.ng-dropdown-header`, `.ng-dropdown-footer` | `.hub-select__panel-items`, `.hub-select__panel-header`, `.hub-select__panel-footer` |
-| Options | `.ng-option`, `-marked`, `-selected`, `-disabled`, `-child`, `.ng-option-label`, `.ng-optgroup`, `.ng-tag-label` | `.hub-select__panel-option`, `--marked`, `--selected`, `--disabled`, `--child`, `.hub-select__panel-option-label`, `.hub-select__panel-optgroup`, `.hub-select__panel-tag-label` |
+| Element                | Before                                                                                                                                                                          | Now                                                                                                                                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Host                   | `.ng-select`                                                                                                                                                                    | `.hub-select__control`                                                                                                                                                                                  |
+| Host state             | `.ng-select-single`, `-multiple`, `-opened`, `-focused`, `-disabled`, `-searchable`, `-clearable`, `-taggable`, `-typeahead`, `-filtered`, `-top`, `-bottom`, `-left`, `-right` | `.hub-select__control--single`, `--multiple`, `--opened`, `--focused`, `--disabled`, `--searchable`, `--clearable`, `--taggable`, `--typeahead`, `--filtered`, `--top`, `--bottom`, `--left`, `--right` |
+| Box                    | `.ng-select-container`, `.ng-has-value`                                                                                                                                         | `.hub-select__box`, `.hub-select__box--has-value`                                                                                                                                                       |
+| Values                 | `.ng-value-container`, `.ng-value`, `.ng-value-disabled`, `.ng-value-label`, `.ng-value-icon`                                                                                   | `.hub-select__values`, `.hub-select__value`, `.hub-select__value--disabled`, `.hub-select__value-label`, `.hub-select__value-remove`                                                                    |
+| Placeholder and search | `.ng-placeholder`, `.ng-input`                                                                                                                                                  | `.hub-select__placeholder`, `.hub-select__search`                                                                                                                                                       |
+| Clear, arrow, spinner  | `.ng-clear-wrapper`, `.ng-clear`, `.ng-arrow-wrapper`, `.ng-arrow`, `.ng-spinner-loader`                                                                                        | `.hub-select__clear`, `.hub-select__clear-icon`, `.hub-select__arrow-wrapper`, `.hub-select__arrow`, `.hub-select__spinner`                                                                             |
+| Live region            | `.ng-visually-hidden`                                                                                                                                                           | `.hub-select__visually-hidden`                                                                                                                                                                          |
+| Panel                  | `.ng-dropdown-panel`, `.ng-select-top` / `-bottom` / `-left` / `-right`                                                                                                         | `.hub-select__panel`, `.hub-select__panel--top` / `--bottom` / `--left` / `--right`                                                                                                                     |
+| Panel parts            | `.ng-dropdown-panel-items`, `.ng-dropdown-header`, `.ng-dropdown-footer`                                                                                                        | `.hub-select__panel-items`, `.hub-select__panel-header`, `.hub-select__panel-footer`                                                                                                                    |
+| Options                | `.ng-option`, `-marked`, `-selected`, `-disabled`, `-child`, `.ng-option-label`, `.ng-optgroup`, `.ng-tag-label`                                                                | `.hub-select__panel-option`, `--marked`, `--selected`, `--disabled`, `--child`, `.hub-select__panel-option-label`, `.hub-select__panel-optgroup`, `.hub-select__panel-tag-label`                        |
 
 ## v22.49.0
 

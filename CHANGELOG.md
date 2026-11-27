@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 
-- The `.ng-*` classes on the select's DOM. They are removed in the next minor release.
+- The `.ng-*` classes on the select's DOM. They are removed in 23.0.0.
 - `HubSelectConfig.appearance`. It has no effect since the Material appearance was removed.
 
 ## [22.49.0] - 2026-11-24

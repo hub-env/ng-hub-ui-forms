@@ -6,7 +6,7 @@ import { HubSelectComponent } from './select.component';
 
 /**
  * The engine emits the upstream `.ng-*` names next to the `hub-select__*` ones so consumer
- * stylesheets written against ng-select keep matching for one release. This pins every pair,
+ * stylesheets written against ng-select keep matching until 23.0.0. This pins every pair,
  * so the compatibility layer cannot be dropped by accident.
  */
 @Component({

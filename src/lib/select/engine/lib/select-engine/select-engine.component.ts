@@ -137,7 +137,7 @@ function optionalBooleanAttribute(value: unknown): boolean | undefined {
 		'[class.ng-select-clearable]': 'clearable()',
 		'[class.ng-select-filtered]': 'filtered',
 		'[class.ng-select-disabled]': 'disabled()',
-		// The `.ng-*` names above are kept for one release so consumer stylesheets keep matching;
+		// The `.ng-*` names above are kept until 23.0.0 so consumer stylesheets keep matching;
 		// the library itself only styles the `hub-select__*` names.
 		'[class.hub-select__control--single]': '!multiple()',
 		'[class.hub-select__control--typeahead]': 'typeahead()',
